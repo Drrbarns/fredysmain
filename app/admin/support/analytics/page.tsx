@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 
-const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+const COLORS = ['#171717', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
 export default function SupportAnalyticsPage() {
   const [data, setData] = useState<any>(null);
@@ -43,7 +43,7 @@ export default function SupportAnalyticsPage() {
   ];
   const ratingData = (data?.ratingDistribution || [0, 0, 0, 0, 0]).map((count: number, i: number) => ({ name: `${i + 1} Star`, count }));
   const ticketStatusData = Object.entries(data?.ticketStatusBreakdown || {}).map(([name, value]) => ({ name: name.replace(/_/g, ' '), value }));
-  const sentColors = ['#10b981', '#94a3b8', '#ef4444'];
+  const sentColors = ['#171717', '#94a3b8', '#ef4444'];
 
   const aiRate = s.totalConversations > 0 ? ((s.aiHandled / s.totalConversations) * 100).toFixed(0) : '0';
   const escalationRate = s.totalConversations > 0 ? ((s.escalated / s.totalConversations) * 100).toFixed(0) : '0';
@@ -53,14 +53,14 @@ export default function SupportAnalyticsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-            <Link href="/admin/support" className="hover:text-emerald-600">Support</Link>
+            <Link href="/admin/support" className="hover:text-gray-700">Support</Link>
             <i className="ri-arrow-right-s-line text-xs" />
             <span className="text-gray-900 font-medium">Analytics</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Support Analytics</h1>
         </div>
         <select value={days} onChange={(e) => setDays(Number(e.target.value))}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-600">
           <option value={7}>Last 7 days</option>
           <option value={14}>Last 14 days</option>
           <option value={30}>Last 30 days</option>
@@ -72,7 +72,7 @@ export default function SupportAnalyticsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
           { label: 'Conversations', value: s.totalConversations, icon: 'ri-chat-3-line', color: 'text-blue-600 bg-blue-50' },
-          { label: 'Tickets', value: s.totalTickets, icon: 'ri-ticket-line', color: 'text-emerald-600 bg-emerald-50' },
+          { label: 'Tickets', value: s.totalTickets, icon: 'ri-ticket-line', color: 'text-gray-700 bg-gray-50' },
           { label: 'AI Handled', value: `${aiRate}%`, icon: 'ri-robot-2-line', color: 'text-purple-600 bg-purple-50' },
           { label: 'Escalated', value: `${escalationRate}%`, icon: 'ri-alarm-warning-line', color: 'text-orange-600 bg-orange-50' },
           { label: 'Avg Rating', value: s.avgRating, icon: 'ri-star-line', color: 'text-amber-600 bg-amber-50' },
@@ -115,7 +115,7 @@ export default function SupportAnalyticsPage() {
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#10b981" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="count" fill="#171717" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -175,7 +175,7 @@ export default function SupportAnalyticsPage() {
                 <Legend />
                 <Line type="monotone" dataKey="total_conversations" name="Conversations" stroke="#3b82f6" strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="total_tickets_created" name="Tickets Created" stroke="#ef4444" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="total_tickets_resolved" name="Tickets Resolved" stroke="#10b981" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="total_tickets_resolved" name="Tickets Resolved" stroke="#171717" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>

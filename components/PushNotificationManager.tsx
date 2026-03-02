@@ -99,15 +99,15 @@ export default function PushNotificationManager() {
           </p>
           <div className="space-y-2 mb-4">
             <div className="flex items-center gap-2 text-sm text-gray-700">
-              <i className="ri-check-line text-green-600"></i>
+              <i className="ri-check-line text-gray-700"></i>
               <span>Order updates & tracking</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
-              <i className="ri-check-line text-green-600"></i>
+              <i className="ri-check-line text-gray-700"></i>
               <span>Flash sales & exclusive offers</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
-              <i className="ri-check-line text-green-600"></i>
+              <i className="ri-check-line text-gray-700"></i>
               <span>Price drops on wishlist</span>
             </div>
           </div>

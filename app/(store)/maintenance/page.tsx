@@ -1,10 +1,10 @@
 export default function MaintenancePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center px-4">
       <div className="max-w-2xl mx-auto text-center">
         <div className="mb-8">
-          <div className="w-32 h-32 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i className="ri-tools-line text-6xl text-emerald-700"></i>
+          <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i className="ri-tools-line text-6xl text-gray-900"></i>
           </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
             We'll Be Right Back
@@ -16,7 +16,7 @@ export default function MaintenancePage() {
 
         <div className="bg-white border border-gray-200 rounded-2xl p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Expected Downtime</h2>
-          <div className="flex items-center justify-center gap-3 text-emerald-700">
+          <div className="flex items-center justify-center gap-3 text-gray-900">
             <i className="ri-time-line text-3xl"></i>
             <div className="text-left">
               <p className="text-sm text-gray-600">Estimated completion</p>
@@ -35,8 +35,8 @@ export default function MaintenancePage() {
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="ri-shield-check-line text-2xl text-emerald-700"></i>
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="ri-shield-check-line text-2xl text-gray-900"></i>
             </div>
             <h3 className="font-bold text-gray-900 mb-2">Security</h3>
             <p className="text-gray-600 text-sm">Enhanced protection for your data and transactions</p>
@@ -51,14 +51,14 @@ export default function MaintenancePage() {
           </div>
         </div>
 
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 mb-8">
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 mb-8">
           <h3 className="text-xl font-bold text-gray-900 mb-4">Need Immediate Assistance?</h3>
           <p className="text-gray-600 mb-6">
             Our customer service team is still available to help you
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a
-              href="mailto:hello@premiumstore.com"
+              href="mailto:contact@delizbeautytools.com"
               className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-full font-medium hover:bg-gray-50 transition-colors border border-gray-200 whitespace-nowrap"
             >
               <i className="ri-mail-line"></i>
@@ -68,7 +68,7 @@ export default function MaintenancePage() {
               href="https://wa.me/233241234567"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-emerald-700 text-white px-6 py-3 rounded-full font-medium hover:bg-emerald-800 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-full font-medium hover:bg-gray-800 transition-colors whitespace-nowrap"
             >
               <i className="ri-whatsapp-line"></i>
               WhatsApp

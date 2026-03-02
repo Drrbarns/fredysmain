@@ -150,7 +150,7 @@ export default function NotificationsPage() {
             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 <h2 className="text-xl font-semibold mb-6">Send New Campaign</h2>
 
-                {success && <div className="bg-emerald-50 text-emerald-700 p-4 rounded-lg mb-4">{success}</div>}
+                {success && <div className="bg-gray-50 text-gray-900 p-4 rounded-lg mb-4">{success}</div>}
                 {error && <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-4">{error}</div>}
 
                 <form onSubmit={handleSend} className="space-y-6">
@@ -159,7 +159,7 @@ export default function NotificationsPage() {
                         <select
                             value={form.audience}
                             onChange={e => setForm({ ...form, audience: e.target.value })}
-                            className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-gray-600"
                         >
                             <option value="all">All Customers</option>
                             <option value="newsletter">Newsletter Subscribers</option>
@@ -172,7 +172,7 @@ export default function NotificationsPage() {
                                 type="checkbox"
                                 checked={form.channels.email}
                                 onChange={e => setForm({ ...form, channels: { ...form.channels, email: e.target.checked } })}
-                                className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                                className="w-5 h-5 text-gray-700 rounded focus:ring-gray-600 cursor-pointer"
                             />
                             <span className="font-medium text-gray-900">Send Email</span>
                         </label>
@@ -181,7 +181,7 @@ export default function NotificationsPage() {
                                 type="checkbox"
                                 checked={form.channels.sms}
                                 onChange={e => setForm({ ...form, channels: { ...form.channels, sms: e.target.checked } })}
-                                className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                                className="w-5 h-5 text-gray-700 rounded focus:ring-gray-600 cursor-pointer"
                             />
                             <span className="font-medium text-gray-900">Send SMS</span>
                         </label>
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
                                 type="text"
                                 value={form.subject}
                                 onChange={e => setForm({ ...form, subject: e.target.value })}
-                                className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+                                className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-gray-600"
                                 placeholder="e.g., Summer Sale Starts Now!"
                                 required={form.channels.email}
                             />
@@ -206,7 +206,7 @@ export default function NotificationsPage() {
                         <textarea
                             value={form.message}
                             onChange={e => setForm({ ...form, message: e.target.value })}
-                            className="w-full p-3 border border-gray-300 rounded-lg h-40 outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="w-full p-3 border border-gray-300 rounded-lg h-40 outline-none focus:ring-2 focus:ring-gray-600"
                             placeholder="Write your message here... For emails, this supports plain text."
                             required
                         />
@@ -216,7 +216,7 @@ export default function NotificationsPage() {
                     <button
                         type="submit"
                         disabled={loading || (!form.channels.email && !form.channels.sms)}
-                        className="w-full bg-emerald-700 text-white py-4 rounded-lg font-bold text-lg hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                        className="w-full bg-gray-900 text-white py-4 rounded-lg font-bold text-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
                         {loading ? (
                             <span className="flex items-center justify-center">

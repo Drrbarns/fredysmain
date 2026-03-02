@@ -140,9 +140,9 @@ export default function VerifyPhonePage() {
           </div>
 
           <div className="mt-8 pt-6 border-t">
-            <div className="bg-green-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                <i className="ri-shield-check-line text-green-600"></i>
+                <i className="ri-shield-check-line text-gray-700"></i>
                 Why verify your phone?
               </h3>
               <ul className="text-xs text-gray-600 space-y-1">

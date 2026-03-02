@@ -18,7 +18,7 @@ export default function Home() {
 
   const slides = [
     {
-      image: '/hero2.jpeg',
+      image: '/nova.jpeg',
       tagline: 'New Collection',
       headline: 'Premium Beauty Essentials — Lash, Hair, Nail, Spa & Skincare',
       subheadline: 'Ghana\'s trusted destination for beauty pros and lovers. Madina, Ritz Junction, Accra. Retail & wholesale. Nationwide delivery.',
@@ -66,17 +66,12 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch featured products directly from Supabase
-        const { data: productsData, error: productsError } = await supabase
-          .from('products')
-          .select('*, product_variants(*), product_images(*)')
-          .eq('status', 'active')
-          .eq('featured', true)
-          .order('created_at', { ascending: false })
-          .limit(8);
-
-        if (productsError) throw productsError;
-        setFeaturedProducts(productsData || []);
+        // Featured products from API (service role) so product_images always load
+        const res = await fetch('/api/storefront/products?featured=true&limit=8');
+        if (res.ok) {
+          const productsData = await res.json();
+          setFeaturedProducts(Array.isArray(productsData) ? productsData : []);
+        }
 
         // Fetch featured categories (featured is stored in metadata JSONB)
         const { data: categoriesData, error: categoriesError } = await supabase
@@ -225,20 +220,37 @@ export default function Home() {
 
           <AnimatedGrid className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {categories.map((category) => (
-              <Link href={`/shop?category=${category.slug}`} key={category.id} className="group cursor-pointer block">
-                <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 relative shadow-md">
+              <Link href={`/shop?category=${category.slug}`} key={category.id} className="group outline-none block">
+                <div className="relative aspect-[3/4] sm:aspect-[4/5] rounded-2xl sm:rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]">
                   <Image
                     src={category.image || category.image_url || 'https://via.placeholder.com/600x800?text=' + encodeURIComponent(category.name)}
                     alt={category.name}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover transform transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.03]"
                     sizes="(max-width: 768px) 50vw, 25vw"
-                    quality={75}
+                    quality={85}
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-                  <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-xl text-center transform translate-y-2 opacity-90 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <h3 className="font-serif font-bold text-gray-900 text-lg">{category.name}</h3>
-                    <span className="text-xs text-gray-800 font-medium uppercase tracking-wider mt-1 block">View Collection</span>
+
+                  {/* Subtle darkening for text contrast */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
+
+                  {/* Elegant text layout resting at the bottom */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8">
+                    <div className="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]">
+                      <h3 className="font-serif text-2xl md:text-3xl lg:text-[1.75rem] text-white font-medium drop-shadow-sm mb-1.5 md:mb-2 leading-tight">
+                        {category.name}
+                      </h3>
+
+                      <div className="overflow-hidden">
+                        <div className="flex items-center gap-3 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] delay-[50ms]">
+                          <span className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] text-white/90">
+                            View Collection
+                          </span>
+                          <div className="h-[1px] w-6 sm:w-8 bg-white/70" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -298,7 +310,7 @@ export default function Home() {
                     name={product.name}
                     price={product.price}
                     originalPrice={product.compare_at_price}
-                    image={product.product_images?.[0]?.url || 'https://via.placeholder.com/400x500'}
+                    image={(Array.isArray(product.product_images) ? [...product.product_images].sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0))[0]?.url : product.product_images?.[0]?.url) || 'https://via.placeholder.com/400x500'}
                     rating={product.rating_avg || 5}
                     reviewCount={product.review_count || 0}
                     badge={product.featured ? 'Featured' : undefined}

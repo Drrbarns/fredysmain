@@ -130,7 +130,7 @@ export default function ZonesPage() {
         <div className="space-y-6">
             {toast && (
                 <div className={`fixed top-4 right-4 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium ${
-                    toast.startsWith('Error') ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+                    toast.startsWith('Error') ? 'bg-red-600 text-white' : 'bg-gray-700 text-white'
                 }`}>{toast}</div>
             )}
 
@@ -140,7 +140,7 @@ export default function ZonesPage() {
                     <p className="text-gray-500 mt-1">Define delivery areas and pricing</p>
                 </div>
                 <button onClick={openAddModal}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 transition-colors font-medium text-sm">
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium text-sm">
                     <i className="ri-add-line" /> Add Zone
                 </button>
             </div>
@@ -149,7 +149,7 @@ export default function ZonesPage() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <i className="ri-loader-4-line animate-spin text-3xl text-emerald-600 mr-3" />
+                    <i className="ri-loader-4-line animate-spin text-3xl text-gray-700 mr-3" />
                     <span className="text-gray-500">Loading zones...</span>
                 </div>
             ) : zones.length === 0 ? (
@@ -158,7 +158,7 @@ export default function ZonesPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">No delivery zones yet</h3>
                     <p className="text-gray-500 mb-4">Create delivery zones to define areas, fees, and estimated delivery times.</p>
                     <button onClick={openAddModal}
-                        className="px-5 py-2.5 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 font-medium text-sm">
+                        className="px-5 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-medium text-sm">
                         Create First Zone
                     </button>
                 </div>
@@ -174,7 +174,7 @@ export default function ZonesPage() {
                                     {zone.description && <p className="text-sm text-gray-500 mt-0.5">{zone.description}</p>}
                                 </div>
                                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                    zone.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-500'
+                                    zone.is_active ? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-500'
                                 }`}>{zone.is_active ? 'Active' : 'Inactive'}</span>
                             </div>
 
@@ -183,9 +183,9 @@ export default function ZonesPage() {
                                     <p className="text-[10px] font-medium text-gray-500 uppercase">Standard Fee</p>
                                     <p className="text-lg font-bold text-gray-900">GH₵ {zone.base_fee?.toFixed(2)}</p>
                                 </div>
-                                <div className="bg-emerald-50 rounded-xl p-3">
-                                    <p className="text-[10px] font-medium text-emerald-600 uppercase">Express Fee</p>
-                                    <p className="text-lg font-bold text-emerald-700">GH₵ {zone.express_fee?.toFixed(2)}</p>
+                                <div className="bg-gray-50 rounded-xl p-3">
+                                    <p className="text-[10px] font-medium text-gray-700 uppercase">Express Fee</p>
+                                    <p className="text-lg font-bold text-gray-900">GH₵ {zone.express_fee?.toFixed(2)}</p>
                                 </div>
                             </div>
 
@@ -207,12 +207,12 @@ export default function ZonesPage() {
 
                             <div className="flex gap-2 pt-3 border-t border-gray-100">
                                 <button onClick={() => openEditModal(zone)}
-                                    className="flex-1 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
+                                    className="flex-1 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                                     <i className="ri-edit-line mr-1" /> Edit
                                 </button>
                                 <button onClick={() => handleToggle(zone)}
                                     className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-                                        zone.is_active ? 'text-amber-600 hover:bg-amber-50' : 'text-green-600 hover:bg-green-50'
+                                        zone.is_active ? 'text-amber-600 hover:bg-amber-50' : 'text-gray-700 hover:bg-gray-50'
                                     }`}>
                                     {zone.is_active ? 'Deactivate' : 'Activate'}
                                 </button>
@@ -238,14 +238,14 @@ export default function ZonesPage() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Zone Name *</label>
                                 <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
                                     placeholder="Greater Accra Metro" />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Description</label>
                                 <input type="text" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
                                     placeholder="Covers central Accra and suburbs" />
                             </div>
 
@@ -254,14 +254,14 @@ export default function ZonesPage() {
                                     <label className="block text-sm font-semibold text-gray-900 mb-1.5">Standard Fee (GH₵)</label>
                                     <input type="number" step="0.01" value={form.base_fee}
                                         onChange={e => setForm(f => ({ ...f, base_fee: e.target.value }))}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600"
                                         placeholder="20.00" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-900 mb-1.5">Express Fee (GH₵)</label>
                                     <input type="number" step="0.01" value={form.express_fee}
                                         onChange={e => setForm(f => ({ ...f, express_fee: e.target.value }))}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600"
                                         placeholder="40.00" />
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ export default function ZonesPage() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Estimated Delivery Time</label>
                                 <select value={form.estimated_days} onChange={e => setForm(f => ({ ...f, estimated_days: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600">
                                     <option value="Same day">Same day</option>
                                     <option value="Next day">Next day</option>
                                     <option value="1-2 days">1-2 days</option>
@@ -286,11 +286,11 @@ export default function ZonesPage() {
                                     {GHANA_REGIONS.map(region => (
                                         <label key={region}
                                             className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors text-sm ${
-                                                form.regions.includes(region) ? 'bg-emerald-50 text-emerald-700' : 'hover:bg-gray-50 text-gray-700'
+                                                form.regions.includes(region) ? 'bg-gray-50 text-gray-900' : 'hover:bg-gray-50 text-gray-700'
                                             }`}>
                                             <input type="checkbox" checked={form.regions.includes(region)}
                                                 onChange={() => toggleRegion(region)}
-                                                className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" />
+                                                className="rounded border-gray-300 text-gray-700 focus:ring-gray-600" />
                                             {region}
                                         </label>
                                     ))}
@@ -301,7 +301,7 @@ export default function ZonesPage() {
                                 <button onClick={() => setShowModal(false)}
                                     className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Cancel</button>
                                 <button onClick={handleSave} disabled={saving}
-                                    className="flex-1 px-4 py-3 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 font-semibold disabled:opacity-50 transition-colors">
+                                    className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold disabled:opacity-50 transition-colors">
                                     {saving ? 'Saving...' : editingZone ? 'Update Zone' : 'Create Zone'}
                                 </button>
                             </div>

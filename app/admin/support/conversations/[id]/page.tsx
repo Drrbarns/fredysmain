@@ -109,16 +109,16 @@ export default function ConversationDetailPage({ params }: { params: Promise<{ i
     try { meta = JSON.parse(meta); } catch { meta = {}; }
   }
 
-  const sentimentColor = conversation.sentiment === 'positive' ? 'text-emerald-600 bg-emerald-50' : conversation.sentiment === 'negative' ? 'text-red-600 bg-red-50' : 'text-gray-600 bg-gray-50';
-  const memoryTypeColors: Record<string, string> = { preference: 'bg-purple-100 text-purple-700', issue: 'bg-red-100 text-red-700', context: 'bg-blue-100 text-blue-700', instruction: 'bg-amber-100 text-amber-700', fact: 'bg-emerald-100 text-emerald-700' };
+  const sentimentColor = conversation.sentiment === 'positive' ? 'text-gray-700 bg-gray-50' : conversation.sentiment === 'negative' ? 'text-red-600 bg-red-50' : 'text-gray-600 bg-gray-50';
+  const memoryTypeColors: Record<string, string> = { preference: 'bg-purple-100 text-purple-700', issue: 'bg-red-100 text-red-700', context: 'bg-blue-100 text-blue-700', instruction: 'bg-amber-100 text-amber-700', fact: 'bg-gray-100 text-gray-900' };
 
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500">
-        <Link href="/admin/support" className="hover:text-emerald-600">Support</Link>
+        <Link href="/admin/support" className="hover:text-gray-700">Support</Link>
         <i className="ri-arrow-right-s-line text-xs" />
-        <Link href="/admin/support/conversations" className="hover:text-emerald-600">Conversations</Link>
+        <Link href="/admin/support/conversations" className="hover:text-gray-700">Conversations</Link>
         <i className="ri-arrow-right-s-line text-xs" />
         <span className="text-gray-900 font-medium truncate">{conversation.session_id?.slice(0, 16)}</span>
       </div>
@@ -136,7 +136,7 @@ export default function ConversationDetailPage({ params }: { params: Promise<{ i
             </div>
             <div className="flex gap-2">
               <button onClick={toggleResolved}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${conversation.is_resolved ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${conversation.is_resolved ? 'bg-gray-50 border-gray-200 text-gray-900' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
                 <i className={`${conversation.is_resolved ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'} mr-1`} />
                 {conversation.is_resolved ? 'Resolved' : 'Mark Resolved'}
               </button>
@@ -150,15 +150,15 @@ export default function ConversationDetailPage({ params }: { params: Promise<{ i
 
           {/* Messages */}
           <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-3 text-white flex items-center gap-2">
+            <div className="bg-gradient-to-r from-gray-700 to-gray-900 px-4 py-3 text-white flex items-center gap-2">
               <i className="ri-chat-3-line" />
               <span className="text-sm font-semibold">Conversation Transcript</span>
-              <span className="ml-auto text-xs text-emerald-100">{messages.length || conversation.message_count || 0} messages</span>
+              <span className="ml-auto text-xs text-gray-100">{messages.length || conversation.message_count || 0} messages</span>
             </div>
             <div className="max-h-[600px] overflow-y-auto p-4 space-y-3 bg-gray-50/50">
               {messages.map((msg: any, i: number) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${msg.role === 'user' ? 'bg-emerald-600 text-white rounded-br-sm' : 'bg-white text-gray-800 rounded-bl-sm border border-gray-100 shadow-sm'}`}>
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${msg.role === 'user' ? 'bg-gray-700 text-white rounded-br-sm' : 'bg-white text-gray-800 rounded-bl-sm border border-gray-100 shadow-sm'}`}>
                     <MarkdownMessage content={msg.content || ''} isUserMessage={msg.role === 'user'} />
                   </div>
                 </div>
@@ -189,7 +189,7 @@ export default function ConversationDetailPage({ params }: { params: Promise<{ i
               )}
               <div className="flex justify-between"><span className="text-gray-500">Session</span><span className="font-mono text-xs text-gray-600">{conversation.session_id?.slice(0, 20)}</span></div>
               {conversation.user_id && (
-                <div className="flex justify-between"><span className="text-gray-500">Auth User</span><span className="text-xs text-emerald-600">Logged in</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Auth User</span><span className="text-xs text-gray-700">Logged in</span></div>
               )}
             </div>
           </div>

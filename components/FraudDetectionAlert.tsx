@@ -9,7 +9,7 @@ interface FraudDetectionAlertProps {
 export default function FraudDetectionAlert({ riskLevel, reasons, orderId }: FraudDetectionAlertProps) {
   const getRiskColor = () => {
     switch (riskLevel) {
-      case 'low': return 'bg-green-50 border-green-200 text-green-800';
+      case 'low': return 'bg-gray-50 border-gray-200 text-gray-800';
       case 'medium': return 'bg-orange-50 border-orange-200 text-orange-800';
       case 'high': return 'bg-red-50 border-red-200 text-red-800';
     }
@@ -17,7 +17,7 @@ export default function FraudDetectionAlert({ riskLevel, reasons, orderId }: Fra
 
   const getRiskIcon = () => {
     switch (riskLevel) {
-      case 'low': return 'ri-shield-check-line text-green-600';
+      case 'low': return 'ri-shield-check-line text-gray-700';
       case 'medium': return 'ri-error-warning-line text-orange-600';
       case 'high': return 'ri-alarm-warning-line text-red-600';
     }

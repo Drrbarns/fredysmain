@@ -7,9 +7,9 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@standardecom.com';
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Deliz Beauty Tools <noreply@delizbeautytools.com>';
 const BRAND = {
     name: 'Deliz Beauty Tools',
-    color: '#047857',
-    colorLight: '#ecfdf5',
-    colorDark: '#064e3b',
+    color: '#171717',
+    colorLight: '#f9fafb',
+    colorDark: '#262626',
     url: (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, ''),
     phone: process.env.CONTACT_PHONE || '0278549831',
 };
@@ -360,7 +360,7 @@ export async function sendOrderStatusUpdate(order: any, newStatus: string) {
     // Status icons/colors
     const statusConfig: Record<string, { icon: string; color: string; bg: string }> = {
         processing: { icon: '&#9881;', color: '#2563eb', bg: '#eff6ff' },
-        shipped: { icon: '&#128666;', color: '#047857', bg: '#ecfdf5' },
+        shipped: { icon: '&#128666;', color: '#171717', bg: '#f9fafb' },
         dispatched_to_rider: { icon: '&#128101;', color: '#4f46e5', bg: '#eef2ff' },
         delivered: { icon: '&#127881;', color: '#16a34a', bg: '#f0fdf4' },
         cancelled: { icon: '&#10060;', color: '#dc2626', bg: '#fef2f2' },

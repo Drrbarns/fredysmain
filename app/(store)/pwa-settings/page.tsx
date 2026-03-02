@@ -98,7 +98,7 @@ export default function PWASettingsPage() {
                 </p>
               </div>
               <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                isInstalled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500'
+                isInstalled ? 'bg-gray-100 text-gray-700' : 'bg-gray-200 text-gray-500'
               }`}>
                 <i className={isInstalled ? 'ri-check-line text-2xl' : 'ri-close-line text-2xl'}></i>
               </div>
@@ -129,8 +129,8 @@ export default function PWASettingsPage() {
                   </button>
                 )}
                 {notificationPermission === 'granted' && (
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <i className="ri-check-line text-green-700 text-2xl"></i>
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                    <i className="ri-check-line text-gray-700 text-2xl"></i>
                   </div>
                 )}
                 {notificationPermission === 'denied' && (
@@ -216,18 +216,18 @@ export default function PWASettingsPage() {
 
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <i className="ri-flashlight-line text-green-700"></i>
+              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                <i className="ri-flashlight-line text-gray-700"></i>
               </div>
               PWA Features
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 bg-green-50 rounded-xl">
+              <div className="p-4 bg-gray-50 rounded-xl">
                 <div className="flex items-center gap-3 mb-2">
-                  <i className="ri-wifi-off-line text-green-700 text-xl"></i>
-                  <span className="font-semibold text-green-900">Offline Mode</span>
+                  <i className="ri-wifi-off-line text-gray-700 text-xl"></i>
+                  <span className="font-semibold text-gray-900">Offline Mode</span>
                 </div>
-                <p className="text-sm text-green-800">Browse cached pages without internet</p>
+                <p className="text-sm text-gray-800">Browse cached pages without internet</p>
               </div>
               <div className="p-4 bg-blue-50 rounded-xl">
                 <div className="flex items-center gap-3 mb-2">

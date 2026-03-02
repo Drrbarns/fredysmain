@@ -6,7 +6,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import ProductCard, { type ColorVariant } from '@/components/ProductCard';
 import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import { getColorHex } from '@/components/ProductCard';
-import { supabase } from '@/lib/supabase';
 import { cachedQuery } from '@/lib/query-cache';
 import PageHero from '@/components/PageHero';
 
@@ -56,91 +55,48 @@ function ShopContent() {
     fetchCategories();
   }, []);
 
-  // Fetch Products
+  // Fetch Products from API (service role) so product_images always load on storefront
   useEffect(() => {
     async function fetchProducts() {
       setLoading(true);
       try {
-        const search = searchParams.get('search');
+        const search = searchParams.get('search') || '';
+        let categorySlugs = 'all';
+        if (selectedCategory !== 'all') {
+          const categoryObj = categories.find((c: any) => c.slug === selectedCategory);
+          if (categoryObj) {
+            const childSlugs = categories
+              .filter((c: any) => c.parent_id === categoryObj.id)
+              .map((c: any) => c.slug);
+            categorySlugs = [selectedCategory, ...childSlugs].join(',');
+          } else {
+            categorySlugs = selectedCategory;
+          }
+        }
 
-        // Build cache key from all filter params
-        const cacheKey = `shop:${selectedCategory}:${search || ''}:${priceRange.join('-')}:${selectedRating}:${sortBy}:${page}`;
-
-        const { data, count, error } = await cachedQuery<{ data: any; count: any; error: any }>(
+        const cacheKey = `shop:${selectedCategory}:${search}:${priceRange.join('-')}:${selectedRating}:${sortBy}:${page}`;
+        const { data, count } = await cachedQuery<{ data: any[]; count: number }>(
           cacheKey,
           async () => {
-            let query = supabase
-              .from('products')
-              .select(`
-                *,
-                categories!inner(name, slug),
-                product_images!product_id(url, position),
-                product_variants(id, name, price, quantity, option1, option2, image_url)
-              `, { count: 'exact' })
-              .order('position', { foreignTable: 'product_images', ascending: true });
-
-            // Search
-            if (search) {
-              query = query.ilike('name', `%${search}%`);
+            const params = new URLSearchParams({
+              search,
+              categorySlugs,
+              priceMin: String(priceRange[0]),
+              priceMax: String(priceRange[1]),
+              rating: String(selectedRating),
+              sortBy,
+              page: String(page),
+              limit: String(productsPerPage),
+            });
+            const res = await fetch(`/api/storefront/shop?${params}`);
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.error || 'Failed to load products');
             }
-
-            // Category Filter with Subcategories
-            if (selectedCategory !== 'all') {
-              const categoryObj = categories.find(c => c.slug === selectedCategory);
-
-              if (categoryObj) {
-                const targetSlugs = [selectedCategory];
-                const childSlugs = categories
-                  .filter(c => c.parent_id === categoryObj.id)
-                  .map(c => c.slug);
-                targetSlugs.push(...childSlugs);
-                query = query.in('categories.slug', targetSlugs);
-              } else {
-                query = query.eq('categories.slug', selectedCategory);
-              }
-            }
-
-            // Price Filter
-            if (priceRange[1] < 5000) {
-              query = query.gte('price', priceRange[0]).lte('price', priceRange[1]);
-            }
-
-            // Rating Filter
-            if (selectedRating > 0) {
-              query = query.gte('rating_avg', selectedRating);
-            }
-
-            // Sorting
-            switch (sortBy) {
-              case 'price-low':
-                query = query.order('price', { ascending: true });
-                break;
-              case 'price-high':
-                query = query.order('price', { ascending: false });
-                break;
-              case 'rating':
-                query = query.order('rating_avg', { ascending: false });
-                break;
-              case 'new':
-                query = query.order('created_at', { ascending: false });
-                break;
-              case 'popular':
-              default:
-                query = query.order('created_at', { ascending: false });
-                break;
-            }
-
-            // Pagination
-            const from = (page - 1) * productsPerPage;
-            const to = from + productsPerPage - 1;
-            query = query.range(from, to);
-
-            return query as any;
+            return res.json();
           },
-          2 * 60 * 1000 // Cache for 2 minutes
+          30 * 1000
         );
-
-        if (error) throw error;
 
         if (data) {
           const formattedProducts = data.map((p: any) => {
@@ -149,7 +105,6 @@ function ShopContent() {
             const minVariantPrice = hasVariants ? Math.min(...variants.map((v: any) => v.price || p.price)) : undefined;
             const totalVariantStock = hasVariants ? variants.reduce((sum: number, v: any) => sum + (v.quantity || 0), 0) : 0;
             const effectiveStock = hasVariants ? totalVariantStock : p.quantity;
-            // Extract unique colors from option2
             const colorVariants: ColorVariant[] = [];
             const seenColors = new Set<string>();
             for (const v of variants) {
@@ -162,24 +117,26 @@ function ShopContent() {
                 }
               }
             }
+            const images = Array.isArray(p.product_images) ? [...p.product_images].sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0)) : [];
+            const firstImageUrl = images.find((img: any) => Number(img.position) === 0)?.url || images[0]?.url || 'https://via.placeholder.com/800x800?text=No+Image';
 
             return {
-              id: p.id,           // Product UUID for cart/orders
-              slug: p.slug,       // Slug for navigation
+              id: p.id,
+              slug: p.slug,
               name: p.name,
               price: p.price,
               originalPrice: p.compare_at_price,
-              image: p.product_images?.[0]?.url || 'https://via.placeholder.com/800x800?text=No+Image',
+              image: firstImageUrl,
               rating: p.rating_avg || 0,
-              reviewCount: 0, // Need to implement reviews relation
-              badge: p.compare_at_price > p.price ? 'Sale' : undefined, // Simple badge logic
+              reviewCount: 0,
+              badge: p.compare_at_price > p.price ? 'Sale' : undefined,
               inStock: effectiveStock > 0,
               maxStock: effectiveStock || 50,
               moq: p.moq || 1,
               category: p.categories?.name,
               hasVariants,
               minVariantPrice,
-              colorVariants
+              colorVariants,
             };
           });
           setProducts(formattedProducts);

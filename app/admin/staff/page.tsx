@@ -16,7 +16,7 @@ interface StaffMember {
 
 const ROLE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
   admin: { label: 'Super Admin', color: 'bg-amber-100 text-amber-800 border-amber-200', icon: 'ri-shield-star-line' },
-  staff: { label: 'Staff', color: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: 'ri-shield-user-line' },
+  staff: { label: 'Staff', color: 'bg-gray-100 text-gray-800 border-gray-200', icon: 'ri-shield-user-line' },
 };
 
 export default function StaffPage() {
@@ -227,7 +227,7 @@ export default function StaffPage() {
             setInviteError('');
             setInviteSuccess('');
           }}
-          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
+          className="flex items-center gap-2 px-5 py-2.5 bg-gray-700 text-white font-semibold rounded-xl hover:bg-gray-900 transition-colors shadow-sm cursor-pointer"
         >
           <i className="ri-user-add-line text-lg" />
           Add Staff
@@ -243,7 +243,7 @@ export default function StaffPage() {
             <p className="text-gray-500 mb-4">Add your first team member to get started.</p>
             <button
               onClick={() => setShowInviteModal(true)}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors cursor-pointer"
             >
               Add Staff Member
             </button>
@@ -274,7 +274,7 @@ export default function StaffPage() {
                       />
                     ) : (
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm ${
-                        member.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                        member.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-900'
                       }`}>
                         {initials}
                       </div>
@@ -309,7 +309,7 @@ export default function StaffPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => openEdit(member)}
-                      className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                      className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
                       title="Edit"
                     >
                       <i className="ri-pencil-line text-lg" />
@@ -368,8 +368,8 @@ export default function StaffPage() {
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                    <i className="ri-user-add-line text-xl text-emerald-600" />
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <i className="ri-user-add-line text-xl text-gray-700" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-gray-900">Add Staff Member</h2>
@@ -393,7 +393,7 @@ export default function StaffPage() {
                 </div>
               )}
               {inviteSuccess && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700 flex items-center gap-2">
+                <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 flex items-center gap-2">
                   <i className="ri-check-line text-lg" />
                   {inviteSuccess}
                 </div>
@@ -407,7 +407,7 @@ export default function StaffPage() {
                   onChange={e => setInviteForm(f => ({ ...f, fullName: e.target.value }))}
                   required
                   placeholder="e.g. John Doe"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 focus:border-gray-600 outline-none"
                 />
               </div>
 
@@ -419,7 +419,7 @@ export default function StaffPage() {
                   onChange={e => setInviteForm(f => ({ ...f, email: e.target.value }))}
                   required
                   placeholder="staff@example.com"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 focus:border-gray-600 outline-none"
                 />
               </div>
 
@@ -432,7 +432,7 @@ export default function StaffPage() {
                   required
                   minLength={6}
                   placeholder="Minimum 6 characters"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 focus:border-gray-600 outline-none"
                 />
                 <p className="text-xs text-gray-400 mt-1">Share this password with the staff member for their first login.</p>
               </div>
@@ -444,7 +444,7 @@ export default function StaffPage() {
                   value={inviteForm.phone}
                   onChange={e => setInviteForm(f => ({ ...f, phone: e.target.value }))}
                   placeholder="e.g. 0535998837"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 focus:border-gray-600 outline-none"
                 />
               </div>
 
@@ -456,12 +456,12 @@ export default function StaffPage() {
                     onClick={() => setInviteForm(f => ({ ...f, role: 'staff' }))}
                     className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
                       inviteForm.role === 'staff'
-                        ? 'border-emerald-300 bg-emerald-50'
+                        ? 'border-gray-300 bg-gray-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <i className="ri-shield-user-line text-emerald-600" />
+                      <i className="ri-shield-user-line text-gray-700" />
                       <span className="font-semibold text-sm text-gray-900">Staff</span>
                     </div>
                     <p className="text-xs text-gray-500">Limited access based on role permissions</p>
@@ -495,7 +495,7 @@ export default function StaffPage() {
                 <button
                   type="submit"
                   disabled={inviteLoading}
-                  className="flex-1 px-4 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors cursor-pointer"
+                  className="flex-1 px-4 py-2.5 bg-gray-700 text-white font-semibold rounded-xl hover:bg-gray-900 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   {inviteLoading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -545,7 +545,7 @@ export default function StaffPage() {
                   value={editForm.fullName}
                   onChange={e => setEditForm(f => ({ ...f, fullName: e.target.value }))}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 focus:border-gray-600 outline-none"
                 />
               </div>
 
@@ -555,7 +555,7 @@ export default function StaffPage() {
                   type="tel"
                   value={editForm.phone}
                   onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 focus:border-gray-600 outline-none"
                 />
               </div>
 
@@ -575,12 +575,12 @@ export default function StaffPage() {
                       onClick={() => setEditForm(f => ({ ...f, role: 'staff' }))}
                       className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
                         editForm.role === 'staff'
-                          ? 'border-emerald-300 bg-emerald-50'
+                          ? 'border-gray-300 bg-gray-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <i className="ri-shield-user-line text-emerald-600" />
+                        <i className="ri-shield-user-line text-gray-700" />
                         <span className="font-semibold text-sm text-gray-900">Staff</span>
                       </div>
                     </button>
@@ -613,7 +613,7 @@ export default function StaffPage() {
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="flex-1 px-4 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors cursor-pointer"
+                  className="flex-1 px-4 py-2.5 bg-gray-700 text-white font-semibold rounded-xl hover:bg-gray-900 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   {editLoading ? 'Saving...' : 'Save Changes'}
                 </button>

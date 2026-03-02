@@ -70,7 +70,7 @@ export default function OrderHistory() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'delivered':
-        return 'bg-green-100 text-green-700';
+        return 'bg-gray-100 text-gray-700';
       case 'dispatched_to_rider':
         return 'bg-indigo-100 text-indigo-700';
       case 'shipped':
@@ -98,7 +98,7 @@ export default function OrderHistory() {
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <i className="ri-loader-4-line animate-spin text-3xl text-emerald-700"></i>
+        <i className="ri-loader-4-line animate-spin text-3xl text-gray-900"></i>
         <p className="mt-2 text-gray-500">Loading orders...</p>
       </div>
     );
@@ -112,7 +112,7 @@ export default function OrderHistory() {
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-1">No orders yet</h3>
         <p className="text-gray-500 mb-6">Start shopping to see your orders here.</p>
-        <Link href="/shop" className="inline-block bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-800 transition-colors">
+        <Link href="/shop" className="inline-block bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors">
           Go to Shop
         </Link>
       </div>
@@ -150,7 +150,7 @@ export default function OrderHistory() {
                   </div>
                   <div className="w-full sm:w-auto">
                     <p className="text-xs text-gray-600 mb-1">Total</p>
-                    <p className="font-bold text-emerald-700">GH₵{order.total.toFixed(2)}</p>
+                    <p className="font-bold text-gray-900">GH₵{order.total.toFixed(2)}</p>
                   </div>
                 </div>
                 <div className="w-full sm:w-auto">
@@ -184,7 +184,7 @@ export default function OrderHistory() {
               <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-4 border-t border-gray-200">
                 <Link
                   href={`/order-tracking?order=${order.orderNumber}`}
-                  className="flex-1 sm:flex-none text-center px-4 py-2 bg-emerald-700 text-white rounded-lg font-semibold hover:bg-emerald-800 transition-colors whitespace-nowrap"
+                  className="flex-1 sm:flex-none text-center px-4 py-2 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors whitespace-nowrap"
                 >
                   <i className="ri-map-pin-line mr-2"></i>
                   Track Order

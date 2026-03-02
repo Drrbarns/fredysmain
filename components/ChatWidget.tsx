@@ -575,7 +575,7 @@ export default function ChatWidget() {
               <div className="min-w-0">
                 <h3 className="font-semibold text-sm leading-tight truncate">{WIDGET_TITLE}</h3>
                 <p className="text-[11px] text-gray-200 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-green-300 rounded-full inline-block animate-pulse flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full inline-block animate-pulse flex-shrink-0" />
                   AI Assistant &middot; Online
                 </p>
               </div>

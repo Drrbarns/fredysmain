@@ -25,7 +25,7 @@ const STATUS_COLORS: Record<string, string> = {
     assigned: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     picked_up: 'bg-blue-100 text-blue-800 border-blue-200',
     in_transit: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    delivered: 'bg-green-100 text-green-800 border-green-200',
+    delivered: 'bg-gray-100 text-gray-800 border-gray-200',
     failed: 'bg-red-100 text-red-800 border-red-200',
     returned: 'bg-gray-100 text-gray-800 border-gray-200',
 };
@@ -186,7 +186,7 @@ export default function AssignmentsPage() {
         <div className="space-y-6">
             {toast && (
                 <div className={`fixed top-4 right-4 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium ${
-                    toast.startsWith('Error') ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+                    toast.startsWith('Error') ? 'bg-red-600 text-white' : 'bg-gray-700 text-white'
                 }`}>{toast}</div>
             )}
 
@@ -199,7 +199,7 @@ export default function AssignmentsPage() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <i className="ri-loader-4-line animate-spin text-3xl text-emerald-600 mr-3" />
+                    <i className="ri-loader-4-line animate-spin text-3xl text-gray-700 mr-3" />
                     <span className="text-gray-500">Loading assignments...</span>
                 </div>
             ) : (
@@ -228,7 +228,7 @@ export default function AssignmentsPage() {
                                             <p><i className="ri-money-cny-circle-line mr-1" />GH₵ {order.total?.toFixed(2)}</p>
                                         </div>
                                         <button onClick={() => openAssignModal(order)}
-                                            className="mt-2 w-full py-2 bg-emerald-700 text-white rounded-lg text-sm font-semibold hover:bg-emerald-800 transition-colors">
+                                            className="mt-2 w-full py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors">
                                             <i className="ri-user-add-line mr-1" /> Assign Rider
                                         </button>
                                     </div>
@@ -240,7 +240,7 @@ export default function AssignmentsPage() {
                     {/* Filters */}
                     <div className="flex flex-wrap gap-3 items-center">
                         <select value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
-                            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 bg-white">
                             <option value="all">All Statuses</option>
                             <option value="assigned">Assigned</option>
                             <option value="picked_up">Picked Up</option>
@@ -250,7 +250,7 @@ export default function AssignmentsPage() {
                             <option value="returned">Returned</option>
                         </select>
                         <select value={filterRider} onChange={e => { setFilterRider(e.target.value); setPage(1); }}
-                            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 bg-white">
                             <option value="">All Riders</option>
                             {riders.map(r => (
                                 <option key={r.id} value={r.id}>{r.full_name}</option>
@@ -322,7 +322,7 @@ export default function AssignmentsPage() {
                                                     <div className="flex items-center justify-end gap-1">
                                                         {!['delivered', 'returned'].includes(a.status) && (
                                                             <button onClick={() => openUpdateModal(a)}
-                                                                className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Update Status">
+                                                                className="p-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors" title="Update Status">
                                                                 <i className="ri-edit-line" />
                                                             </button>
                                                         )}
@@ -377,7 +377,7 @@ export default function AssignmentsPage() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-2">Select Rider *</label>
                                 <select value={assignForm.rider_id} onChange={e => setAssignForm(f => ({ ...f, rider_id: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600">
                                     <option value="">Choose a rider...</option>
                                     {riders.filter(r => r.status === 'active').map(r => (
                                         <option key={r.id} value={r.id}>{r.full_name} — {r.vehicle_type} ({r.phone})</option>
@@ -392,7 +392,7 @@ export default function AssignmentsPage() {
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-900 mb-2">Priority</label>
                                     <select value={assignForm.priority} onChange={e => setAssignForm(f => ({ ...f, priority: e.target.value }))}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600">
                                         <option value="low">Low</option>
                                         <option value="normal">Normal</option>
                                         <option value="high">High</option>
@@ -403,7 +403,7 @@ export default function AssignmentsPage() {
                                     <label className="block text-sm font-semibold text-gray-900 mb-2">Delivery Fee (GH₵)</label>
                                     <input type="number" step="0.01" value={assignForm.delivery_fee}
                                         onChange={e => setAssignForm(f => ({ ...f, delivery_fee: e.target.value }))}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600"
                                         placeholder="20.00" />
                                 </div>
                             </div>
@@ -412,7 +412,7 @@ export default function AssignmentsPage() {
                                 <label className="block text-sm font-semibold text-gray-900 mb-2">Delivery Notes</label>
                                 <textarea value={assignForm.delivery_notes}
                                     onChange={e => setAssignForm(f => ({ ...f, delivery_notes: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 resize-none"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 resize-none"
                                     rows={2} placeholder="Special instructions for the rider..." />
                             </div>
 
@@ -420,7 +420,7 @@ export default function AssignmentsPage() {
                                 <button onClick={() => setShowAssignModal(false)}
                                     className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Cancel</button>
                                 <button onClick={handleAssign} disabled={saving || !assignForm.rider_id}
-                                    className="flex-1 px-4 py-3 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 font-semibold disabled:opacity-50 transition-colors">
+                                    className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold disabled:opacity-50 transition-colors">
                                     {saving ? 'Assigning...' : 'Assign Rider'}
                                 </button>
                             </div>
@@ -455,7 +455,7 @@ export default function AssignmentsPage() {
                                         <button key={s} onClick={() => setUpdateForm(f => ({ ...f, status: s }))}
                                             className={`p-3 rounded-xl border-2 text-center text-xs font-semibold transition-colors ${
                                                 updateForm.status === s
-                                                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                                                    ? 'border-gray-600 bg-gray-50 text-gray-900'
                                                     : 'border-gray-200 hover:border-gray-300 text-gray-600'
                                             }`}>
                                             <i className={`${STATUS_ICONS[s]} text-lg block mb-1`} />
@@ -479,7 +479,7 @@ export default function AssignmentsPage() {
                                 <label className="block text-sm font-semibold text-gray-900 mb-2">Notes</label>
                                 <textarea value={updateForm.delivery_notes}
                                     onChange={e => setUpdateForm(f => ({ ...f, delivery_notes: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 resize-none"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 resize-none"
                                     rows={2} placeholder="Optional delivery notes..." />
                             </div>
 
@@ -488,7 +488,7 @@ export default function AssignmentsPage() {
                                     className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Cancel</button>
                                 <button onClick={handleStatusUpdate}
                                     disabled={saving || updateForm.status === selectedAssignment.status || (updateForm.status === 'failed' && !updateForm.failure_reason)}
-                                    className="flex-1 px-4 py-3 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 font-semibold disabled:opacity-50 transition-colors">
+                                    className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold disabled:opacity-50 transition-colors">
                                     {saving ? 'Updating...' : 'Update Status'}
                                 </button>
                             </div>

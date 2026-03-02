@@ -82,7 +82,7 @@ export default function AdminReviewsPage() {
 
   const statusColors: any = {
     'Pending': 'bg-amber-100 text-amber-700',
-    'Approved': 'bg-emerald-100 text-emerald-700',
+    'Approved': 'bg-gray-100 text-gray-900',
     'Rejected': 'bg-red-100 text-red-700'
   };
 
@@ -150,7 +150,7 @@ export default function AdminReviewsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <button
           onClick={() => setStatusFilter('all')}
-          className={`p-4 rounded-xl border-2 transition-all text-left ${statusFilter === 'all' ? 'border-emerald-700 bg-emerald-50' : 'border-gray-200 bg-white'
+          className={`p-4 rounded-xl border-2 transition-all text-left ${statusFilter === 'all' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white'
             }`}
         >
           <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
@@ -166,10 +166,10 @@ export default function AdminReviewsPage() {
         </button>
         <button
           onClick={() => setStatusFilter('approved')}
-          className={`p-4 rounded-xl border-2 transition-all text-left ${statusFilter === 'approved' ? 'border-emerald-700 bg-emerald-50' : 'border-gray-200 bg-white'
+          className={`p-4 rounded-xl border-2 transition-all text-left ${statusFilter === 'approved' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white'
             }`}
         >
-          <p className="text-2xl font-bold text-emerald-700">{stats.approved}</p>
+          <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
           <p className="text-sm text-gray-600 mt-1">Approved</p>
         </button>
         <button
@@ -188,7 +188,7 @@ export default function AdminReviewsPage() {
             <h2 className="text-lg font-bold text-gray-900 text-transform capitalize">
               {statusFilter === 'all' ? 'All Reviews' : `${statusFilter} Reviews`}
             </h2>
-            <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium cursor-pointer">
+            <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 font-medium cursor-pointer">
               <option>Sort by Date</option>
               <option>Sort by Rating</option>
               <option>Sort by Helpful</option>
@@ -197,14 +197,14 @@ export default function AdminReviewsPage() {
         </div>
 
         {selectedReviews.length > 0 && (
-          <div className="p-4 bg-emerald-50 border-b border-emerald-200 flex items-center justify-between">
-            <p className="text-emerald-800 font-semibold">
+          <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <p className="text-gray-800 font-semibold">
               {selectedReviews.length} review{selectedReviews.length > 1 ? 's' : ''} selected
             </p>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => handleBulkAction('Approve')}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap cursor-pointer"
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap cursor-pointer"
               >
                 <i className="ri-check-line mr-2"></i>
                 Approve
@@ -229,7 +229,7 @@ export default function AdminReviewsPage() {
                     type="checkbox"
                     checked={selectedReviews.length === filteredReviews.length && filteredReviews.length > 0}
                     onChange={handleSelectAll}
-                    className="w-4 h-4 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                    className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer"
                   />
                 </th>
                 <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700 w-1/4">Product</th>
@@ -252,7 +252,7 @@ export default function AdminReviewsPage() {
                         type="checkbox"
                         checked={selectedReviews.includes(review.id)}
                         onChange={() => handleSelectReview(review.id)}
-                        className="w-4 h-4 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                        className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer"
                       />
                     </td>
                     <td className="py-4 px-4">
@@ -267,7 +267,7 @@ export default function AdminReviewsPage() {
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                        <div className="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-900 rounded-full text-xs font-semibold">
                           {review.customer.avatar}
                         </div>
                         <div>

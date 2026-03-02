@@ -162,7 +162,7 @@ export default function AnalyticsPage() {
     fetchAnalytics();
   }, [fetchAnalytics]);
 
-  const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+  const COLORS = ['#171717', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -176,14 +176,14 @@ export default function AnalyticsPage() {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium pr-8 cursor-pointer bg-white"
+              className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 font-medium pr-8 cursor-pointer bg-white"
             >
               <option value="7days">Last 7 Days</option>
               <option value="30days">Last 30 Days</option>
               <option value="90days">Last 90 Days</option>
               <option value="year">This Year</option>
             </select>
-            <button className="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer flex items-center justify-center">
+            <button className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer flex items-center justify-center">
               <i className="ri-download-line mr-2"></i>
               Export
             </button>
@@ -200,10 +200,10 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 flex items-center justify-center bg-emerald-100 rounded-lg">
-                <i className="ri-money-dollar-circle-line text-2xl text-emerald-700"></i>
+              <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg">
+                <i className="ri-money-dollar-circle-line text-2xl text-gray-900"></i>
               </div>
-              <span className="text-emerald-700 font-semibold text-sm">Live</span>
+              <span className="text-gray-900 font-semibold text-sm">Live</span>
             </div>
             <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
             <p className="text-3xl font-bold text-gray-900">GH₵{metrics.revenue.toLocaleString()}</p>
@@ -252,8 +252,8 @@ export default function AnalyticsPage() {
               <AreaChart data={salesData.length > 0 ? salesData : [{ date: 'No Data', sales: 0 }]}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#171717" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#171717" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -261,7 +261,7 @@ export default function AnalyticsPage() {
                 <YAxis stroke="#6b7280" />
                 <Tooltip />
                 <Legend />
-                <Area type="monotone" dataKey="sales" stroke="#10b981" fillOpacity={1} fill="url(#colorSales)" name="Sales (GH₵)" />
+                <Area type="monotone" dataKey="sales" stroke="#171717" fillOpacity={1} fill="url(#colorSales)" name="Sales (GH₵)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -313,7 +313,7 @@ export default function AnalyticsPage() {
                     <tr key={index}>
                       <td className="py-3 text-sm font-medium text-gray-900">{product.name}</td>
                       <td className="py-3 text-right text-sm text-gray-600">{product.units}</td>
-                      <td className="py-3 text-right text-sm font-semibold text-emerald-600">GH₵{product.revenue.toLocaleString()}</td>
+                      <td className="py-3 text-right text-sm font-semibold text-gray-700">GH₵{product.revenue.toLocaleString()}</td>
                     </tr>
                   ))}
                   {topProducts.length === 0 && <tr><td colSpan={3} className="text-center py-4 text-gray-500">No sales data yet.</td></tr>}

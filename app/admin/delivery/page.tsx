@@ -36,7 +36,7 @@ const STATUS_COLORS: Record<string, string> = {
     assigned: 'bg-yellow-100 text-yellow-800',
     picked_up: 'bg-blue-100 text-blue-800',
     in_transit: 'bg-indigo-100 text-indigo-800',
-    delivered: 'bg-green-100 text-green-800',
+    delivered: 'bg-gray-100 text-gray-800',
     failed: 'bg-red-100 text-red-800',
     returned: 'bg-gray-100 text-gray-800',
 };
@@ -87,7 +87,7 @@ export default function DeliveryDashboard() {
                 </div>
                 <div className="flex gap-3">
                     <Link href="/admin/delivery/assignments"
-                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 transition-colors font-medium text-sm">
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium text-sm">
                         <i className="ri-add-line" /> New Assignment
                     </Link>
                     <button onClick={fetchData}
@@ -101,15 +101,15 @@ export default function DeliveryDashboard() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <i className="ri-loader-4-line animate-spin text-3xl text-emerald-600 mr-3" />
+                    <i className="ri-loader-4-line animate-spin text-3xl text-gray-700 mr-3" />
                     <span className="text-gray-500 text-lg">Loading delivery data...</span>
                 </div>
             ) : (
                 <>
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <StatCard icon="ri-route-line" color="emerald" label="Active Deliveries" value={stats?.activeDeliveries || 0} />
-                        <StatCard icon="ri-checkbox-circle-line" color="green" label="Delivered Today" value={stats?.deliveredToday || 0} />
+                        <StatCard icon="ri-route-line" color="gray" label="Active Deliveries" value={stats?.activeDeliveries || 0} />
+                        <StatCard icon="ri-checkbox-circle-line" color="gray" label="Delivered Today" value={stats?.deliveredToday || 0} />
                         <StatCard icon="ri-error-warning-line" color="red" label="Failed Today" value={stats?.failedToday || 0} />
                         <StatCard icon="ri-e-bike-2-line" color="blue" label="Riders on Delivery" value={stats?.onDeliveryRiders || 0}
                             sub={`${stats?.activeRiders || 0} available`} />
@@ -118,20 +118,20 @@ export default function DeliveryDashboard() {
 
                     {/* Revenue + Fleet + Quick Actions */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-6 text-white">
+                        <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-2xl p-6 text-white">
                             <div className="flex items-center justify-between mb-4">
-                                <span className="text-emerald-200 text-sm font-medium">Today&apos;s Delivery Revenue</span>
-                                <i className="ri-money-cny-circle-line text-2xl text-emerald-200" />
+                                <span className="text-gray-200 text-sm font-medium">Today&apos;s Delivery Revenue</span>
+                                <i className="ri-money-cny-circle-line text-2xl text-gray-200" />
                             </div>
                             <p className="text-3xl font-bold">GH₵ {(stats?.todayRevenue || 0).toFixed(2)}</p>
-                            <p className="text-emerald-200 text-sm mt-2">{stats?.deliveredToday || 0} deliveries completed</p>
+                            <p className="text-gray-200 text-sm mt-2">{stats?.deliveredToday || 0} deliveries completed</p>
                         </div>
 
                         <div className="bg-white rounded-2xl border border-gray-200 p-6">
                             <h3 className="text-sm font-semibold text-gray-500 mb-4">Fleet Overview</h3>
                             <div className="space-y-3">
                                 <FleetRow label="Total Riders" value={stats?.totalRiders || 0} color="text-gray-900" />
-                                <FleetRow label="Available" value={stats?.activeRiders || 0} color="text-green-600" />
+                                <FleetRow label="Available" value={stats?.activeRiders || 0} color="text-gray-700" />
                                 <FleetRow label="On Delivery" value={stats?.onDeliveryRiders || 0} color="text-blue-600" />
                                 <FleetRow label="Active Zones" value={stats?.activeZones || 0} color="text-indigo-600" />
                             </div>
@@ -142,8 +142,8 @@ export default function DeliveryDashboard() {
                             <div className="space-y-2">
                                 <Link href="/admin/delivery/assignments"
                                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700">
-                                    <div className="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                        <i className="ri-route-line text-emerald-600" />
+                                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                                        <i className="ri-route-line text-gray-700" />
                                     </div>
                                     View All Assignments
                                 </Link>
@@ -182,8 +182,8 @@ export default function DeliveryDashboard() {
                                 {activeAssignments.slice(0, 10).map(a => (
                                     <div key={a.id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 hover:bg-gray-50 transition-colors">
                                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                                            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                                                <i className={`${VEHICLE_ICONS[a.riders?.vehicle_type || 'motorcycle'] || 'ri-e-bike-2-line'} text-emerald-600 text-lg`} />
+                                            <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+                                                <i className={`${VEHICLE_ICONS[a.riders?.vehicle_type || 'motorcycle'] || 'ri-e-bike-2-line'} text-gray-700 text-lg`} />
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="font-semibold text-gray-900 text-sm">#{a.orders?.order_number}</p>
@@ -214,7 +214,7 @@ export default function DeliveryDashboard() {
                     <div className="bg-white rounded-2xl border border-gray-200">
                         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                             <h2 className="text-lg font-bold text-gray-900">Recent Completions</h2>
-                            <Link href="/admin/delivery/assignments?status=delivered" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+                            <Link href="/admin/delivery/assignments?status=delivered" className="text-sm text-gray-700 hover:text-gray-900 font-medium">
                                 View all
                             </Link>
                         </div>
@@ -225,7 +225,7 @@ export default function DeliveryDashboard() {
                                 {recentAssignments.filter(a => a.status === 'delivered').slice(0, 5).map(a => (
                                     <div key={a.id} className="px-6 py-3 flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <i className="ri-checkbox-circle-fill text-green-500 text-lg" />
+                                            <i className="ri-checkbox-circle-fill text-gray-700 text-lg" />
                                             <div>
                                                 <p className="text-sm font-medium text-gray-900">#{a.orders?.order_number}</p>
                                                 <p className="text-xs text-gray-500">{a.riders?.full_name}</p>
@@ -250,8 +250,7 @@ export default function DeliveryDashboard() {
 
 function StatCard({ icon, color, label, value, sub }: { icon: string; color: string; label: string; value: number; sub?: string }) {
     const colorMap: Record<string, string> = {
-        emerald: 'bg-emerald-100 text-emerald-600',
-        green: 'bg-green-100 text-green-600',
+        gray: 'bg-gray-100 text-gray-700',
         red: 'bg-red-100 text-red-600',
         blue: 'bg-blue-100 text-blue-600',
         amber: 'bg-amber-100 text-amber-600',
@@ -265,7 +264,7 @@ function StatCard({ icon, color, label, value, sub }: { icon: string; color: str
             </div>
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             <p className="text-xs text-gray-500 mt-1">{label}</p>
-            {sub && <p className="text-xs text-green-600 mt-0.5">{sub}</p>}
+            {sub && <p className="text-xs text-gray-700 mt-0.5">{sub}</p>}
         </div>
     );
 }

@@ -180,10 +180,10 @@ export default function InventoryManagementPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Retail Value</p>
-                <p className="text-3xl font-bold text-emerald-600">GH₵{totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                <p className="text-3xl font-bold text-gray-700">GH₵{totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
-              <div className="w-12 h-12 flex items-center justify-center bg-emerald-100 rounded-lg">
-                <i className="ri-money-dollar-circle-line text-2xl text-emerald-600"></i>
+              <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg">
+                <i className="ri-money-dollar-circle-line text-2xl text-gray-700"></i>
               </div>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function InventoryManagementPage() {
                   placeholder="Search by product name or SKU..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 text-sm"
                 />
               </div>
             </div>
@@ -225,7 +225,7 @@ export default function InventoryManagementPage() {
 
               <button
                 onClick={() => setShowImportModal(true)}
-                className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2 whitespace-nowrap cursor-pointer"
+                className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2 whitespace-nowrap cursor-pointer"
               >
                 <i className="ri-upload-line"></i>
                 <span>Import CSV</span>
@@ -242,14 +242,14 @@ export default function InventoryManagementPage() {
           </div>
 
           {selectedProducts.length > 0 && (
-            <div className="mt-4 flex items-center justify-between p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-              <p className="text-emerald-800 font-medium">
+            <div className="mt-4 flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="text-gray-800 font-medium">
                 {selectedProducts.length} product{selectedProducts.length > 1 ? 's' : ''} selected
               </p>
               <div className="flex items-center space-x-3">
                 <button
                   onClick={handleBulkRestock}
-                  className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
                 >
                   Bulk Restock
                 </button>
@@ -274,7 +274,7 @@ export default function InventoryManagementPage() {
                       type="checkbox"
                       checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
                       onChange={toggleAllProducts}
-                      className="w-5 h-5 text-emerald-700 rounded cursor-pointer"
+                      className="w-5 h-5 text-gray-900 rounded cursor-pointer"
                     />
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Product</th>
@@ -299,7 +299,7 @@ export default function InventoryManagementPage() {
                           type="checkbox"
                           checked={selectedProducts.includes(product.id)}
                           onChange={() => toggleProductSelection(product.id)}
-                          className="w-5 h-5 text-emerald-700 rounded cursor-pointer"
+                          className="w-5 h-5 text-gray-900 rounded cursor-pointer"
                         />
                       </td>
                       <td className="px-6 py-4">
@@ -320,7 +320,7 @@ export default function InventoryManagementPage() {
                       </td>
                       <td className="px-6 py-4">
                         {product.status === 'good' && (
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700 whitespace-nowrap">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-900 whitespace-nowrap">
                             <i className="ri-checkbox-circle-fill mr-1"></i>
                             In Stock
                           </span>
@@ -341,7 +341,7 @@ export default function InventoryManagementPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-2">
                           <button
-                            className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-emerald-700 transition-colors cursor-pointer"
+                            className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
                             title="Edit"
                           >
                             <i className="ri-edit-line text-lg"></i>

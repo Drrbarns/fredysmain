@@ -126,23 +126,23 @@ export default function PrivacySettingsPage() {
               <h3 className="font-semibold mb-2">What's Included?</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start gap-2">
-                  <i className="ri-check-line text-green-600 mt-0.5 flex-shrink-0"></i>
+                  <i className="ri-check-line text-gray-700 mt-0.5 flex-shrink-0"></i>
                   <span>Personal information (name, email, phone)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <i className="ri-check-line text-green-600 mt-0.5 flex-shrink-0"></i>
+                  <i className="ri-check-line text-gray-700 mt-0.5 flex-shrink-0"></i>
                   <span>Order history and transaction details</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <i className="ri-check-line text-green-600 mt-0.5 flex-shrink-0"></i>
+                  <i className="ri-check-line text-gray-700 mt-0.5 flex-shrink-0"></i>
                   <span>Saved addresses and payment methods</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <i className="ri-check-line text-green-600 mt-0.5 flex-shrink-0"></i>
+                  <i className="ri-check-line text-gray-700 mt-0.5 flex-shrink-0"></i>
                   <span>Marketing preferences and subscriptions</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <i className="ri-check-line text-green-600 mt-0.5 flex-shrink-0"></i>
+                  <i className="ri-check-line text-gray-700 mt-0.5 flex-shrink-0"></i>
                   <span>Wishlist and browsing history</span>
                 </li>
               </ul>

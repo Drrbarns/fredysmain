@@ -118,12 +118,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* PWA Meta Tags */}
-        <meta name="theme-color" content="#047857" />
+        <meta name="theme-color" content="#171717" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Deliz Beauty Tools" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#047857" />
+        <meta name="msapplication-TileColor" content="#171717" />
         <meta name="msapplication-tap-highlight" content="no" />
 
         {/* Apple Touch Icons */}

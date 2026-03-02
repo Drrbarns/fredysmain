@@ -51,13 +51,13 @@ export default function StoreLayout({
 
         if (error || !data || data.length === 0) {
           // If we can’t read the module row, fall back to environment flag only
-          setChatModuleEnabled(null);
+          setChatModuleEnabled(false);
         } else {
           setChatModuleEnabled(!!data[0].enabled);
         }
       } catch {
         if (isMounted) {
-          setChatModuleEnabled(null);
+          setChatModuleEnabled(false);
         }
       }
     }
@@ -69,7 +69,8 @@ export default function StoreLayout({
     };
   }, []);
 
-  const shouldShowChat = CHAT_ENABLED && chatModuleEnabled !== false;
+  // Only show chat when env allows AND the module is explicitly enabled in DB (Modules page)
+  const shouldShowChat = CHAT_ENABLED && chatModuleEnabled === true;
 
   return (
     <CMSProvider>

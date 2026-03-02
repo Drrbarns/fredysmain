@@ -215,7 +215,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                     disabled={!product.inStock}
                     className={`w-full py-4 rounded-lg font-semibold transition-colors whitespace-nowrap ${
                       addedToCart
-                        ? 'bg-green-600 text-white'
+                        ? 'bg-gray-700 text-white'
                         : product.inStock
                         ? 'bg-gray-900 hover:bg-gray-800 text-white'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'

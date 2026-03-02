@@ -76,16 +76,16 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   if (!ticket) return <div className="text-center p-12"><p className="text-gray-500">Ticket not found</p></div>;
 
   const priorityColors: Record<string, string> = { urgent: 'bg-red-100 text-red-700', high: 'bg-orange-100 text-orange-700', medium: 'bg-blue-100 text-blue-700', low: 'bg-gray-100 text-gray-600' };
-  const statusColors: Record<string, string> = { open: 'bg-blue-100 text-blue-700', in_progress: 'bg-yellow-100 text-yellow-700', waiting_customer: 'bg-purple-100 text-purple-700', resolved: 'bg-emerald-100 text-emerald-700', closed: 'bg-gray-200 text-gray-600' };
-  const senderColors: Record<string, string> = { customer: 'bg-blue-600', agent: 'bg-emerald-600', system: 'bg-gray-500', ai: 'bg-purple-600' };
+  const statusColors: Record<string, string> = { open: 'bg-blue-100 text-blue-700', in_progress: 'bg-yellow-100 text-yellow-700', waiting_customer: 'bg-purple-100 text-purple-700', resolved: 'bg-gray-100 text-gray-900', closed: 'bg-gray-200 text-gray-600' };
+  const senderColors: Record<string, string> = { customer: 'bg-blue-600', agent: 'bg-gray-700', system: 'bg-gray-500', ai: 'bg-purple-600' };
 
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500">
-        <Link href="/admin/support" className="hover:text-emerald-600">Support</Link>
+        <Link href="/admin/support" className="hover:text-gray-700">Support</Link>
         <i className="ri-arrow-right-s-line text-xs" />
-        <Link href="/admin/support/tickets" className="hover:text-emerald-600">Tickets</Link>
+        <Link href="/admin/support/tickets" className="hover:text-gray-700">Tickets</Link>
         <i className="ri-arrow-right-s-line text-xs" />
         <span className="text-gray-900 font-medium">{ticket.ticket_number}</span>
       </div>
@@ -98,7 +98,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-mono text-emerald-600 font-semibold">{ticket.ticket_number}</span>
+                  <span className="text-xs font-mono text-gray-700 font-semibold">{ticket.ticket_number}</span>
                   <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${priorityColors[ticket.priority]}`}>{ticket.priority}</span>
                   <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${statusColors[ticket.status]}`}>{ticket.status.replace(/_/g, ' ')}</span>
                 </div>
@@ -107,15 +107,15 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
               </div>
               <div className="flex gap-2">
                 <button onClick={addResolution}
-                  className="px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                  className="px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-lg hover:bg-gray-900 transition-colors">
                   <i className="ri-check-double-line mr-1" /> Resolve
                 </button>
               </div>
             </div>
             {ticket.resolution && (
-              <div className="mt-3 p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
-                <p className="text-xs font-semibold text-emerald-700 mb-1">Resolution</p>
-                <p className="text-sm text-emerald-800">{ticket.resolution}</p>
+              <div className="mt-3 p-3 bg-gray-50 border border-gray-100 rounded-lg">
+                <p className="text-xs font-semibold text-gray-900 mb-1">Resolution</p>
+                <p className="text-sm text-gray-800">{ticket.resolution}</p>
               </div>
             )}
           </div>
@@ -127,12 +127,12 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
                 <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                   <i className="ri-chat-3-line text-blue-500" /> Linked AI Conversation
                 </h3>
-                <Link href={`/admin/support/conversations/${conversation.id}`} className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">View full →</Link>
+                <Link href={`/admin/support/conversations/${conversation.id}`} className="text-xs text-gray-700 hover:text-gray-900 font-medium">View full →</Link>
               </div>
               <div className="max-h-40 overflow-y-auto space-y-2 bg-gray-50 rounded-lg p-3">
                 {(Array.isArray(conversation.messages) ? conversation.messages : typeof conversation.messages === 'string' ? (() => { try { return JSON.parse(conversation.messages); } catch { return []; } })() : []).slice(-6).map((m: any, i: number) => (
                   <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] rounded-lg px-3 py-1.5 text-xs ${m.role === 'user' ? 'bg-emerald-100 text-emerald-800' : 'bg-white text-gray-700 border border-gray-100'}`}>
+                    <div className={`max-w-[80%] rounded-lg px-3 py-1.5 text-xs ${m.role === 'user' ? 'bg-gray-100 text-gray-800' : 'bg-white text-gray-700 border border-gray-100'}`}>
                       {m.content?.slice(0, 150)}{m.content?.length > 150 ? '...' : ''}
                     </div>
                   </div>
@@ -174,7 +174,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
             {/* Reply Form */}
             <form onSubmit={sendMessage} className="border-t border-gray-100 p-4 space-y-3">
               <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={3} placeholder={isInternal ? 'Add an internal note (not visible to customer)...' : 'Type your reply...'}
-                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 resize-none ${isInternal ? 'border-amber-200 bg-amber-50 focus:ring-amber-400' : 'border-gray-200 focus:ring-emerald-500'}`} />
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 resize-none ${isInternal ? 'border-amber-200 bg-amber-50 focus:ring-amber-400' : 'border-gray-200 focus:ring-gray-600'}`} />
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
                   <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)}
@@ -182,7 +182,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
                   Internal note
                 </label>
                 <button type="submit" disabled={sending || !reply.trim()}
-                  className="px-4 py-2 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-40 transition-colors">
+                  className="px-4 py-2 text-xs font-medium bg-gray-700 text-white rounded-lg hover:bg-gray-900 disabled:opacity-40 transition-colors">
                   {sending ? 'Sending...' : isInternal ? 'Add Note' : 'Send Reply'}
                 </button>
               </div>
@@ -198,21 +198,21 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
               <select value={ticket.status} onChange={(e) => updateTicket({ status: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-600">
                 {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Priority</label>
               <select value={ticket.priority} onChange={(e) => updateTicket({ priority: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-600">
                 {PRIORITY_OPTIONS.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Assigned To</label>
               <input value={ticket.assigned_to || ''} onChange={(e) => updateTicket({ assigned_to: e.target.value })} placeholder="Agent name or email"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-600" />
             </div>
           </div>
 
@@ -246,7 +246,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
               )}
               {ticket.resolved_at && (
                 <div className="flex items-start gap-2">
-                  <div className="w-2 h-2 mt-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  <div className="w-2 h-2 mt-1.5 rounded-full bg-gray-600 shrink-0" />
                   <div><p className="text-xs font-medium text-gray-700">Resolved</p><p className="text-[10px] text-gray-400">{new Date(ticket.resolved_at).toLocaleString()}</p></div>
                 </div>
               )}

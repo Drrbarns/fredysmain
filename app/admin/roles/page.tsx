@@ -202,7 +202,7 @@ export default function RolesPage() {
                         <div
                             key={role.id}
                             className={`bg-white rounded-xl border-2 transition-all ${
-                                isExpanded ? 'border-emerald-300 shadow-lg' : 'border-gray-200 shadow-sm'
+                                isExpanded ? 'border-gray-300 shadow-lg' : 'border-gray-200 shadow-sm'
                             } ${!role.enabled && !role.is_system ? 'opacity-60' : ''}`}
                         >
                             <div className="p-6">
@@ -212,7 +212,7 @@ export default function RolesPage() {
                                             role.is_system
                                                 ? 'bg-amber-100 text-amber-700'
                                                 : role.enabled
-                                                    ? 'bg-emerald-100 text-emerald-700'
+                                                    ? 'bg-gray-100 text-gray-900'
                                                     : 'bg-gray-100 text-gray-400'
                                         }`}>
                                             <i className={`${role.is_system ? 'ri-shield-star-line' : 'ri-shield-user-line'} text-2xl`}></i>
@@ -254,7 +254,7 @@ export default function RolesPage() {
                                                 title={role.enabled ? 'Disable this role' : 'Enable this role'}
                                             >
                                                 <div className={`w-14 h-7 rounded-full transition-colors duration-200 ${
-                                                    role.enabled ? 'bg-emerald-600' : 'bg-gray-300'
+                                                    role.enabled ? 'bg-gray-700' : 'bg-gray-300'
                                                 }`}>
                                                     <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 translate-y-1 ${
                                                         role.enabled ? 'translate-x-8' : 'translate-x-1'
@@ -277,7 +277,7 @@ export default function RolesPage() {
                                 <div className="border-t border-gray-200">
                                     <div className="p-4 bg-gray-50 flex items-center justify-between">
                                         <h4 className="text-sm font-bold text-gray-700 flex items-center">
-                                            <i className="ri-key-2-line mr-2 text-emerald-600"></i>
+                                            <i className="ri-key-2-line mr-2 text-gray-700"></i>
                                             Feature Permissions
                                         </h4>
                                         {!role.is_system && (
@@ -316,12 +316,12 @@ export default function RolesPage() {
                                                             isLocked
                                                                 ? 'border-gray-100 bg-gray-50 cursor-default'
                                                                 : isEnabled
-                                                                    ? 'border-emerald-200 bg-emerald-50 hover:border-emerald-300 cursor-pointer'
+                                                                    ? 'border-gray-200 bg-gray-50 hover:border-gray-300 cursor-pointer'
                                                                     : 'border-gray-200 bg-white hover:border-gray-300 cursor-pointer'
                                                         } ${isSaving ? 'opacity-50' : ''}`}
                                                     >
                                                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                                                            isEnabled ? 'bg-emerald-200 text-emerald-800' : 'bg-gray-100 text-gray-400'
+                                                            isEnabled ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-400'
                                                         }`}>
                                                             <i className={`${perm.icon} text-lg`}></i>
                                                         </div>
@@ -331,7 +331,7 @@ export default function RolesPage() {
                                                                     {perm.label}
                                                                 </span>
                                                                 {isEnabled ? (
-                                                                    <i className="ri-checkbox-circle-fill text-emerald-600 text-lg"></i>
+                                                                    <i className="ri-checkbox-circle-fill text-gray-700 text-lg"></i>
                                                                 ) : (
                                                                     <i className="ri-checkbox-blank-circle-line text-gray-300 text-lg"></i>
                                                                 )}

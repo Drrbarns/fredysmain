@@ -123,7 +123,7 @@ export default function ArticlePage() {
         <div className="max-w-4xl mx-auto px-4">
           <Link
             href="/help"
-            className="inline-flex items-center text-emerald-700 hover:text-emerald-900 font-semibold mb-6 whitespace-nowrap"
+            className="inline-flex items-center text-gray-900 hover:text-gray-900 font-semibold mb-6 whitespace-nowrap"
           >
             <i className="ri-arrow-left-line mr-2"></i>
             Back to Help Center
@@ -132,7 +132,7 @@ export default function ArticlePage() {
           <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
             <div className="mb-6 pb-6 border-b border-gray-200">
               <div className="flex items-center space-x-3 mb-4">
-                <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold whitespace-nowrap">
+                <span className="px-3 py-1 bg-gray-100 text-gray-900 rounded-full text-sm font-semibold whitespace-nowrap">
                   {article.category}
                 </span>
                 <span className="text-sm text-gray-500">
@@ -153,7 +153,7 @@ export default function ArticlePage() {
             </div>
 
             <article
-              className="prose prose-emerald max-w-none"
+              className="prose prose-gray max-w-none"
               dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
               style={{
                 lineHeight: '1.8'
@@ -167,7 +167,7 @@ export default function ArticlePage() {
               <div className="flex space-x-4">
                 <button
                   onClick={() => handleHelpful(true)}
-                  className="flex-1 py-3 px-6 border-2 border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white rounded-lg font-semibold transition-colors whitespace-nowrap"
+                  className="flex-1 py-3 px-6 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white rounded-lg font-semibold transition-colors whitespace-nowrap"
                 >
                   <i className="ri-thumb-up-line mr-2"></i>
                   Yes, it was helpful
@@ -184,8 +184,8 @@ export default function ArticlePage() {
               <div className="text-center">
                 {wasHelpful ? (
                   <>
-                    <div className="w-16 h-16 flex items-center justify-center bg-emerald-100 rounded-full mx-auto mb-4">
-                      <i className="ri-check-line text-3xl text-emerald-700"></i>
+                    <div className="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mx-auto mb-4">
+                      <i className="ri-check-line text-3xl text-gray-900"></i>
                     </div>
                     <p className="text-lg font-semibold text-gray-900 mb-2">
                       Thank you for your feedback!
@@ -227,7 +227,7 @@ export default function ArticlePage() {
                   className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors"
                 >
                   <div className="flex items-center space-x-3">
-                    <i className="ri-file-text-line text-xl text-emerald-700"></i>
+                    <i className="ri-file-text-line text-xl text-gray-900"></i>
                     <div>
                       <p className="font-semibold text-gray-900">{related.title}</p>
                       <p className="text-sm text-gray-600">{related.category}</p>

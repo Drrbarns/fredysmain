@@ -209,7 +209,7 @@ export default function AdminCustomersPage() {
 
   const statusColors: any = {
     'New': 'bg-blue-100 text-blue-700',
-    'Active': 'bg-emerald-100 text-emerald-700',
+    'Active': 'bg-gray-100 text-gray-900',
     'VIP': 'bg-purple-100 text-purple-700',
     'Inactive': 'bg-gray-100 text-gray-700'
   };
@@ -280,7 +280,7 @@ export default function AdminCustomersPage() {
           <h1 className="text-3xl font-bold text-gray-900">Customers</h1>
           <p className="text-gray-600 mt-1">Manage your customer base and relationships</p>
         </div>
-        <button className="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer">
+        <button className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer">
           <i className="ri-download-line mr-2"></i>
           Export Customers
         </button>
@@ -293,7 +293,7 @@ export default function AdminCustomersPage() {
         </div>
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
           <p className="text-sm text-gray-600 mb-1">New This Month</p>
-          <p className="text-2xl font-bold text-emerald-700">{stats.newThisMonth}</p>
+          <p className="text-2xl font-bold text-gray-900">{stats.newThisMonth}</p>
         </div>
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
           <p className="text-sm text-gray-600 mb-1">VIP Customers</p>
@@ -316,7 +316,7 @@ export default function AdminCustomersPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by name, email, or phone..."
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 text-sm"
                 />
               </div>
             </div>
@@ -325,7 +325,7 @@ export default function AdminCustomersPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium cursor-pointer"
+                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 font-medium cursor-pointer"
               >
                 <option>All Customers</option>
                 <option>New</option>
@@ -336,7 +336,7 @@ export default function AdminCustomersPage() {
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
-                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium cursor-pointer"
+                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 font-medium cursor-pointer"
               >
                 <option>Sort by Join Date</option>
                 <option>Sort by Name</option>
@@ -348,8 +348,8 @@ export default function AdminCustomersPage() {
         </div>
 
         {selectedCustomers.length > 0 && (
-          <div className="p-4 bg-emerald-50 border-b border-emerald-200 flex items-center justify-between">
-            <p className="text-emerald-800 font-semibold">
+          <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <p className="text-gray-800 font-semibold">
               {selectedCustomers.length} customer{selectedCustomers.length > 1 ? 's' : ''} selected
             </p>
             <div className="flex items-center space-x-2">
@@ -378,7 +378,7 @@ export default function AdminCustomersPage() {
                     type="checkbox"
                     checked={selectedCustomers.length === filteredCustomers.length && filteredCustomers.length > 0}
                     onChange={handleSelectAll}
-                    className="w-4 h-4 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                    className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer"
                   />
                 </th>
                 <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Customer</th>
@@ -403,16 +403,16 @@ export default function AdminCustomersPage() {
                         type="checkbox"
                         checked={selectedCustomers.includes(customer.id)}
                         onChange={() => handleSelectCustomer(customer.id)}
-                        className="w-4 h-4 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                        className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer"
                       />
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded-full font-semibold">
+                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-900 rounded-full font-semibold">
                           {customer.avatar}
                         </div>
                         <div>
-                          <Link href={`/admin/customers/${customer.id}`} className="font-semibold text-gray-900 hover:text-emerald-700 whitespace-nowrap">
+                          <Link href={`/admin/customers/${customer.id}`} className="font-semibold text-gray-900 hover:text-gray-900 whitespace-nowrap">
                             {customer.name}
                           </Link>
                           <p className="text-sm text-gray-500">Joined {customer.joined}</p>
@@ -424,7 +424,7 @@ export default function AdminCustomersPage() {
                       <p className="text-gray-600 text-sm">{customer.phone}</p>
                     </td>
                     <td className="py-4 px-4 font-semibold text-gray-900">{customer.orders}</td>
-                    <td className="py-4 px-4 font-semibold text-emerald-700 whitespace-nowrap">GH₵ {customer.totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td className="py-4 px-4 font-semibold text-gray-900 whitespace-nowrap">GH₵ {customer.totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td className="py-4 px-4 text-gray-700 text-sm whitespace-nowrap">{customer.lastOrder}</td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
@@ -442,7 +442,7 @@ export default function AdminCustomersPage() {
                       <div className="flex items-center space-x-2">
                         <Link
                           href={`/admin/customers/${customer.id}`}
-                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
                         >
                           <i className="ri-eye-line text-lg"></i>
                         </Link>

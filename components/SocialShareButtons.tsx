@@ -98,9 +98,9 @@ export default function SocialShareButtons({ url, title, description, image }: S
 
               <button
                 onClick={() => handleShare('whatsapp')}
-                className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-green-50 transition-colors group"
+                className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
               >
-                <div className="w-12 h-12 flex items-center justify-center bg-green-500 text-white rounded-full group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 flex items-center justify-center bg-gray-700 text-white rounded-full group-hover:scale-110 transition-transform">
                   <i className="ri-whatsapp-fill text-xl"></i>
                 </div>
                 <span className="text-xs text-gray-600">WhatsApp</span>

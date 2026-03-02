@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
+const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/300?text=No+Image';
+
 export default function ProductsPage() {
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [sortBy, setSortBy] = useState('newest');
@@ -23,7 +25,7 @@ export default function ProductsPage() {
   });
 
   const statusColors: any = {
-    'active': 'bg-emerald-100 text-emerald-700',
+    'active': 'bg-gray-100 text-gray-900',
     'draft': 'bg-gray-100 text-gray-700',
     'archived': 'bg-amber-100 text-amber-700',
   };
@@ -42,48 +44,23 @@ export default function ProductsPage() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      let query = supabase
-        .from('products')
-        .select(`
-          *,
-          categories(name),
-          product_variants(count),
-          product_images(url, position)
-        `);
-
-      // Apply sorting
-      if (sortBy === 'newest') query = query.order('created_at', { ascending: false });
-      if (sortBy === 'price_asc') query = query.order('price', { ascending: true });
-      if (sortBy === 'price_desc') query = query.order('price', { ascending: false });
-      if (sortBy === 'name') query = query.order('name', { ascending: true });
-      if (sortBy === 'stock') query = query.order('quantity', { ascending: true });
-
-      const { data, error } = await query;
-
-      if (error) throw error;
+      const sortParam = sortBy ? `?sortBy=${encodeURIComponent(sortBy)}` : '';
+      const res = await fetch(`/api/admin/products${sortParam}`, { credentials: 'include' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to load products');
+      }
+      const data = await res.json();
 
       if (data) {
-        // Transform data for UI
-        const transformedProducts = data.map((p: any) => ({
-          ...p,
-          category: p.categories?.name || 'Uncategorized',
-          image: p.product_images?.find((img: any) => img.position === 0)?.url
-            || p.product_images?.[0]?.url
-            || 'https://via.placeholder.com/300?text=No+Image',
-          variantsCount: p.product_variants?.[0]?.count || 0,
-          stock: p.quantity,
-          sales: 0, // Placeholder for now
-          rating: p.rating_avg || 0
-        }));
+        setProducts(Array.isArray(data) ? data : []);
 
-        setProducts(transformedProducts);
-
-        // Calculate stats locally for now (better to do count queries in production)
+        const list = Array.isArray(data) ? data : [];
         setStats({
-          total: transformedProducts.length,
-          lowStock: transformedProducts.filter(p => p.quantity < (p.metadata?.low_stock_threshold || 5) && p.quantity > 0).length,
-          outOfStock: transformedProducts.filter(p => p.quantity === 0).length,
-          active: transformedProducts.filter(p => p.status === 'active').length
+          total: list.length,
+          lowStock: list.filter((p: any) => p.quantity < (p.metadata?.low_stock_threshold || 5) && p.quantity > 0).length,
+          outOfStock: list.filter((p: any) => p.quantity === 0).length,
+          active: list.filter((p: any) => p.status === 'active').length
         });
       }
     } catch (error) {
@@ -111,25 +88,32 @@ export default function ProductsPage() {
 
   const handleDeleteProduct = async (productId: string) => {
     if (confirm('Are you sure you want to delete this product?')) {
-      const { error } = await supabase.from('products').delete().eq('id', productId);
-      if (!error) {
+      const res = await fetch(`/api/admin/products/${productId}`, { method: 'DELETE', credentials: 'include' });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
         setProducts(products.filter(p => p.id !== productId));
         alert('Product deleted successfully');
       } else {
-        alert('Error deleting product');
+        alert(data.error || 'Error deleting product');
       }
     }
   };
 
   const handleBulkDelete = async () => {
     if (confirm(`Are you sure you want to delete ${selectedProducts.length} products?`)) {
-      const { error } = await supabase.from('products').delete().in('id', selectedProducts);
-      if (!error) {
+      let failed = 0;
+      for (const id of selectedProducts) {
+        const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE', credentials: 'include' });
+        if (!res.ok) failed++;
+      }
+      if (failed === 0) {
         setProducts(products.filter(p => !selectedProducts.includes(p.id)));
         setSelectedProducts([]);
         alert('Products deleted successfully');
       } else {
-        alert('Error deleting products');
+        alert(`Deleted ${selectedProducts.length - failed} product(s). ${failed} could not be deleted (e.g. they have orders).`);
+        fetchProducts();
+        setSelectedProducts([]);
       }
     }
   };
@@ -150,7 +134,7 @@ export default function ProductsPage() {
         </div>
         <Link
           href="/admin/products/new"
-          className="px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer flex items-center justify-center md:items-start"
+          className="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer flex items-center justify-center md:items-start"
         >
           <i className="ri-add-line mr-2"></i>
           Add Product
@@ -164,7 +148,7 @@ export default function ProductsPage() {
         </div>
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
           <p className="text-sm text-gray-600 mb-1">Active</p>
-          <p className="text-2xl font-bold text-emerald-700">{stats.active}</p>
+          <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
         </div>
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
           <p className="text-sm text-gray-600 mb-1">Low Stock</p>
@@ -187,7 +171,7 @@ export default function ProductsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products by name, SKU, or category..."
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 text-sm"
                 />
               </div>
             </div>
@@ -203,7 +187,7 @@ export default function ProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium cursor-pointer"
+                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 font-medium cursor-pointer"
               >
                 <option value="newest">Newest First</option>
                 <option value="name">Sort by Name</option>
@@ -214,14 +198,14 @@ export default function ProductsPage() {
               <div className="flex border-2 border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`w-10 h-10 flex items-center justify-center transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-emerald-700 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
+                  className={`w-10 h-10 flex items-center justify-center transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
                     }`}
                 >
                   <i className="ri-list-check text-xl w-5 h-5 flex items-center justify-center"></i>
                 </button>
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`w-10 h-10 flex items-center justify-center border-l-2 border-gray-300 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-emerald-700 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
+                  className={`w-10 h-10 flex items-center justify-center border-l-2 border-gray-300 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
                     }`}
                 >
                   <i className="ri-grid-line text-xl w-5 h-5 flex items-center justify-center"></i>
@@ -247,8 +231,8 @@ export default function ProductsPage() {
         </div>
 
         {selectedProducts.length > 0 && (
-          <div className="p-4 bg-emerald-50 border-b border-emerald-200 flex items-center justify-between">
-            <p className="text-emerald-800 font-semibold">
+          <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <p className="text-gray-800 font-semibold">
               {selectedProducts.length} product{selectedProducts.length > 1 ? 's' : ''} selected
             </p>
             <div className="flex items-center space-x-2">
@@ -283,7 +267,7 @@ export default function ProductsPage() {
                       type="checkbox"
                       checked={selectedProducts.length === products.length && products.length > 0}
                       onChange={handleSelectAll}
-                      className="w-4 h-4 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                      className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer"
                     />
                   </th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Product</th>
@@ -303,13 +287,18 @@ export default function ProductsPage() {
                         type="checkbox"
                         checked={selectedProducts.includes(product.id)}
                         onChange={() => handleSelectProduct(product.id)}
-                        className="w-4 h-4 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                        className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer"
                       />
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
                         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+                          />
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">{product.name}</p>
@@ -366,10 +355,15 @@ export default function ProductsPage() {
                     type="checkbox"
                     checked={selectedProducts.includes(product.id)}
                     onChange={() => handleSelectProduct(product.id)}
-                    className="absolute top-2 left-2 w-5 h-5 text-emerald-700 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer z-10"
+                    className="absolute top-2 left-2 w-5 h-5 text-gray-900 border-gray-300 rounded focus:ring-gray-600 cursor-pointer z-10"
                   />
                   <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 border border-gray-200">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+                    />
                   </div>
                 </div>
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold mb-2 capitalize ${statusColors[product.status] || 'bg-gray-100 text-gray-600'}`}>
@@ -386,7 +380,7 @@ export default function ProductsPage() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/admin/products/${product.id}`}
-                    className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-2 rounded-lg text-sm font-medium text-center transition-colors whitespace-nowrap cursor-pointer"
+                    className="flex-1 bg-gray-900 hover:bg-gray-800 text-white py-2 rounded-lg text-sm font-medium text-center transition-colors whitespace-nowrap cursor-pointer"
                   >
                     Edit
                   </Link>

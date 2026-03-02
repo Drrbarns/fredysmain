@@ -25,7 +25,7 @@ export default function FAQsPage() {
     {
       category: 'orders',
       question: 'Can I modify or cancel my order?',
-      answer: 'You can modify or cancel your order within 1 hour of placing it. Contact our customer service immediately at +233 24 123 4567 or hello@premiumstore.com. Once an order is processed, modifications may not be possible.'
+      answer: 'You can modify or cancel your order within 1 hour of placing it. Contact our customer service immediately at 027 854 9831 or contact@delizbeautytools.com. Once an order is processed, modifications may not be possible.'
     },
     {
       category: 'orders',
@@ -139,7 +139,7 @@ export default function FAQsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 py-16">
+      <div className="bg-gradient-to-br from-gray-50 via-white to-amber-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl font-bold text-gray-900 mb-6">
@@ -155,7 +155,7 @@ export default function FAQsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for answers..."
-                className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm shadow-lg"
+                className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-gray-600 focus:border-transparent text-sm shadow-lg"
               />
               <i className="ri-search-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
             </div>
@@ -171,7 +171,7 @@ export default function FAQsPage() {
               onClick={() => setActiveCategory(category.id)}
               className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all whitespace-nowrap ${
                 activeCategory === category.id
-                  ? 'bg-emerald-700 text-white shadow-lg'
+                  ? 'bg-gray-900 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -211,19 +211,19 @@ export default function FAQsPage() {
         )}
       </div>
 
-      <div className="bg-gradient-to-br from-emerald-700 to-emerald-900 py-16">
+      <div className="bg-gradient-to-br from-gray-900 to-gray-900 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <i className="ri-customer-service-2-line text-3xl text-white"></i>
           </div>
           <h2 className="text-3xl font-bold text-white mb-4">Still Have Questions?</h2>
-          <p className="text-xl text-emerald-100 mb-8 leading-relaxed">
+          <p className="text-xl text-gray-100 mb-8 leading-relaxed">
             Our customer service team is ready to help. Contact us and we'll respond within 24 hours.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-white text-emerald-700 px-8 py-4 rounded-full font-medium hover:bg-emerald-50 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-white text-gray-900 px-8 py-4 rounded-full font-medium hover:bg-gray-50 transition-colors whitespace-nowrap"
             >
               <i className="ri-mail-line text-lg"></i>
               Contact Support
@@ -232,7 +232,7 @@ export default function FAQsPage() {
               href="https://wa.me/233241234567"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-full font-medium hover:bg-emerald-500 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-gray-700 text-white px-8 py-4 rounded-full font-medium hover:bg-gray-600 transition-colors whitespace-nowrap"
             >
               <i className="ri-whatsapp-line text-lg"></i>
               Chat on WhatsApp
@@ -249,8 +249,8 @@ export default function FAQsPage() {
 
         <div className="grid md:grid-cols-3 gap-6">
           <Link href="/shipping" className="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-all cursor-pointer">
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-              <i className="ri-truck-line text-2xl text-emerald-700"></i>
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <i className="ri-truck-line text-2xl text-gray-900"></i>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Shipping Policy</h3>
             <p className="text-gray-600 leading-relaxed">
@@ -259,8 +259,8 @@ export default function FAQsPage() {
           </Link>
 
           <Link href="/returns" className="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-all cursor-pointer">
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-              <i className="ri-arrow-go-back-line text-2xl text-emerald-700"></i>
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <i className="ri-arrow-go-back-line text-2xl text-gray-900"></i>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Returns Policy</h3>
             <p className="text-gray-600 leading-relaxed">
@@ -269,8 +269,8 @@ export default function FAQsPage() {
           </Link>
 
           <Link href="/privacy" className="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-all cursor-pointer">
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-              <i className="ri-shield-check-line text-2xl text-emerald-700"></i>
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <i className="ri-shield-check-line text-2xl text-gray-900"></i>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Privacy & Security</h3>
             <p className="text-gray-600 leading-relaxed">

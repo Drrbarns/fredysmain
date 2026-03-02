@@ -14,7 +14,7 @@ interface Rider {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-    active: 'bg-green-100 text-green-800',
+    active: 'bg-gray-100 text-gray-800',
     inactive: 'bg-gray-100 text-gray-800',
     on_delivery: 'bg-blue-100 text-blue-800',
     off_duty: 'bg-yellow-100 text-yellow-800',
@@ -145,7 +145,7 @@ export default function RidersPage() {
         <div className="space-y-6">
             {toast && (
                 <div className={`fixed top-4 right-4 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium ${
-                    toast.startsWith('Error') ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+                    toast.startsWith('Error') ? 'bg-red-600 text-white' : 'bg-gray-700 text-white'
                 }`}>{toast}</div>
             )}
 
@@ -155,7 +155,7 @@ export default function RidersPage() {
                     <p className="text-gray-500 mt-1">Manage your delivery fleet</p>
                 </div>
                 <button onClick={openAddModal}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 transition-colors font-medium text-sm">
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium text-sm">
                     <i className="ri-add-line" /> Add Rider
                 </button>
             </div>
@@ -164,7 +164,7 @@ export default function RidersPage() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <i className="ri-loader-4-line animate-spin text-3xl text-emerald-600 mr-3" />
+                    <i className="ri-loader-4-line animate-spin text-3xl text-gray-700 mr-3" />
                     <span className="text-gray-500">Loading riders...</span>
                 </div>
             ) : (
@@ -176,7 +176,7 @@ export default function RidersPage() {
                             <p className="text-xs text-gray-500 mt-1">Total Riders</p>
                         </div>
                         <div className="bg-white border border-gray-200 rounded-2xl p-4">
-                            <p className="text-2xl font-bold text-green-600">{riders.filter(r => r.status === 'active').length}</p>
+                            <p className="text-2xl font-bold text-gray-700">{riders.filter(r => r.status === 'active').length}</p>
                             <p className="text-xs text-gray-500 mt-1">Available</p>
                         </div>
                         <div className="bg-white border border-gray-200 rounded-2xl p-4">
@@ -194,11 +194,11 @@ export default function RidersPage() {
                         <div className="relative flex-1 min-w-[200px] max-w-sm">
                             <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500"
+                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600"
                                 placeholder="Search riders..." />
                         </div>
                         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                            className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                            className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-600 bg-white">
                             <option value="all">All Statuses</option>
                             <option value="active">Active</option>
                             <option value="on_delivery">On Delivery</option>
@@ -223,8 +223,8 @@ export default function RidersPage() {
                                     <div key={rider.id} className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                                                    <i className={`${VEHICLE_ICONS[rider.vehicle_type] || 'ri-e-bike-2-line'} text-emerald-600 text-xl`} />
+                                                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+                                                    <i className={`${VEHICLE_ICONS[rider.vehicle_type] || 'ri-e-bike-2-line'} text-gray-700 text-xl`} />
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-gray-900">{rider.full_name}</p>
@@ -253,23 +253,23 @@ export default function RidersPage() {
                                                 <p className="text-[10px] text-gray-500">Total</p>
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-sm font-bold text-green-600">{rider.successful_deliveries}</p>
+                                                <p className="text-sm font-bold text-gray-700">{rider.successful_deliveries}</p>
                                                 <p className="text-[10px] text-gray-500">Success</p>
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-sm font-bold text-emerald-600">{successRate}%</p>
+                                                <p className="text-sm font-bold text-gray-700">{successRate}%</p>
                                                 <p className="text-[10px] text-gray-500">Rate</p>
                                             </div>
                                         </div>
 
                                         <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
                                             <button onClick={() => openEditModal(rider)}
-                                                className="flex-1 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
+                                                className="flex-1 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                                                 <i className="ri-edit-line mr-1" /> Edit
                                             </button>
                                             <button onClick={() => handleToggleStatus(rider)}
                                                 className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-                                                    rider.status === 'active' ? 'text-amber-600 hover:bg-amber-50' : 'text-green-600 hover:bg-green-50'
+                                                    rider.status === 'active' ? 'text-amber-600 hover:bg-amber-50' : 'text-gray-700 hover:bg-gray-50'
                                                 }`}>
                                                 <i className={`${rider.status === 'active' ? 'ri-pause-line' : 'ri-play-line'} mr-1`} />
                                                 {rider.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -299,26 +299,26 @@ export default function RidersPage() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Full Name *</label>
                                 <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
                                     placeholder="Kwame Asante" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Phone Number *</label>
                                 <input type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
                                     placeholder="0551234567" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Email</label>
                                 <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
                                     placeholder="kwame@example.com" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-900 mb-1.5">Vehicle Type</label>
                                     <select value={form.vehicle_type} onChange={e => setForm(f => ({ ...f, vehicle_type: e.target.value }))}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600">
                                         <option value="motorcycle">Motorcycle</option>
                                         <option value="bicycle">Bicycle</option>
                                         <option value="car">Car</option>
@@ -328,14 +328,14 @@ export default function RidersPage() {
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-900 mb-1.5">License Plate</label>
                                     <input type="text" value={form.license_plate} onChange={e => setForm(f => ({ ...f, license_plate: e.target.value }))}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
                                         placeholder="GW 1234-22" />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-1.5">Delivery Zone</label>
                                 <select value={form.zone_id} onChange={e => setForm(f => ({ ...f, zone_id: e.target.value }))}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-600">
                                     <option value="">No zone assigned</option>
                                     {zones.map(z => (<option key={z.id} value={z.id}>{z.name}</option>))}
                                 </select>
@@ -345,7 +345,7 @@ export default function RidersPage() {
                                 <button onClick={() => setShowModal(false)}
                                     className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Cancel</button>
                                 <button onClick={handleSave} disabled={saving}
-                                    className="flex-1 px-4 py-3 bg-emerald-700 text-white rounded-xl hover:bg-emerald-800 font-semibold disabled:opacity-50 transition-colors">
+                                    className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold disabled:opacity-50 transition-colors">
                                     {saving ? 'Saving...' : editingRider ? 'Update Rider' : 'Add Rider'}
                                 </button>
                             </div>

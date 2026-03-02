@@ -139,7 +139,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading || verifying}
-              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {isLoading || verifying ? (
                 <span className="flex items-center justify-center space-x-2">
@@ -156,7 +156,7 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-emerald-700 transition-colors whitespace-nowrap">
+          <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap">
             <i className="ri-arrow-left-line mr-2"></i>
             Back to Store
           </Link>

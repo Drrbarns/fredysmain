@@ -128,7 +128,7 @@ export default function CustomerInsightsPage() {
 
   const getSegmentBadge = (segment: string) => {
     const badges: any = {
-      vip: 'bg-emerald-100 text-emerald-700',
+      vip: 'bg-gray-100 text-gray-900',
       returning: 'bg-blue-100 text-blue-700',
       new: 'bg-amber-100 text-amber-700',
       'at-risk': 'bg-red-100 text-red-700'
@@ -148,7 +148,7 @@ export default function CustomerInsightsPage() {
 
   const getRiskBadge = (risk: string) => {
     const badges: any = {
-      low: 'bg-emerald-100 text-emerald-700',
+      low: 'bg-gray-100 text-gray-900',
       medium: 'bg-amber-100 text-amber-700',
       high: 'bg-red-100 text-red-700'
     };
@@ -182,13 +182,13 @@ export default function CustomerInsightsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 flex items-center justify-center bg-emerald-100 rounded-lg">
-                <i className="ri-vip-crown-line text-2xl text-emerald-700"></i>
+              <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg">
+                <i className="ri-vip-crown-line text-2xl text-gray-900"></i>
               </div>
             </div>
             <p className="text-sm text-gray-600 mb-1">VIP Customers</p>
             <p className="text-3xl font-bold text-gray-900">{stats.vip}</p>
-            <p className="text-sm text-emerald-700 font-semibold mt-2">Spent &gt; GH₵1,000</p>
+            <p className="text-sm text-gray-900 font-semibold mt-2">Spent &gt; GH₵1,000</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6">
@@ -235,7 +235,7 @@ export default function CustomerInsightsPage() {
                   placeholder="Search customers by name or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 text-sm"
                 />
               </div>
             </div>
@@ -273,7 +273,7 @@ export default function CustomerInsightsPage() {
               <div key={customer.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-4">
-                    <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full text-white text-2xl font-bold">
+                    <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-900 rounded-full text-white text-2xl font-bold">
                       {customer.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div>
@@ -320,14 +320,14 @@ export default function CustomerInsightsPage() {
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-sm text-gray-600 mb-1">Lifetime Value</p>
-                    <p className="text-2xl font-bold text-emerald-700">{formatCurrency(customer.lifetimeValue)}</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(customer.lifetimeValue)}</p>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-sm text-gray-600 mb-1">Engagement</p>
                     <div className="flex items-center space-x-2">
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full ${customer.engagementScore >= 80 ? 'bg-emerald-600' :
+                          className={`h-2 rounded-full ${customer.engagementScore >= 80 ? 'bg-gray-700' :
                             customer.engagementScore >= 60 ? 'bg-blue-600' :
                               customer.engagementScore >= 40 ? 'bg-amber-600' : 'bg-red-600'
                             }`}

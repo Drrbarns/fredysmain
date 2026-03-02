@@ -155,7 +155,7 @@ export default function PaymentPage() {
             {order?.discount_total > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Discount</span>
-                <span className="text-green-600">-GH₵ {order?.discount_total?.toFixed(2)}</span>
+                <span className="text-gray-700">-GH₵ {order?.discount_total?.toFixed(2)}</span>
               </div>
             )}
           </div>

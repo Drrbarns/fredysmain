@@ -105,12 +105,12 @@ export default function InstallInstructions() {
               ))}
             </div>
 
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
               <div className="flex items-center gap-2 mb-2">
-                <i className="ri-lightbulb-line text-green-700"></i>
-                <span className="font-semibold text-green-900">Why Install?</span>
+                <i className="ri-lightbulb-line text-gray-700"></i>
+                <span className="font-semibold text-gray-900">Why Install?</span>
               </div>
-              <ul className="space-y-1 text-sm text-green-800">
+              <ul className="space-y-1 text-sm text-gray-800">
                 <li className="flex items-center gap-2">
                   <i className="ri-check-line"></i>
                   <span>Lightning fast performance</span>

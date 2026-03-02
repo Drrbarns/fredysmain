@@ -63,7 +63,7 @@ export default function MessengerChatButton() {
                 <div className="w-12 h-12 flex items-center justify-center bg-white text-purple-600 rounded-full font-bold text-xl">
                   <i className="ri-customer-service-2-fill"></i>
                 </div>
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 rounded-full border-2 border-white"></div>
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold">Customer Support</h3>

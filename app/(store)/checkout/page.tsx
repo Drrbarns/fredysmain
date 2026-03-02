@@ -475,7 +475,7 @@ export default function CheckoutPage() {
                       {!errors.phone && shippingData.phone && (() => {
                         const d = shippingData.phone.replace(/\D/g, '');
                         const valid = (d.length === 10 && d.startsWith('0')) || (d.length === 12 && d.startsWith('233'));
-                        if (valid) return <p className="text-xs text-green-600 mt-1 flex items-center gap-1"><i className="ri-checkbox-circle-fill"></i> Valid phone number</p>;
+                        if (valid) return <p className="text-xs text-gray-700 mt-1 flex items-center gap-1"><i className="ri-checkbox-circle-fill"></i> Valid phone number</p>;
                         if (d.length > 0 && d.length < 10) return <p className="text-xs text-amber-600 mt-1">{10 - d.length} more digit{10 - d.length > 1 ? 's' : ''} needed</p>;
                         return null;
                       })()}
