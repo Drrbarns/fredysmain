@@ -18,8 +18,11 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
     const [productName, setProductName] = useState(initialData?.name || '');
     const [categoryId, setCategoryId] = useState(initialData?.category_id || '');
-    const [price, setPrice] = useState(initialData?.price || '');
-    const [comparePrice, setComparePrice] = useState(initialData?.compare_at_price || '');
+    const [price, setPrice] = useState(initialData?.price ?? '');
+    const [comparePrice, setComparePrice] = useState(initialData?.compare_at_price ?? '');
+    const [onSale, setOnSale] = useState(!!(initialData?.compare_at_price && parseFloat(initialData.compare_at_price) > parseFloat(initialData?.price || 0)));
+    const [wholesalePrice, setWholesalePrice] = useState(initialData?.metadata?.wholesale_price ?? '');
+    const [wholesaleMinQty, setWholesaleMinQty] = useState(initialData?.metadata?.wholesale_min_qty ?? '');
     const [sku, setSku] = useState(initialData?.sku || '');
     const [stock, setStock] = useState(initialData?.quantity || '');
     const [moq, setMoq] = useState(initialData?.moq || '1');
@@ -415,7 +418,9 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                 tags: (keywords as string).split(',').map((k: string) => k.trim()).filter(Boolean),
                 metadata: {
                     low_stock_threshold: parseInt(lowStockThreshold) || 5,
-                    preorder_shipping: preorderShipping.trim() || null
+                    preorder_shipping: preorderShipping.trim() || null,
+                    wholesale_price: wholesalePrice ? parseFloat(wholesalePrice) : null,
+                    wholesale_min_qty: wholesaleMinQty ? parseInt(wholesaleMinQty) : null
                 },
                 variants: variantsPayload,
             };
@@ -499,9 +504,9 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                 </div>
 
                 <div className="flex items-center space-x-3">
-                    {isEditMode && (
+                    {isEditMode && initialData?.slug && (
                         <Link
-                            href={`/product/${initialData?.id}`}
+                            href={`/product/${initialData.slug}`}
                             target="_blank"
                             className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors font-semibold whitespace-nowrap cursor-pointer flex items-center"
                         >
@@ -658,55 +663,106 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
                     {activeTab === 'pricing' && (
                         <div className="space-y-6 max-w-3xl">
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                        Price (GH₵) *
-                                    </label>
-                                    <div className="relative">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
-                                        <input
-                                            type="number"
-                                            value={price}
-                                            onChange={(e) => setPrice(e.target.value)}
-                                            className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
-                                            step="0.01"
-                                            placeholder="0.00"
-                                        />
-                                    </div>
+                            {/* Price (GH₵) - always shown */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                    Price (GH₵) *
+                                </label>
+                                <div className="relative max-w-xs">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
+                                    <input
+                                        type="number"
+                                        value={price}
+                                        onChange={(e) => setPrice(e.target.value)}
+                                        className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    />
                                 </div>
-
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                        Compare at Price (GH₵)
-                                    </label>
-                                    <div className="relative">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
-                                        <input
-                                            type="number"
-                                            value={comparePrice}
-                                            onChange={(e) => setComparePrice(e.target.value)}
-                                            className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
-                                            step="0.01"
-                                            placeholder="0.00"
-                                        />
-                                    </div>
-                                    <p className="text-sm text-gray-500 mt-2">Show original price for comparison</p>
-                                </div>
+                                <p className="text-sm text-gray-500 mt-2">{onSale ? 'This is the sale price customers pay.' : 'Standard selling price.'}</p>
                             </div>
 
-                            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                <p className="text-blue-900 font-semibold mb-1">Discount Calculation</p>
-                                {price && comparePrice && parseFloat(comparePrice) > parseFloat(price) ? (
-                                    <p className="text-blue-800">
-                                        Savings: GH₵ {(parseFloat(comparePrice) - parseFloat(price)).toFixed(2)}
-                                        <span className="ml-2">
-                                            ({(((parseFloat(comparePrice) - parseFloat(price)) / parseFloat(comparePrice)) * 100).toFixed(0)}% off)
-                                        </span>
-                                    </p>
-                                ) : (
-                                    <p className="text-blue-800 text-sm">Enter a valid compare price higher than the price to see discount.</p>
-                                )}
+                            {/* On Sale toggle */}
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+                                <div>
+                                    <p className="font-semibold text-gray-900">On Sale</p>
+                                    <p className="text-sm text-gray-600 mt-0.5">Enable sale pricing and show the original price crossed out.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={onSale}
+                                    onClick={() => {
+                                        setOnSale(!onSale);
+                                        if (!onSale && price) setComparePrice(price);
+                                        else if (onSale) setComparePrice('');
+                                    }}
+                                    className={`relative w-12 h-7 rounded-full transition-colors cursor-pointer ${onSale ? 'bg-gray-900' : 'bg-gray-300'}`}
+                                >
+                                    <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-all ${onSale ? 'left-7' : 'left-1'}`} />
+                                </button>
+                            </div>
+
+                            {/* Sale price fields - shown when On Sale is on */}
+                            {onSale && (
+                                <div className="space-y-4 pl-4 border-l-4 border-amber-400">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Regular Price (GH₵)</label>
+                                        <div className="relative max-w-xs">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
+                                            <input
+                                                type="number"
+                                                value={comparePrice}
+                                                onChange={(e) => setComparePrice(e.target.value)}
+                                                className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                                step="0.01"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                        <p className="text-sm text-gray-500 mt-2">Original price shown crossed out next to sale price.</p>
+                                    </div>
+                                    {price && comparePrice && parseFloat(comparePrice) > parseFloat(price) && (
+                                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                            <p className="text-amber-900 font-semibold text-sm">
+                                                Savings: GH₵ {(parseFloat(comparePrice) - parseFloat(price)).toFixed(2)} ({(((parseFloat(comparePrice) - parseFloat(price)) / parseFloat(comparePrice)) * 100).toFixed(0)}% off)
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Wholesale */}
+                            <div className="pt-6 border-t border-gray-200">
+                                <h3 className="text-lg font-bold text-gray-900 mb-2">Wholesale (optional)</h3>
+                                <p className="text-sm text-gray-600 mb-4">Set a bulk price for customers who order larger quantities.</p>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Wholesale Price (GH₵)</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
+                                            <input
+                                                type="number"
+                                                value={wholesalePrice}
+                                                onChange={(e) => setWholesalePrice(e.target.value)}
+                                                className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                                step="0.01"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Minimum Quantity for Wholesale</label>
+                                        <input
+                                            type="number"
+                                            value={wholesaleMinQty}
+                                            onChange={(e) => setWholesaleMinQty(e.target.value)}
+                                            min="2"
+                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                            placeholder="e.g. 10"
+                                        />
+                                        <p className="text-sm text-gray-500 mt-2">Min. order qty to qualify for wholesale price.</p>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="pt-6 border-t border-gray-200">
