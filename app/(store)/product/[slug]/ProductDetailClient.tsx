@@ -418,7 +418,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
 
                 <p className="text-gray-700 leading-relaxed mb-8 text-lg">{product.description}</p>
 
-                {/* Color Selector */}
+                {/* Color / Variant image selector: show variant image when available, else color swatch */}
                 {hasVariants && product.colors.length > 0 && (
                   <div className="mb-6">
                     <label className="block font-semibold text-gray-900 mb-3">
@@ -434,32 +434,43 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                         const colorVariants = product.variants.filter((v: any) => v.color === color);
                         const colorStock = colorVariants.reduce((sum: number, v: any) => sum + (v.stock ?? v.quantity ?? 0), 0);
                         const isOutOfStock = colorStock === 0 && product.stockCount === 0;
+                        const variantImage = colorVariants.find((v: any) => v.image_url)?.image_url;
                         return (
                           <button
                             key={color}
                             onClick={() => {
                               setSelectedColor(color);
-                              // If only one variant for this color, auto-select it
                               const matching = product.variants.filter((v: any) => v.color === color);
                               if (matching.length === 1) {
                                 setSelectedVariant(matching[0]);
                                 setSelectedSize(matching[0].name);
                               } else {
-                                // Reset variant selection so user picks a size too
                                 setSelectedVariant(null);
                                 setSelectedSize('');
                               }
                             }}
                             disabled={isOutOfStock}
-                            className={`px-5 py-2.5 rounded-full border-2 font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${isSelected
+                            className={`rounded-lg border-2 font-medium transition-all cursor-pointer flex items-center gap-2 overflow-hidden ${isSelected
                               ? 'border-gray-900 bg-gray-50 text-gray-900 shadow-sm'
                               : isOutOfStock
                                 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50'
                                 : 'border-gray-300 text-gray-700 hover:border-gray-400'
                               }`}
                           >
-                            <span className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 shadow-sm" style={{ backgroundColor: product.colorHexMap?.[color] || colorNameToHex(color) }}></span>
-                            <span>{color}</span>
+                            {variantImage ? (
+                              <span className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 bg-gray-100">
+                                <Image
+                                  src={variantImage}
+                                  alt={color}
+                                  width={48}
+                                  height={48}
+                                  className="w-full h-full object-cover"
+                                />
+                              </span>
+                            ) : (
+                              <span className="w-10 h-10 rounded-full border border-gray-300 flex-shrink-0 shadow-sm" style={{ backgroundColor: product.colorHexMap?.[color] || colorNameToHex(color) }}></span>
+                            )}
+                            <span className="py-2 pr-3">{color}</span>
                           </button>
                         );
                       })}
@@ -482,7 +493,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                   const showNameSelector = visibleVariants.length > 1 || (!hasColors && visibleVariants.length > 0);
 
                   if (!showNameSelector && !hasColors) {
-                    // Single variant with no colors — show standard picker
+                    // Single variant with no colors — show image when available, else name
                     return (
                       <div className="mb-8">
                         <label className="block font-semibold text-gray-900 mb-3">
@@ -505,15 +516,21 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                   setSelectedSize(variant.name);
                                 }}
                                 disabled={isOutOfStock}
-                                className={`px-6 py-3 rounded-lg border-2 font-medium transition-all whitespace-nowrap cursor-pointer flex flex-col items-center ${isSelected
+                                className={`rounded-lg border-2 font-medium transition-all cursor-pointer flex flex-col items-center overflow-hidden min-w-[80px] ${isSelected
                                   ? 'border-gray-900 bg-gray-50 text-gray-900 shadow-sm'
                                   : isOutOfStock
                                     ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50'
                                     : 'border-gray-300 text-gray-700 hover:border-gray-400'
                                   }`}
                               >
-                                <span>{variant.name}</span>
-                                <span className={`text-xs mt-0.5 ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
+                                {variant.image_url ? (
+                                  <span className="w-20 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
+                                    <Image src={variant.image_url} alt={variant.name} width={80} height={80} className="w-full h-full object-cover" />
+                                  </span>
+                                ) : (
+                                  <span className="px-4 pt-3 text-center font-medium">{variant.name}</span>
+                                )}
+                                <span className={`px-2 pb-2 text-xs ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
                                   GH₵{(variant.price || product.price).toFixed(2)}
                                 </span>
                               </button>
@@ -547,15 +564,21 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                   setSelectedSize(variant.name);
                                 }}
                                 disabled={isOutOfStock}
-                                className={`px-6 py-3 rounded-lg border-2 font-medium transition-all whitespace-nowrap cursor-pointer flex flex-col items-center ${isSelected
+                                className={`rounded-lg border-2 font-medium transition-all cursor-pointer flex flex-col items-center overflow-hidden min-w-[80px] ${isSelected
                                   ? 'border-gray-900 bg-gray-50 text-gray-900 shadow-sm'
                                   : isOutOfStock
                                     ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50'
                                     : 'border-gray-300 text-gray-700 hover:border-gray-400'
                                   }`}
                               >
-                                <span>{variant.name}</span>
-                                <span className={`text-xs mt-0.5 ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
+                                {variant.image_url ? (
+                                  <span className="w-20 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
+                                    <Image src={variant.image_url} alt={variant.name} width={80} height={80} className="w-full h-full object-cover" />
+                                  </span>
+                                ) : (
+                                  <span className="px-4 pt-3 text-center font-medium">{variant.name}</span>
+                                )}
+                                <span className={`px-2 pb-2 text-xs ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
                                   GH₵{(variant.price || product.price).toFixed(2)}
                                 </span>
                               </button>
