@@ -46,41 +46,45 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     async function fetchProduct() {
       try {
         setLoading(true);
-        // Fetch main product (cached for 2 minutes)
-        const { data: productData, error } = await cachedQuery<{ data: any; error: any }>(
-          `product:${slug}`,
-          async () => {
-            let query = supabase
-              .from('products')
-              .select(`
-                *,
-                categories(name),
-                product_variants(*),
-                product_images(url, position, alt_text, media_type)
-              `);
-
-            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-
-            if (isUUID) {
-              query = query.or(`id.eq.${slug},slug.eq.${slug}`);
-            } else {
-              query = query.eq('slug', slug);
-            }
-
-            return query.single() as any;
-          },
-          2 * 60 * 1000 // 2 minutes
-        );
-
-        if (error || !productData) {
-          console.error('Error fetching product:', error);
-          setLoading(false);
-          return;
+        // Fetch via storefront API (service role) so variants always load regardless of RLS
+        let dataToTransform: any = null;
+        const res = await fetch(`/api/storefront/products/${encodeURIComponent(slug)}`, {
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          dataToTransform = await res.json();
+        }
+        if (!dataToTransform) {
+          // Fallback: client Supabase (e.g. if API not available)
+          const { data: fallbackData, error } = await cachedQuery<{ data: any; error: any }>(
+            `product:${slug}`,
+            async () => {
+              let query = supabase
+                .from('products')
+                .select(`
+                  *,
+                  categories(name),
+                  product_variants(*),
+                  product_images(url, position, alt_text, media_type)
+                `);
+              const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+              if (isUUID) query = query.or(`id.eq.${slug},slug.eq.${slug}`);
+              else query = query.eq('slug', slug);
+              return query.single() as any;
+            },
+            2 * 60 * 1000
+          );
+          if (error || !fallbackData) {
+            console.error('Error fetching product:', error);
+            setLoading(false);
+            return;
+          }
+          dataToTransform = fallbackData;
         }
 
         // Transform product data
         // Map variant colors from option2, and extract color_hex from metadata
-        const rawVariants = (productData.product_variants || []).map((v: any) => ({
+        const rawVariants = (dataToTransform.product_variants || []).map((v: any) => ({
           ...v,
           color: v.option2 || '',
           colorHex: v.metadata?.color_hex || ''
@@ -97,17 +101,17 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
         });
 
         const transformedProduct = {
-          ...productData,
-          media: productData.product_images?.sort((a: any, b: any) => a.position - b.position).map((img: any) => ({
+          ...dataToTransform,
+          media: dataToTransform.product_images?.sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0)).map((img: any) => ({
             url: img.url,
             type: img.media_type || (/\.(mp4|mov|webm)$/i.test(img.url) ? 'video' : 'image'),
           })) || [],
-          images: productData.product_images?.sort((a: any, b: any) => a.position - b.position).map((img: any) => img.url) || [],
-          category: productData.categories?.name || 'Shop',
-          rating: productData.rating_avg || 0,
+          images: dataToTransform.product_images?.sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0)).map((img: any) => img.url) || [],
+          category: dataToTransform.categories?.name || 'Shop',
+          rating: dataToTransform.rating_avg || 0,
           reviewCount: 0,
-          stockCount: productData.quantity,
-          moq: productData.moq || 1,
+          stockCount: dataToTransform.quantity,
+          moq: dataToTransform.moq || 1,
           colors: [...new Set(rawVariants.map((v: any) => v.color).filter(Boolean))],
           colorHexMap,
           variants: rawVariants,
@@ -115,7 +119,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
           features: ['Premium Quality', 'Authentic Design'],
           featured: ['Premium Quality', 'Authentic Design'],
           care: 'Handle with care.',
-          preorderShipping: productData.metadata?.preorder_shipping || null
+          preorderShipping: dataToTransform.metadata?.preorder_shipping || null
         };
 
         // Ensure at least one image/placeholder
@@ -137,14 +141,14 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
         setSelectedColor('');
 
         // Fetch related products (cached for 5 minutes)
-        if (productData.category_id) {
+        if (dataToTransform.category_id) {
           const { data: related } = await cachedQuery<{ data: any; error: any }>(
-            `related:${productData.category_id}:${productData.id}`,
+            `related:${dataToTransform.category_id}:${dataToTransform.id}`,
             (() => supabase
               .from('products')
               .select('*, product_images(url, position), product_variants(id, name, price, quantity)')
-              .eq('category_id', productData.category_id)
-              .neq('id', productData.id)
+              .eq('category_id', dataToTransform.category_id)
+              .neq('id', dataToTransform.id)
               .limit(4)) as any,
             5 * 60 * 1000
           );

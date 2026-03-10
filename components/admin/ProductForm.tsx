@@ -270,6 +270,12 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         }
     }, [isEditMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    // Keep On Sale toggle in sync with Compare at Price (interchangeable)
+    useEffect(() => {
+        const hasSale = !!(comparePrice && price && parseFloat(comparePrice) > parseFloat(price));
+        setOnSale(hasSale);
+    }, [comparePrice, price]);
+
     const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
             if (!e.target.files || e.target.files.length === 0) return;
@@ -663,73 +669,80 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
                     {activeTab === 'pricing' && (
                         <div className="space-y-6 max-w-3xl">
-                            {/* Price (GH₵) - always shown */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                    Price (GH₵) *
-                                </label>
-                                <div className="relative max-w-xs">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
-                                    <input
-                                        type="number"
-                                        value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
-                                        className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
-                                        step="0.01"
-                                        placeholder="0.00"
-                                    />
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Price (GH₵) *
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
+                                        <input
+                                            type="number"
+                                            value={price}
+                                            onChange={(e) => setPrice(e.target.value)}
+                                            className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                            step="0.01"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
                                 </div>
-                                <p className="text-sm text-gray-500 mt-2">{onSale ? 'This is the sale price customers pay.' : 'Standard selling price.'}</p>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Compare at Price (GH₵)
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
+                                        <input
+                                            type="number"
+                                            value={comparePrice}
+                                            onChange={(e) => setComparePrice(e.target.value)}
+                                            className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                            step="0.01"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">Show original price for comparison (e.g. crossed out when on sale).</p>
+                                </div>
                             </div>
 
-                            {/* On Sale toggle */}
+                            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p className="text-blue-900 font-semibold mb-1">Discount Calculation</p>
+                                {price && comparePrice && parseFloat(comparePrice) > parseFloat(price) ? (
+                                    <p className="text-blue-800">
+                                        Savings: GH₵ {(parseFloat(comparePrice) - parseFloat(price)).toFixed(2)}
+                                        <span className="ml-2">
+                                            ({(((parseFloat(comparePrice) - parseFloat(price)) / parseFloat(comparePrice)) * 100).toFixed(0)}% off)
+                                        </span>
+                                    </p>
+                                ) : (
+                                    <p className="text-blue-800 text-sm">Enter a compare price higher than the selling price to see discount.</p>
+                                )}
+                            </div>
+
+                            {/* On Sale toggle - works interchangeably with Compare at Price above */}
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
                                 <div>
                                     <p className="font-semibold text-gray-900">On Sale</p>
-                                    <p className="text-sm text-gray-600 mt-0.5">Enable sale pricing and show the original price crossed out.</p>
+                                    <p className="text-sm text-gray-600 mt-0.5">Turn on to mark as sale (or just set Compare at Price above).</p>
                                 </div>
                                 <button
                                     type="button"
                                     role="switch"
                                     aria-checked={onSale}
                                     onClick={() => {
-                                        setOnSale(!onSale);
-                                        if (!onSale && price) setComparePrice(price);
-                                        else if (onSale) setComparePrice('');
+                                        if (onSale) {
+                                            setComparePrice('');
+                                        } else {
+                                            const p = parseFloat(price);
+                                            if (p > 0) setComparePrice(String((p * 1.1).toFixed(2)));
+                                        }
                                     }}
                                     className={`relative w-12 h-7 rounded-full transition-colors cursor-pointer ${onSale ? 'bg-gray-900' : 'bg-gray-300'}`}
                                 >
                                     <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-all ${onSale ? 'left-7' : 'left-1'}`} />
                                 </button>
                             </div>
-
-                            {/* Sale price fields - shown when On Sale is on */}
-                            {onSale && (
-                                <div className="space-y-4 pl-4 border-l-4 border-amber-400">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Regular Price (GH₵)</label>
-                                        <div className="relative max-w-xs">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">GH₵</span>
-                                            <input
-                                                type="number"
-                                                value={comparePrice}
-                                                onChange={(e) => setComparePrice(e.target.value)}
-                                                className="w-full pl-16 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
-                                                step="0.01"
-                                                placeholder="0.00"
-                                            />
-                                        </div>
-                                        <p className="text-sm text-gray-500 mt-2">Original price shown crossed out next to sale price.</p>
-                                    </div>
-                                    {price && comparePrice && parseFloat(comparePrice) > parseFloat(price) && (
-                                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                                            <p className="text-amber-900 font-semibold text-sm">
-                                                Savings: GH₵ {(parseFloat(comparePrice) - parseFloat(price)).toFixed(2)} ({(((parseFloat(comparePrice) - parseFloat(price)) / parseFloat(comparePrice)) * 100).toFixed(0)}% off)
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
 
                             {/* Wholesale */}
                             <div className="pt-6 border-t border-gray-200">
