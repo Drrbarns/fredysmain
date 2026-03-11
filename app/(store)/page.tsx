@@ -18,22 +18,6 @@ export default function Home() {
 
   const slides = [
     {
-      image: '/nova.jpeg',
-      tagline: 'New Collection',
-      headline: 'Premium Beauty Essentials — Lash, Hair, Nail, Spa & Skincare',
-      subheadline: 'Ghana\'s trusted destination for beauty pros and lovers. Madina, Ritz Junction, Accra. Retail & wholesale. Nationwide delivery.',
-      primaryButtonText: 'Shop Now',
-      primaryButtonLink: '/shop',
-    },
-    {
-      image: '/hero3.jpeg',
-      tagline: 'Pro Equipment',
-      headline: 'Elevate Your Salon with Premium Tools',
-      subheadline: 'Equip your business with the best. Shop curated luxury tools designed for professional performance and stunning results.',
-      primaryButtonText: 'View Collections',
-      primaryButtonLink: '/categories',
-    },
-    {
       image: '/delizbeautybg.jpg.jpeg',
       tagline: 'Trending Now',
       headline: 'Discover Your Ultimate Beauty Glow',
