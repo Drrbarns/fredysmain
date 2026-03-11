@@ -287,6 +287,7 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-400">
+                  <th className="text-left py-2 px-2 w-16">Image</th>
                   <th className="text-left py-2 px-2">Product</th>
                   <th className="text-left py-2 px-2">Variant</th>
                   <th className="text-center py-2 px-2">Qty</th>
@@ -294,14 +295,25 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
                 </tr>
               </thead>
               <tbody>
-                {order?.order_items?.map((item: any) => (
-                  <tr key={item.id} className="border-b border-gray-200">
-                    <td className="py-2 px-2 font-medium">{item.product_name}</td>
-                    <td className="py-2 px-2 text-sm">{item.variant_name || '-'}</td>
-                    <td className="py-2 px-2 text-center font-bold">{item.quantity}</td>
-                    <td className="py-2 px-2 text-right">GH₵ {item.unit_price?.toFixed(2)}</td>
-                  </tr>
-                ))}
+                {order?.order_items?.map((item: any) => {
+                  const imageUrl = item.products?.product_images?.[0]?.url;
+                  return (
+                    <tr key={item.id} className="border-b border-gray-200">
+                      <td className="py-2 px-2">
+                        {imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={imageUrl} alt={item.product_name} className="w-14 h-14 object-cover rounded border border-gray-200" />
+                        ) : (
+                          <div className="w-14 h-14 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-400 text-xs">No img</div>
+                        )}
+                      </td>
+                      <td className="py-2 px-2 font-medium">{item.product_name}</td>
+                      <td className="py-2 px-2 text-sm">{item.variant_name || '-'}</td>
+                      <td className="py-2 px-2 text-center font-bold">{item.quantity}</td>
+                      <td className="py-2 px-2 text-right">GH₵ {item.unit_price?.toFixed(2)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

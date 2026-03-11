@@ -80,17 +80,36 @@ export default function PrintInventoryPage() {
                 </div>
             </div>
 
-            <div className="mb-6 print-hidden">
+            <div className="mb-6 print-hidden flex flex-wrap gap-3 items-center">
                 <button
                     onClick={() => window.print()}
-                    className="px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition-colors font-semibold flex items-center inline-flex"
+                    className="px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition-colors font-semibold flex items-center"
                 >
                     <i className="ri-printer-line mr-2"></i>
                     Print Now
                 </button>
                 <button
+                    onClick={() => {
+                        const text = encodeURIComponent(
+                            `📦 *Deliz Beauty Tools — Inventory Report*\n` +
+                            `📅 Date: ${currentDate}\n` +
+                            `🛍️ Total Products: ${products.length}\n` +
+                            `💰 Total Value: GH₵ ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n\n` +
+                            `_Generated from Deliz Beauty Tools Admin Panel_`
+                        );
+                        window.open(`https://wa.me/?text=${text}`, '_blank');
+                    }}
+                    className="px-6 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600 transition-colors font-semibold flex items-center"
+                >
+                    <i className="ri-whatsapp-line mr-2"></i>
+                    Share on WhatsApp
+                </button>
+                <div className="text-sm text-gray-500 ml-1">
+                    <span className="font-medium">Tip:</span> Click <em>Print Now</em> → choose <em>Save as PDF</em> → then attach the PDF directly in WhatsApp.
+                </div>
+                <button
                     onClick={() => window.close()}
-                    className="ml-4 px-6 py-2 bg-white text-black border-2 border-black rounded shadow hover:bg-gray-100 transition-colors font-semibold flex items-center inline-flex"
+                    className="ml-auto px-6 py-2 bg-white text-black border-2 border-black rounded shadow hover:bg-gray-100 transition-colors font-semibold flex items-center"
                 >
                     <i className="ri-close-line mr-2"></i>
                     Close Window
