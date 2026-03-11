@@ -84,8 +84,8 @@ export default function AdminOrdersPage() {
       setAvailableProducts(Array.from(productNames).sort());
 
       // Separate confirmed (paid) from abandoned (pending payment)
-      const confirmedOrders = ordersData?.filter(o => o.payment_status === 'paid') || [];
-      const abandonedOrders = ordersData?.filter(o => o.payment_status !== 'paid') || [];
+      const confirmedOrders = ordersData?.filter((o: any) => o.payment_status === 'paid') || [];
+      const abandonedOrders = ordersData?.filter((o: any) => o.payment_status !== 'paid') || [];
       
       setConfirmedCount(confirmedOrders.length);
       setAbandonedCount(abandonedOrders.length);
@@ -93,12 +93,12 @@ export default function AdminOrdersPage() {
       // Calculate stats based on confirmed orders only
       const stats = [
         { label: 'All Orders', count: confirmedOrders.length, status: 'all' },
-        { label: 'Pending', count: confirmedOrders.filter(o => o.status === 'pending').length, status: 'pending' },
-        { label: 'Processing', count: confirmedOrders.filter(o => o.status === 'processing').length, status: 'processing' },
-        { label: 'Packaged', count: confirmedOrders.filter(o => o.status === 'shipped').length, status: 'shipped' },
-        { label: 'Dispatched To Rider', count: confirmedOrders.filter(o => o.status === 'dispatched_to_rider').length, status: 'dispatched_to_rider' },
-        { label: 'Delivered', count: confirmedOrders.filter(o => o.status === 'delivered').length, status: 'delivered' },
-        { label: 'Cancelled', count: confirmedOrders.filter(o => o.status === 'cancelled').length, status: 'cancelled' }
+        { label: 'Pending', count: confirmedOrders.filter((o: any) => o.status === 'pending').length, status: 'pending' },
+        { label: 'Processing', count: confirmedOrders.filter((o: any) => o.status === 'processing').length, status: 'processing' },
+        { label: 'Packaged', count: confirmedOrders.filter((o: any) => o.status === 'shipped').length, status: 'shipped' },
+        { label: 'Dispatched To Rider', count: confirmedOrders.filter((o: any) => o.status === 'dispatched_to_rider').length, status: 'dispatched_to_rider' },
+        { label: 'Delivered', count: confirmedOrders.filter((o: any) => o.status === 'delivered').length, status: 'delivered' },
+        { label: 'Cancelled', count: confirmedOrders.filter((o: any) => o.status === 'cancelled').length, status: 'cancelled' }
       ];
       setOrderStats(stats);
 
