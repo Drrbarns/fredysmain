@@ -1,16 +1,74 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/300?text=No+Image';
 
 export default function PrintInventoryPage() {
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [sharing, setSharing] = useState(false);
+    const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         fetchProducts();
     }, []);
+
+    const handleShareWhatsApp = async () => {
+        if (!contentRef.current) return;
+        setSharing(true);
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const { jsPDF } = await import('jspdf');
+
+            const canvas = await html2canvas(contentRef.current, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.92);
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pageWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            const pdfBlob = pdf.output('blob');
+            const fileName = `Deliz-Inventory-${new Date().toISOString().slice(0, 10)}.pdf`;
+            const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                await navigator.share({ files: [pdfFile], title: 'Deliz Beauty Tools — Inventory Report' });
+            } else {
+                // Fallback: download the PDF
+                const url = URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('PDF downloaded! You can now attach it to a WhatsApp message.');
+            }
+        } catch (err) {
+            console.error('Share failed:', err);
+            alert('Could not generate PDF. Please use Print Now → Save as PDF instead.');
+        } finally {
+            setSharing(false);
+        }
+    };
 
     const fetchProducts = async () => {
         try {
@@ -33,10 +91,6 @@ export default function PrintInventoryPage() {
             console.error('Error fetching products:', error);
         } finally {
             setLoading(false);
-            // Wait for images to load before popping print dialog
-            setTimeout(() => {
-                window.print();
-            }, 1500);
         }
     };
 
@@ -68,6 +122,34 @@ export default function PrintInventoryPage() {
         }
       `}} />
 
+            {/* Buttons */}
+            <div className="mb-6 print-hidden flex flex-wrap gap-3 items-center">
+                <button
+                    onClick={() => window.print()}
+                    className="px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition-colors font-semibold flex items-center"
+                >
+                    <i className="ri-printer-line mr-2"></i>
+                    Print Now
+                </button>
+                <button
+                    onClick={handleShareWhatsApp}
+                    disabled={sharing}
+                    className="px-6 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600 transition-colors font-semibold flex items-center disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                    <i className={`${sharing ? 'ri-loader-4-line animate-spin' : 'ri-whatsapp-line'} mr-2`}></i>
+                    {sharing ? 'Generating PDF…' : 'Share on WhatsApp'}
+                </button>
+                <button
+                    onClick={() => window.close()}
+                    className="px-6 py-2 bg-white text-black border-2 border-black rounded shadow hover:bg-gray-100 transition-colors font-semibold flex items-center"
+                >
+                    <i className="ri-close-line mr-2"></i>
+                    Close Window
+                </button>
+            </div>
+
+            {/* Printable / shareable content */}
+            <div ref={contentRef}>
             <div className="flex items-center justify-between mb-8 border-b-2 border-black pb-4">
                 <div>
                     <h1 className="text-3xl font-bold font-['Pacifico']">Deliz Beauty Tools</h1>
@@ -78,42 +160,6 @@ export default function PrintInventoryPage() {
                     <p className="font-medium">Total Products: {products.length}</p>
                     <p className="font-bold text-lg mt-1">Total Value: GH₵ {totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
-            </div>
-
-            <div className="mb-6 print-hidden flex flex-wrap gap-3 items-center">
-                <button
-                    onClick={() => window.print()}
-                    className="px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition-colors font-semibold flex items-center"
-                >
-                    <i className="ri-printer-line mr-2"></i>
-                    Print Now
-                </button>
-                <button
-                    onClick={() => {
-                        const text = encodeURIComponent(
-                            `📦 *Deliz Beauty Tools — Inventory Report*\n` +
-                            `📅 Date: ${currentDate}\n` +
-                            `🛍️ Total Products: ${products.length}\n` +
-                            `💰 Total Value: GH₵ ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n\n` +
-                            `_Generated from Deliz Beauty Tools Admin Panel_`
-                        );
-                        window.open(`https://wa.me/?text=${text}`, '_blank');
-                    }}
-                    className="px-6 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600 transition-colors font-semibold flex items-center"
-                >
-                    <i className="ri-whatsapp-line mr-2"></i>
-                    Share on WhatsApp
-                </button>
-                <div className="text-sm text-gray-500 ml-1">
-                    <span className="font-medium">Tip:</span> Click <em>Print Now</em> → choose <em>Save as PDF</em> → then attach the PDF directly in WhatsApp.
-                </div>
-                <button
-                    onClick={() => window.close()}
-                    className="ml-auto px-6 py-2 bg-white text-black border-2 border-black rounded shadow hover:bg-gray-100 transition-colors font-semibold flex items-center"
-                >
-                    <i className="ri-close-line mr-2"></i>
-                    Close Window
-                </button>
             </div>
 
             <table className="w-full text-left border-collapse border border-gray-300">
@@ -162,6 +208,7 @@ export default function PrintInventoryPage() {
             <div className="mt-8 text-center text-sm font-medium border-t-2 border-black pt-4">
                 <p>End of Inventory Report &mdash; Generated from Deliz Beauty Tools Admin Panel</p>
             </div>
+            </div> {/* end contentRef */}
         </div>
     );
 }
