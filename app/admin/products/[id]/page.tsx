@@ -2,7 +2,6 @@
 
 import { use, useEffect, useState } from 'react';
 import ProductForm from '@/components/admin/ProductForm';
-import { supabase } from '@/lib/supabase';
 
 export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -12,19 +11,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select(`
-            *,
-            categories(id, name),
-            product_variants(*),
-            product_images(*)
-          `)
-          .eq('id', resolvedParams.id)
-          .single();
-
-        if (error) throw error;
-        setProductData(data);
+        const res = await fetch(`/api/admin/products/${resolvedParams.id}`, {
+          credentials: 'include',
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Failed to load product');
+        setProductData(json.product ?? json);
       } catch (error) {
         console.error('Error fetching product:', error);
       } finally {

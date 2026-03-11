@@ -46,6 +46,44 @@ async function requireAdmin(request: Request): Promise<NextResponse | null> {
 }
 
 /**
+ * GET /api/admin/products/[id]
+ * Fetches a single product with variants and images using service role (bypasses RLS).
+ */
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const err = await requireAdmin(request);
+  if (err) return err;
+
+  const { id: productId } = await params;
+  if (!productId) {
+    return NextResponse.json({ error: 'Missing product id' }, { status: 400 });
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('products')
+      .select(`
+        *,
+        categories(id, name),
+        product_variants(*),
+        product_images(*)
+      `)
+      .eq('id', productId)
+      .single();
+
+    if (error || !data) {
+      return NextResponse.json({ error: error?.message || 'Product not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ product: data });
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || 'Failed to fetch product' }, { status: 500 });
+  }
+}
+
+/**
  * PUT /api/admin/products/[id]
  * Updates a product + replaces its variants using the service role (bypasses RLS).
  * Handles duplicate slug by appending a numeric suffix.

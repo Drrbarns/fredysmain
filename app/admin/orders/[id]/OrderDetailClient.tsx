@@ -136,6 +136,29 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
     }
   };
 
+  const [markingPaid, setMarkingPaid] = useState(false);
+
+  const handleMarkAsPaid = async () => {
+    if (!order || order.payment_status === 'paid') return;
+    if (!confirm(`Mark order ${order.order_number} as PAID? This cannot be undone.`)) return;
+    try {
+      setMarkingPaid(true);
+      const res = await fetch(`/api/admin/orders/${order.id}/mark-paid`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to mark as paid');
+      alert('Order marked as paid successfully');
+      fetchOrderDetails();
+    } catch (err) {
+      console.error('Error marking as paid:', err);
+      alert('Failed to mark as paid');
+    } finally {
+      setMarkingPaid(false);
+    }
+  };
+
   const [resendingNotification, setResendingNotification] = useState(false);
 
   const handleResendNotification = async () => {
@@ -508,20 +531,39 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
                   <span className="text-gray-600">Method</span>
                   <span className="font-semibold text-gray-900 capitalize">{order.payment_method}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-gray-600">Status</span>
-                  <span className="px-3 py-1 bg-gray-100 text-gray-900 rounded-full text-sm font-semibold whitespace-nowrap capitalize">
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap capitalize ${
+                    order.payment_status === 'paid'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-amber-100 text-amber-700'
+                  }`}>
                     {order.payment_status}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  {/* Transaction ID might be in metadata depending on callback */}
                   <span className="text-gray-600">Transaction</span>
                   <span className="text-sm text-gray-900 font-mono truncate max-w-[150px]">
                     {order.metadata?.moolre_reference || order.payment_transaction_id || 'N/A'}
                   </span>
                 </div>
               </div>
+              {order.payment_status !== 'paid' && (
+                <button
+                  onClick={handleMarkAsPaid}
+                  disabled={markingPaid}
+                  className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {markingPaid ? (
+                    <><i className="ri-loader-4-line animate-spin"></i> Marking as Paid...</>
+                  ) : (
+                    <><i className="ri-checkbox-circle-line"></i> Mark as Paid</>
+                  )}
+                </button>
+              )}
+              {order.payment_status === 'paid' && order.metadata?.manually_marked_paid && (
+                <p className="mt-3 text-xs text-gray-400 text-center">Manually marked as paid</p>
+              )}
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
