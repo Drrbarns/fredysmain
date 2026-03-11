@@ -54,6 +54,26 @@ export default function CheckoutPage() {
     'Western North'
   ];
 
+  const ghanaCitiesByRegion: Record<string, string[]> = {
+    'Greater Accra': ['Accra', 'Tema', 'Madina', 'Adenta', 'Ashaiman', 'Teshie', 'Nungua', 'Lashibi', 'East Legon', 'Airport Residential', 'Cantonments', 'Osu', 'Labone', 'Achimota', 'Dansoman', 'Kasoa', 'Weija', 'Dome', 'Spintex', 'Sakumono'],
+    'Ashanti': ['Kumasi', 'Obuasi', 'Ejisu', 'Konongo', 'Mampong', 'Bekwai', 'Agogo', 'Offinso', 'Asante Mampong', 'Juaben', 'Kenyasi', 'Techiman'],
+    'Western': ['Sekondi', 'Takoradi', 'Tarkwa', 'Prestea', 'Axim', 'Half Assini', 'Dunkwa', 'Enchi'],
+    'Western North': ['Sefwi Wiawso', 'Bibiani', 'Juaboso', 'Dadieso'],
+    'Central': ['Cape Coast', 'Kasoa', 'Winneba', 'Mankessim', 'Elmina', 'Assin Fosu', 'Swedru', 'Saltpond'],
+    'Eastern': ['Koforidua', 'Nkawkaw', 'Suhum', 'Akim Oda', 'Nsawam', 'Aburi', 'Akosombo', 'Asamankese'],
+    'Volta': ['Ho', 'Hohoe', 'Keta', 'Aflao', 'Denu', 'Anloga', 'Kpando', 'Sogakope'],
+    'Oti': ['Dambai', 'Jasikan', 'Kadjebi', 'Nkwanta'],
+    'Northern': ['Tamale', 'Yendi', 'Savelugu', 'Damongo', 'Bimbilla', 'Gushegu', 'Karaga'],
+    'North East': ['Nalerigu', 'Gambaga', 'Walewale', 'Chereponi'],
+    'Savannah': ['Damongo', 'Bole', 'Sawla', 'Tolon'],
+    'Upper East': ['Bolgatanga', 'Bawku', 'Navrongo', 'Zebilla', 'Paga', 'Bongo'],
+    'Upper West': ['Wa', 'Lawra', 'Jirapa', 'Tumu', 'Nandom', 'Gwolu'],
+    'Brong-Ahafo': ['Sunyani', 'Techiman', 'Berekum', 'Dormaa Ahenkro', 'Wenchi', 'Kintampo'],
+    'Ahafo': ['Goaso', 'Kukuom', 'Bechem', 'Duayaw Nkwanta'],
+    'Bono': ['Sunyani', 'Berekum', 'Dormaa Ahenkro', 'Wenchi', 'Nkoranza'],
+    'Bono East': ['Techiman', 'Kintampo', 'Atebubu', 'Nkoranza', 'Yeji'],
+  };
+
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const [paymentMethod, setPaymentMethod] = useState('moolre');
   const [errors, setErrors] = useState<any>({});
@@ -97,8 +117,7 @@ export default function CheckoutPage() {
     const newErrors: any = {};
     if (!shippingData.firstName) newErrors.firstName = 'First name is required';
     if (!shippingData.lastName) newErrors.lastName = 'Last name is required';
-    if (!shippingData.email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(shippingData.email)) newErrors.email = 'Invalid email';
+    if (shippingData.email && !/\S+@\S+\.\S+/.test(shippingData.email)) newErrors.email = 'Invalid email format';
     if (!shippingData.phone) {
       newErrors.phone = 'Phone number is required';
     } else {
@@ -369,12 +388,12 @@ export default function CheckoutPage() {
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Email Address *
+                        Email Address <span className="text-gray-400 font-normal text-xs">(optional)</span>
                       </label>
                       <input
                         type="email"
                         value={shippingData.email}
-                        readOnly={!!user} // Make read-only if logged in (optional, but safer)
+                        readOnly={!!user}
                         onChange={(e) => setShippingData({ ...shippingData, email: e.target.value })}
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 ${errors.email ? 'border-red-500' : 'border-gray-300'
                           } ${user ? 'bg-gray-100 cursor-not-allowed' : ''}`}
@@ -413,7 +432,7 @@ export default function CheckoutPage() {
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Street Address *
+                        Location *
                       </label>
                       <input
                         type="text"
@@ -429,25 +448,11 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-900 mb-2">
-                          City *
-                        </label>
-                        <input
-                          type="text"
-                          value={shippingData.city}
-                          onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })}
-                          className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 ${errors.city ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                          placeholder="Accra"
-                        />
-                        {errors.city && <p className="text-sm text-red-600 mt-1">{errors.city}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-900 mb-2">
                           Region *
                         </label>
                         <select
                           value={shippingData.region}
-                          onChange={(e) => setShippingData({ ...shippingData, region: e.target.value })}
+                          onChange={(e) => setShippingData({ ...shippingData, region: e.target.value, city: '' })}
                           className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 bg-white ${errors.region ? 'border-red-500' : 'border-gray-300'
                             }`}
                         >
@@ -457,6 +462,35 @@ export default function CheckoutPage() {
                           ))}
                         </select>
                         {errors.region && <p className="text-sm text-red-600 mt-1">{errors.region}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          City *
+                        </label>
+                        {shippingData.region && ghanaCitiesByRegion[shippingData.region] ? (
+                          <select
+                            value={shippingData.city}
+                            onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })}
+                            className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 bg-white ${errors.city ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                          >
+                            <option value="">Select City</option>
+                            {ghanaCitiesByRegion[shippingData.region].map((city) => (
+                              <option key={city} value={city}>{city}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            value={shippingData.city}
+                            onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })}
+                            className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 ${errors.city ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            placeholder={shippingData.region ? 'Enter city' : 'Select a region first'}
+                            disabled={!shippingData.region}
+                          />
+                        )}
+                        {errors.city && <p className="text-sm text-red-600 mt-1">{errors.city}</p>}
                       </div>
                     </div>
 
