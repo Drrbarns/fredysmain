@@ -155,7 +155,7 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
         setReverifyResult('✅ Payment verified! Order has been marked as paid.');
         fetchOrderDetails();
       } else {
-        setReverifyResult(`⚠️ ${json.message || 'Could not verify payment with Moolre.'}`);
+        setReverifyResult(`⚠️ Moolre could not confirm this payment automatically. Use "Mark as Paid" below to manually confirm it.`);
       }
     } catch (err) {
       setReverifyResult('❌ Network error. Please try again.');
