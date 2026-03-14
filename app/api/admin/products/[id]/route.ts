@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
+export const maxDuration = 30;
+export const dynamic = 'force-dynamic';
+
 function getAccessToken(request: Request): string | null {
   const authHeader = request.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) return authHeader.slice(7).trim();
@@ -145,9 +148,14 @@ export async function PUT(
         image_url: v.image_url?.trim() || null,
         metadata: v.colorHex ? { color_hex: v.colorHex } : {},
       }));
-      const { error: varError } = await supabaseAdmin.from('product_variants').insert(variantInserts);
-      if (varError) {
-        return NextResponse.json({ error: varError.message }, { status: 500 });
+      // Insert in chunks of 100 to avoid payload limits
+      const CHUNK = 100;
+      for (let i = 0; i < variantInserts.length; i += CHUNK) {
+        const chunk = variantInserts.slice(i, i + CHUNK);
+        const { error: varError } = await supabaseAdmin.from('product_variants').insert(chunk);
+        if (varError) {
+          return NextResponse.json({ error: varError.message }, { status: 500 });
+        }
       }
     }
 
