@@ -148,7 +148,7 @@ export async function POST(request: Request) {
 
     // Insert variants if any
     if (variants.length > 0) {
-      const variantInserts = variants.map((v: any) => ({
+      const variantInserts = variants.map((v: any, idx: number) => ({
         product_id: newProduct.id,
         name: v.name || v.color || 'Default',
         sku: v.sku || null,
@@ -157,6 +157,7 @@ export async function POST(request: Request) {
         option1: v.name || null,
         option2: v.color?.trim() || null,
         image_url: v.image_url?.trim() || null,
+        sort_order: v.sort_order ?? idx,
         metadata: v.colorHex ? { color_hex: v.colorHex } : {},
       }));
       // Insert in chunks of 100 to avoid payload limits

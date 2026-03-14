@@ -134,7 +134,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
     })();
 
     // Build the flat variants array for saving (used by handleSubmit)
-    const variants = variantCombinations.map(combo => {
+    const variants = variantCombinations.map((combo, idx) => {
         const d = variantData[combo.key] || { price: price, stock: '0', sku: '' };
         return {
             name: combo.size,
@@ -142,7 +142,8 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
             sku: d.sku,
             price: d.price || price,
             stock: d.stock || '0',
-            image_url: d.image_url || undefined
+            image_url: d.image_url || undefined,
+            sort_order: idx,
         };
     });
 
@@ -1056,21 +1057,44 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                     </button>
                                 </div>
 
-                                {/* Selected sizes summary */}
+                                {/* Selected sizes — draggable to reorder */}
                                 {selectedSizes.length > 0 && (
-                                    <div className="mt-4 flex flex-wrap gap-2">
-                                        {selectedSizes.map(size => (
-                                            <span key={size} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm shadow-sm font-medium">
-                                                {size}
-                                                <button type="button" onClick={() => { const v = prompt('Edit option name:', size); if (v != null && v.trim()) editSize(size, v.trim()); }} className="text-gray-400 hover:text-gray-700 ml-0.5" title="Edit name">
-                                                    <i className="ri-pencil-line text-sm"></i>
-                                                </button>
-                                                <button type="button" onClick={() => toggleSize(size)} className="text-gray-400 hover:text-red-500 ml-0.5">
-                                                    <i className="ri-close-line text-sm"></i>
-                                                </button>
-                                            </span>
-                                        ))}
-                                    </div>
+                                    <DragDropContext onDragEnd={(result: DropResult) => {
+                                        if (!result.destination) return;
+                                        const reordered = Array.from(selectedSizes);
+                                        const [moved] = reordered.splice(result.source.index, 1);
+                                        reordered.splice(result.destination.index, 0, moved);
+                                        setSelectedSizes(reordered);
+                                    }}>
+                                        <Droppable droppableId="sizes-list" direction="horizontal">
+                                            {(provided) => (
+                                                <div className="mt-4 flex flex-wrap gap-2" ref={provided.innerRef} {...provided.droppableProps}>
+                                                    {selectedSizes.map((size, idx) => (
+                                                        <Draggable key={size} draggableId={`size-${size}`} index={idx}>
+                                                            {(dragProvided, snapshot) => (
+                                                                <span
+                                                                    ref={dragProvided.innerRef}
+                                                                    {...dragProvided.draggableProps}
+                                                                    {...dragProvided.dragHandleProps}
+                                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border rounded-full text-sm shadow-sm font-medium cursor-grab active:cursor-grabbing select-none transition-shadow ${snapshot.isDragging ? 'border-gray-400 shadow-md ring-2 ring-gray-200' : 'border-gray-200'}`}
+                                                                >
+                                                                    <i className="ri-draggable text-gray-300 text-xs mr-0.5"></i>
+                                                                    {size}
+                                                                    <button type="button" onClick={() => { const v = prompt('Edit option name:', size); if (v != null && v.trim()) editSize(size, v.trim()); }} className="text-gray-400 hover:text-gray-700 ml-0.5" title="Edit name">
+                                                                        <i className="ri-pencil-line text-sm"></i>
+                                                                    </button>
+                                                                    <button type="button" onClick={() => toggleSize(size)} className="text-gray-400 hover:text-red-500 ml-0.5">
+                                                                        <i className="ri-close-line text-sm"></i>
+                                                                    </button>
+                                                                </span>
+                                                            )}
+                                                        </Draggable>
+                                                    ))}
+                                                    {provided.placeholder}
+                                                </div>
+                                            )}
+                                        </Droppable>
+                                    </DragDropContext>
                                 )}
                             </div>
 
