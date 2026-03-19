@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       cart,
     } = body;
 
-    if (!orderNumber || !email || !cart?.length) {
+    if (!orderNumber || !cart?.length) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
