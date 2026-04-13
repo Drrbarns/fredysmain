@@ -85,6 +85,7 @@ export default function AdminCategoriesPage() {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('bucket', 'category-images');
 
       const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/admin/upload', {

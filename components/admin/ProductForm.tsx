@@ -350,7 +350,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('bucket', 'products');
+                formData.append('bucket', 'product-images');
 
                 const res = await fetch('/api/admin/upload', {
                     method: 'POST',
@@ -1190,7 +1190,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                                                                     if (!file) return;
                                                                                     const fd = new FormData();
                                                                                     fd.append('file', file);
-                                                                                    fd.append('bucket', 'products');
+                                                                                    fd.append('bucket', 'product-images');
                                                                                     const res = await fetch('/api/admin/upload', { method: 'POST', body: fd, credentials: 'include' });
                                                                                     const data = await res.json().catch(() => ({}));
                                                                                     if (data?.url) setVariantImage(combo.key, data.url);

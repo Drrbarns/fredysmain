@@ -47,7 +47,7 @@ async function requireAdmin(request: Request): Promise<NextResponse | null> {
 
 /**
  * POST /api/admin/upload
- * Body: multipart/form-data with field "file" (and optional "bucket", default "products").
+ * Body: multipart/form-data with field "file" (and optional "bucket", default "product-images").
  * Returns { url: string } public URL. Uses service role so storage RLS is bypassed.
  */
 export async function POST(request: Request) {
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    const bucket = (formData.get('bucket') as string) || 'products';
+    const bucket = (formData.get('bucket') as string) || 'product-images';
 
     if (!file || !(file instanceof Blob)) {
       return NextResponse.json({ error: 'Missing file' }, { status: 400 });
