@@ -77,7 +77,19 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo1.png" alt="Frebys Fashion GH" className="h-8 w-auto mx-auto" />
+            <span className="inline-flex items-center gap-3 rounded-full border border-emerald-200/70 bg-white px-4 py-2 shadow-sm">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white text-[11px] font-bold tracking-[0.14em]">
+                FF
+              </span>
+              <span className="text-left leading-none">
+                <span className="block text-[13px] font-semibold tracking-[0.18em] text-gray-900">
+                  FREBYS
+                </span>
+                <span className="block text-[10px] font-medium tracking-[0.16em] text-emerald-700">
+                  FASHION GH
+                </span>
+              </span>
+            </span>
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 mt-6 mb-2">Admin Login</h1>
           <p className="text-gray-600">Sign in to access the admin dashboard</p>

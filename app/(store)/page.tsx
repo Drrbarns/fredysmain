@@ -17,7 +17,10 @@ export default function Home() {
   const { getSetting, getActiveBanners } = useCMS();
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const heroSlides = ['/hero-frebys-1.png', '/hero-frebys-2.png'];
+  const heroSlides = [
+    { src: '/hero-frebys-1.png', position: '50% 22%' },
+    { src: '/hero-frebys-2.png', position: '50% 24%' },
+  ];
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
 
   useEffect(() => {
@@ -92,17 +95,18 @@ export default function Home() {
         <div className="absolute inset-0">
           {heroSlides.map((slide, index) => (
             <div
-              key={slide}
+              key={slide.src}
               className={`absolute inset-0 transition-opacity duration-1000 ${
                 index === currentHeroSlide ? 'opacity-100' : 'opacity-0'
               }`}
             >
               <Image
-                src={slide}
+                src={slide.src}
                 alt=""
                 fill
                 priority={index === 0}
                 className="object-cover"
+                style={{ objectPosition: slide.position }}
               />
             </div>
           ))}
@@ -150,7 +154,7 @@ export default function Home() {
           <div className="mt-5 flex items-center justify-center gap-2">
             {heroSlides.map((slide, index) => (
               <span
-                key={`dot-${slide}`}
+                key={`dot-${slide.src}`}
                 className={`h-2 rounded-full transition-all ${
                   index === currentHeroSlide ? 'w-6 bg-white' : 'w-2 bg-white/60'
                 }`}
