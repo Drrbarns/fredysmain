@@ -132,17 +132,11 @@ export default function Header() {
                   className="flex items-center group"
                   aria-label="Go to homepage"
                 >
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-green to-brand-greenDark text-white text-[13px] font-extrabold tracking-wider shadow-sm">
-                    FF
-                  </span>
-                  <span className="ml-2 hidden sm:flex flex-col leading-none">
-                    <span className="text-[17px] font-extrabold tracking-[0.2em] text-gray-900 transition-transform duration-500 group-hover:scale-[1.02]">
-                      FREBYS
-                    </span>
-                    <span className="text-[11px] font-medium tracking-[0.17em] text-brand-greenDark/85 mt-1">
-                      FASHION GH
-                    </span>
-                  </span>
+                  <img
+                    src="/frebys-logo.png"
+                    alt={siteName}
+                    className="h-11 sm:h-12 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
                 </Link>
               </div>
 
@@ -294,10 +288,11 @@ export default function Header() {
           <div className="absolute top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col animate-in slide-in-from-left duration-500 ease-out">
             <div className="px-6 py-5 flex items-center justify-between bg-white relative z-10 border-b border-gray-100/50">
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                <span className="inline-flex items-center gap-2">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-brand-green to-brand-greenDark text-white text-[11px] font-extrabold tracking-wider">FF</span>
-                  <span className="text-lg font-extrabold tracking-[0.16em] text-gray-900">FREBYS</span>
-                </span>
+                <img
+                  src="/frebys-logo.png"
+                  alt={siteName}
+                  className="h-10 w-auto object-contain"
+                />
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}

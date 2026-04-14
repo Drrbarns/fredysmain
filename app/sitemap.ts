@@ -39,6 +39,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+    {
+      url: `${baseUrl}/faqs`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/returns`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
   ];
 
   // Dynamic product pages
@@ -71,7 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (categories) {
       categoryPages = categories.map((category) => ({
-        url: `${baseUrl}/category/${category.slug}`,
+        url: `${baseUrl}/shop?category=${encodeURIComponent(category.slug)}`,
         lastModified: new Date(category.updated_at),
         changeFrequency: 'weekly' as const,
         priority: 0.6,

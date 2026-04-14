@@ -19,7 +19,7 @@ export function generateMetadata({
   title = "Kids Ready-to-Wear Ankara Clothes in Ghana",
   description = "Shop unique casual and luxury kids Ankara wear for all occasions. Frebys Fashion GH delivers worldwide from Haatso, Accra, Ghana.",
   keywords = [],
-  ogImage = "https://frebysfashiongh.com/og-image.jpg",
+  ogImage = "https://frebysfashiongh.com/og-image.png",
   ogType = "website",
   price,
   currency = "GHS",
@@ -167,7 +167,7 @@ export function generateOrganizationSchema() {
     "@type": "Organization",
     name: "Frebys Fashion GH",
     url: "https://frebysfashiongh.com",
-    logo: "https://frebysfashiongh.com/logo1.png",
+    logo: "https://frebysfashiongh.com/frebys-logo.png",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+233244720197",

@@ -6,8 +6,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#171717",
+  "background_color": "#166d1f",
+  "theme_color": "#166d1f",
   "dir": "ltr",
   "lang": "en",
   "categories": ["shopping", "fashion", "kids"],
@@ -73,7 +73,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/logo.png",
+      "src": "/frebys-logo.png",
       "sizes": "any",
       "type": "image/png",
       "purpose": "any"

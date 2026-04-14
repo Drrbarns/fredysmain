@@ -65,7 +65,7 @@ interface CMSContextType {
 const defaultSettings: SiteSettings = {
     site_name: 'Frebys Fashion GH',
     site_tagline: 'Unique kids ready-to-wear Ankara clothes for all occasions.',
-    site_logo: '/logo1.png',
+    site_logo: '/frebys-logo.png',
     contact_email: 'hello@frebysfashiongh.com',
     contact_phone: '0244720197',
     contact_address: 'Haatso, Accra, Ghana',
@@ -93,7 +93,7 @@ export function CMSProvider({ children }: { children: ReactNode }) {
     const [settings, setSettings] = useState<SiteSettings>({
         site_name: 'Frebys Fashion GH',
         site_tagline: 'Unique kids ready-to-wear Ankara clothes for all occasions.',
-        site_logo: '/logo1.png',
+        site_logo: '/frebys-logo.png',
         contact_email: 'hello@frebysfashiongh.com',
         contact_phone: '0244720197',
         contact_address: 'Haatso, Accra, Ghana',

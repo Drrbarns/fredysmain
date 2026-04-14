@@ -29,9 +29,9 @@ export default function PWASplash() {
     <div className="pwa-splash" aria-hidden="true">
       <div className="pwa-splash-logo mb-6">
         <img
-          src="/logo1.png"
+          src="/frebys-logo.png"
           alt="Frebys Fashion GH"
-          className="w-16 h-16 object-contain brightness-0 invert"
+          className="w-20 h-20 object-contain"
         />
       </div>
       <h1 className="text-white text-xl font-bold font-serif mb-2">Frebys Fashion GH</h1>

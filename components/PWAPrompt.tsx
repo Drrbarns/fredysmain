@@ -112,7 +112,7 @@ export default function PWAPrompt() {
                 <div className="flex items-center gap-4 mb-5">
                   <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-gray-100 flex items-center justify-center">
                     <img
-                      src="/logo1.png"
+                      src="/frebys-logo.png"
                       alt="Frebys Fashion GH"
                       className="w-10 h-10 object-contain"
                     />
@@ -206,7 +206,7 @@ export default function PWAPrompt() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-gray-100 flex items-center justify-center">
                     <img
-                      src="/logo1.png"
+                      src="/frebys-logo.png"
                       alt="Frebys Fashion GH"
                       className="w-10 h-10 object-contain"
                     />

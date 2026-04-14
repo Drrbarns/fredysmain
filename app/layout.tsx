@@ -22,6 +22,9 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://frebysfashiongh.com"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: "Frebys Fashion GH",
+  category: "shopping",
+  referrer: "origin-when-cross-origin",
   title: {
     default: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
     template: "%s | Frebys Fashion GH",
@@ -54,12 +57,16 @@ export const metadata: Metadata = {
     },
   },
   icons: {
+    shortcut: [{ url: '/favicon.ico' }],
     icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', sizes: '64x64', type: 'image/png' },
       { url: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
       { url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' },
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
     ],
@@ -78,7 +85,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en",
+    locale: "en_GH",
     url: siteUrl,
     title: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
     description:
@@ -86,10 +93,10 @@ export const metadata: Metadata = {
     siteName: "Frebys Fashion GH",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Frebys Fashion GH - Kids Ready-to-Wear Ankara Clothes",
+        alt: "Frebys Fashion GH logo and brand preview",
       },
     ],
   },
@@ -98,7 +105,7 @@ export const metadata: Metadata = {
     title: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
     description:
       "Unique casual and luxury kids Ankara wear with worldwide delivery from Ghana.",
-    images: ["/og-image.jpg"],
+    images: ["/twitter-image.png"],
   },
   alternates: {
     canonical: siteUrl,
@@ -119,16 +126,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* PWA Meta Tags */}
-        <meta name="theme-color" content="#171717" />
+        <meta name="theme-color" content="#166d1f" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Frebys Fashion GH" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#171717" />
+        <meta name="msapplication-TileColor" content="#166d1f" />
         <meta name="msapplication-tap-highlight" content="no" />
 
         {/* Apple Touch Icons */}
-        <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
         <link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
@@ -141,28 +148,45 @@ export default function RootLayout({
           rel="stylesheet"
         />
 
-        {/* Structured Data - Organization */}
+        {/* Structured Data - Organization + Local Business */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "Frebys Fashion GH",
-              "url": siteUrl,
-              "logo": `${siteUrl}/logo1.png`,
-              "description": "Unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear with worldwide delivery.",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "GH",
-                "addressLocality": "Haatso, Accra, Ghana"
-              },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "telephone": "+233244720197",
-                "availableLanguage": "English"
-              }
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": `${siteUrl}#organization`,
+                  "name": "Frebys Fashion GH",
+                  "url": siteUrl,
+                  "logo": `${siteUrl}/frebys-logo.png`,
+                  "image": `${siteUrl}/og-image.png`,
+                  "description": "Unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear with worldwide delivery.",
+                  "sameAs": ["https://wa.me/233244720197"],
+                  "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer service",
+                    "telephone": "+233244720197",
+                    "availableLanguage": "English"
+                  }
+                },
+                {
+                  "@type": "ClothingStore",
+                  "@id": `${siteUrl}#store`,
+                  "name": "Frebys Fashion GH",
+                  "url": siteUrl,
+                  "image": `${siteUrl}/og-image.png`,
+                  "telephone": "+233244720197",
+                  "priceRange": "$$",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Haatso, Accra",
+                    "addressCountry": "GH"
+                  },
+                  "areaServed": "Worldwide"
+                }
+              ]
             })
           }}
         />

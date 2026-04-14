@@ -14,7 +14,7 @@ const STATIC_ASSETS = [
   '/account',
   '/categories',
   '/offline',
-  '/logo1.png',
+  '/frebys-logo.png',
 ];
 
 // Cache size limits

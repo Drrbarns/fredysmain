@@ -43,7 +43,11 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1 space-y-6">
             <Link href="/" className="inline-block">
-              <span className="text-xl font-extrabold tracking-[0.2em] text-white">FREBYS</span>
+              <img
+                src="/frebys-logo.png"
+                alt={siteName}
+                className="h-16 w-auto object-contain"
+              />
             </Link>
             <p className="text-emerald-200/80 leading-relaxed text-sm">
               {siteTagline.replace(/Less\.?$/i, "").trimEnd()}{" "}

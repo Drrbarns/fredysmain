@@ -82,20 +82,20 @@ export default function ProductCard({
   const formatPrice = (val: number) => `GH\u20B5${val.toFixed(2)}`;
 
   return (
-    <article className="group h-full w-full max-w-[320px] overflow-hidden rounded-2xl border border-brand-green/15 bg-white shadow-[0_8px_24px_rgba(11,55,40,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_34px_rgba(11,55,40,0.14)] mx-auto">
+    <article className="group h-full w-full overflow-hidden rounded-[1.35rem] border border-black/5 bg-white shadow-[0_10px_28px_rgba(16,24,40,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(16,24,40,0.14)]">
       <Link
         href={`/product/${slug}`}
-        className="relative block aspect-[5/6] overflow-hidden bg-brand-greenLight/40"
+        className="relative block aspect-[4/5] overflow-hidden bg-gray-100"
       >
         <LazyImage
           src={image}
           alt={name}
-          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
+          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.05]"
         />
 
         <div className="absolute left-3 top-3 flex items-center gap-2">
           {badge && (
-            <span className="rounded-full bg-white/92 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-800 shadow-sm">
+            <span className="rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-800 shadow-sm">
               {badge}
             </span>
           )}
@@ -115,14 +115,14 @@ export default function ProductCard({
         )}
       </Link>
 
-      <div className="flex h-[calc(100%-0px)] flex-col p-3.5 sm:p-4">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium ${
+      <div className="flex flex-col p-4">
+        <div className="mb-2 flex items-center justify-between gap-2 text-xs">
+          <span className={`inline-flex items-center rounded-full px-2.5 py-1 font-medium ${
             inStock ? 'bg-brand-greenLight text-brand-greenDark' : 'bg-gray-100 text-gray-500'
           }`}>
             {inStock ? 'In stock' : 'Unavailable'}
           </span>
-          <div className="inline-flex items-center gap-1 text-xs text-gray-500">
+          <div className="inline-flex items-center gap-1 text-gray-500">
             <i className="ri-star-fill text-brand-orange" />
             <span>{rating.toFixed(1)}</span>
             {reviewCount > 0 && <span>({reviewCount})</span>}
@@ -130,7 +130,7 @@ export default function ProductCard({
         </div>
 
         <Link href={`/product/${slug}`} className="mb-2">
-          <h3 className="line-clamp-2 text-[0.98rem] font-semibold leading-snug text-gray-900 transition-colors group-hover:text-brand-greenDark">
+          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-gray-900 transition-colors group-hover:text-brand-greenDark">
             {name}
           </h3>
         </Link>
@@ -159,8 +159,8 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="mb-3 flex items-baseline gap-2">
-          <span className="text-lg font-bold text-gray-900">
+        <div className="mb-4 flex items-baseline gap-2">
+          <span className="text-xl font-extrabold text-gray-900">
             {hasVariants && minVariantPrice ? `From ${formatPrice(minVariantPrice)}` : formatPrice(price)}
           </span>
           {originalPrice && (
@@ -168,38 +168,27 @@ export default function ProductCard({
           )}
         </div>
 
-        <div className="mt-auto">
-          {hasVariants ? (
-            <Link
-              href={`/product/${slug}`}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-green/30 bg-white py-2.5 text-sm font-semibold text-brand-greenDark transition-colors hover:bg-brand-greenLight"
-            >
-              <i className="ri-list-check text-base" />
-              <span>Select Options</span>
-            </Link>
-          ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  addToCart({ id, name, price, image, quantity: moq, slug, maxStock, moq });
-                }}
-                disabled={!inStock}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-brand-orange py-2.5 text-xs font-semibold text-white shadow-md transition-colors hover:bg-brand-orangeDark disabled:cursor-not-allowed disabled:bg-gray-300"
-              >
-                <i className="ri-shopping-cart-2-line text-sm" />
-                <span>Cart</span>
-              </button>
-              <Link
-                href={`/product/${slug}`}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-brand-green/30 bg-white py-2.5 text-xs font-semibold text-brand-greenDark transition-colors hover:bg-brand-greenLight"
-              >
-                <i className="ri-flashlight-line text-sm" />
-                <span>Buy Now</span>
-              </Link>
-            </div>
-          )}
-        </div>
+        {hasVariants ? (
+          <Link
+            href={`/product/${slug}`}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-green/25 bg-white py-3 text-sm font-semibold text-brand-greenDark transition-colors hover:bg-brand-greenLight"
+          >
+            <i className="ri-list-check text-base" />
+            <span>Select options</span>
+          </Link>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              addToCart({ id, name, price, image, quantity: moq, slug, maxStock, moq });
+            }}
+            disabled={!inStock}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-orange py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-brand-orangeDark disabled:cursor-not-allowed disabled:bg-gray-300"
+          >
+            <i className="ri-shopping-cart-2-line text-base" />
+            <span>{moq > 1 ? `Add ${moq} to cart` : 'Add to cart'}</span>
+          </button>
+        )}
       </div>
     </article>
   );
