@@ -222,11 +222,13 @@ export async function createSupportTicket(
   const { userId, email, subject, description, category } = params;
   if (!email || !subject || !description) return null;
 
+  const ticketNumber = `TKT-${Date.now().toString(36).toUpperCase()}`;
   const { data: ticket, error } = await supabase
     .from('support_tickets')
     .insert({
-      user_id: userId || null,
-      email,
+      ticket_number: ticketNumber,
+      customer_id: userId || null,
+      customer_email: email,
       subject,
       description,
       category: category || 'other',
@@ -241,10 +243,11 @@ export async function createSupportTicket(
     return null;
   }
 
-  await supabase.from('support_messages').insert({
+  await supabase.from('support_ticket_messages').insert({
     ticket_id: ticket.id,
-    user_id: userId || null,
-    message: description,
+    sender_type: 'customer',
+    sender_id: userId || null,
+    content: description,
     is_internal: false,
   });
 

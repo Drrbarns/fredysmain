@@ -64,8 +64,7 @@ export default function ContactPage() {
         });
 
       if (error) {
-        // Table might not exist, still show success
-        console.log('Note: contact_submissions table may not exist');
+        console.error('contact_submissions insert error:', error.message);
       }
 
       // Send Contact Notification
