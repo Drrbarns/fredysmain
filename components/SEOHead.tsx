@@ -15,11 +15,18 @@ interface SEOProps {
   noindex?: boolean;
 }
 
+const seoSiteUrl = (
+  process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "https://frebysfashiongh.com"
+).replace(/\/+$/, "");
+const defaultShareImage = `${seoSiteUrl}/frebys-logo.png`;
+
 export function generateMetadata({
   title = "Kids Ready-to-Wear Ankara Clothes in Ghana",
   description = "Shop unique casual and luxury kids Ankara wear for all occasions. Frebys Fashion GH delivers worldwide from Haatso, Accra, Ghana.",
   keywords = [],
-  ogImage = "https://frebysfashiongh.com/og-image.png",
+  ogImage = defaultShareImage,
   ogType = "website",
   price,
   currency = "GHS",
@@ -30,7 +37,7 @@ export function generateMetadata({
   noindex = false
 }: SEOProps): Metadata {
   const siteName = "Frebys Fashion GH";
-  const siteUrl = "https://frebysfashiongh.com";
+  const siteUrl = seoSiteUrl;
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 
   const defaultKeywords = [
@@ -52,7 +59,7 @@ export function generateMetadata({
     openGraph: {
       title: fullTitle,
       description,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      images: [{ url: ogImage, width: 593, height: 421, type: "image/png", alt: title }],
       type: ogType as any,
       siteName,
       locale: "en_GH",
@@ -166,8 +173,8 @@ export function generateOrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Frebys Fashion GH",
-    url: "https://frebysfashiongh.com",
-    logo: "https://frebysfashiongh.com/frebys-logo.png",
+    url: seoSiteUrl,
+    logo: `${seoSiteUrl}/frebys-logo.png`,
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+233244720197",
@@ -184,12 +191,12 @@ export function generateWebsiteSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Frebys Fashion GH",
-    url: "https://frebysfashiongh.com",
+    url: seoSiteUrl,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://frebysfashiongh.com/shop?search={search_term_string}",
+        urlTemplate: `${seoSiteUrl}/shop?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },

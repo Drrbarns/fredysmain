@@ -18,7 +18,15 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://frebysfashiongh.com";
+/** Canonical site origin — must match the URL people paste in WhatsApp (set NEXT_PUBLIC_APP_URL in production). */
+const siteUrl = (
+  process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "https://frebysfashiongh.com"
+).replace(/\/+$/, "");
+
+/** WhatsApp / Facebook / iMessage read og:image — use absolute URL + explicit meta tags below. */
+const shareImageUrl = `${siteUrl}/frebys-logo.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -93,10 +101,11 @@ export const metadata: Metadata = {
     siteName: "Frebys Fashion GH",
     images: [
       {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Frebys Fashion GH logo and brand preview",
+        url: shareImageUrl,
+        width: 593,
+        height: 421,
+        type: "image/png",
+        alt: "Frebys Fashion GH logo",
       },
     ],
   },
@@ -105,7 +114,7 @@ export const metadata: Metadata = {
     title: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
     description:
       "Unique casual and luxury kids Ankara wear with worldwide delivery from Ghana.",
-    images: ["/twitter-image.png"],
+    images: [shareImageUrl],
   },
   alternates: {
     canonical: siteUrl,
@@ -125,6 +134,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Social share preview (WhatsApp, Facebook, LinkedIn) — explicit absolute og:image */}
+        <meta property="og:image" content={shareImageUrl} />
+        <meta property="og:image:secure_url" content={shareImageUrl} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="593" />
+        <meta property="og:image:height" content="421" />
+        <meta property="og:image:alt" content="Frebys Fashion GH logo" />
+        <meta name="twitter:image" content={shareImageUrl} />
+        <link rel="image_src" href={shareImageUrl} />
+
         {/* PWA Meta Tags */}
         <meta name="theme-color" content="#166d1f" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -161,7 +180,7 @@ export default function RootLayout({
                   "name": "Frebys Fashion GH",
                   "url": siteUrl,
                   "logo": `${siteUrl}/frebys-logo.png`,
-                  "image": `${siteUrl}/og-image.png`,
+                  "image": shareImageUrl,
                   "description": "Unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear with worldwide delivery.",
                   "sameAs": ["https://wa.me/233244720197"],
                   "contactPoint": {
@@ -176,7 +195,7 @@ export default function RootLayout({
                   "@id": `${siteUrl}#store`,
                   "name": "Frebys Fashion GH",
                   "url": siteUrl,
-                  "image": `${siteUrl}/og-image.png`,
+                  "image": shareImageUrl,
                   "telephone": "+233244720197",
                   "priceRange": "$$",
                   "address": {
