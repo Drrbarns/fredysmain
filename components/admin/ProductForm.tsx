@@ -64,8 +64,10 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         { name: 'Gold', hex: '#D4AF37' },
         { name: 'Silver', hex: '#C0C0C0' },
     ];
-    // Common beauty / cosmetics sizes & options (you can still add any custom ones)
-    const sizePresets = ['10ml', '20ml', '30ml', '50ml', '100ml', '150ml', '200ml'];
+    // Kids’ ages as default size options (custom sizes still allowed)
+    const sizePresets = Array.from({ length: 12 }, (_, i) => `Age ${i + 1}`);
+    /** Set true to show color chips + custom colors on the Variants tab */
+    const SHOW_PRODUCT_COLOR_VARIANTS = false;
 
     // Parse existing variants to extract unique colors, sizes, and variant image
     const existingVariants = (initialData?.product_variants || []).map((v: any) => ({
@@ -969,10 +971,10 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                         <div className="space-y-8">
                             <div>
                                 <h3 className="text-lg font-bold text-gray-900">Product Variants</h3>
-                                <p className="text-gray-600 mt-1">Select colors and sizes below — variants are generated automatically</p>
+                                <p className="text-gray-600 mt-1">Select ages (sizes) below — variants are generated automatically</p>
                             </div>
 
-                            {/* STEP 1: Colors */}
+                            {SHOW_PRODUCT_COLOR_VARIANTS && (
                             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                                 <h4 className="text-sm font-bold text-gray-900 mb-1 flex items-center">
                                     <i className="ri-palette-line mr-2 text-lg text-gray-900"></i>
@@ -1054,12 +1056,13 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                     </div>
                                 )}
                             </div>
+                            )}
 
-                            {/* STEP 2: Sizes */}
+                            {/* Ages / sizes */}
                             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                                 <h4 className="text-sm font-bold text-gray-900 mb-1 flex items-center">
                                     <i className="ri-ruler-line mr-2 text-lg text-blue-600"></i>
-                                    Step 2: Select Sizes / Options
+                                    Step 1: Select ages / sizes
                                     {selectedSizes.length > 0 && (
                                         <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
                                             {selectedSizes.length} selected
@@ -1067,8 +1070,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                     )}
                                 </h4>
                                 <p className="text-xs text-gray-500 mb-4">
-                                    Click options to add/remove. Use custom for things like volumes (10ml, 50ml),
-                                    lash lengths (12mm, 16mm), wig lengths (14&quot;, 20&quot;), bundle counts, etc.
+                                    Click Age 1–12 to add/remove, or add a custom label (e.g. Age 13, 2–3 yrs, One Size).
                                 </p>
 
                                 <div className="flex flex-wrap gap-2 mb-4">
@@ -1097,7 +1099,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                         type="text"
                                         value={customSize}
                                         onChange={(e) => setCustomSize(e.target.value)}
-                                        placeholder="Custom option (e.g. 10ml serum, 16mm lash, 20&quot; wig, One Size)"
+                                        placeholder="Custom age or size (e.g. Age 13, 2–3 yrs, One Size)"
                                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                         onKeyDown={(e) => e.key === 'Enter' && addCustomSize()}
                                     />
@@ -1151,14 +1153,14 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                 )}
                             </div>
 
-                            {/* STEP 3: Variant Grid */}
+                            {/* Variant grid: price & stock */}
                             {variantCombinations.length > 0 && (
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                     <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
                                         <div>
                                             <h4 className="text-sm font-bold text-gray-900 flex items-center">
                                                 <i className="ri-grid-line mr-2 text-lg text-purple-600"></i>
-                                                Step 3: Set Price & Stock ({variantCombinations.length} variant{variantCombinations.length > 1 ? 's' : ''})
+                                                Step 2: Set price & stock ({variantCombinations.length} variant{variantCombinations.length > 1 ? 's' : ''})
                                             </h4>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -1191,7 +1193,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                                         <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Color</th>
                                                     )}
                                                     {selectedSizes.length > 0 && (
-                                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Size</th>
+                                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Age / size</th>
                                                     )}
                                                     <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Variant image</th>
                                                     <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Price (GH₵)</th>
