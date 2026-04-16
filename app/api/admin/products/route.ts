@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { syncProductCostOfProduction } from '@/lib/product-cop';
 
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
@@ -118,7 +119,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { variants = [], ...productData } = body;
+    const { variants = [], cop, ...productData } = body;
 
     // Ensure slug is unique
     let slug: string = productData.slug || productData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -144,6 +145,12 @@ export async function POST(request: Request) {
 
     if (insertError || !newProduct) {
       return NextResponse.json({ error: insertError?.message || 'Failed to create product' }, { status: 500 });
+    }
+
+    try {
+      await syncProductCostOfProduction(newProduct.id, cop);
+    } catch (copErr: any) {
+      return NextResponse.json({ error: copErr?.message || 'Failed to save cost of production' }, { status: 500 });
     }
 
     // Insert variants if any

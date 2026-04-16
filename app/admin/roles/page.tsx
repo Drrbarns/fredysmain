@@ -24,6 +24,7 @@ const PERMISSION_LABELS: Record<string, { label: string; icon: string; descripti
     reviews: { label: 'Reviews', icon: 'ri-chat-smile-2-line', description: 'Moderate product reviews' },
     inventory: { label: 'Inventory', icon: 'ri-stack-line', description: 'Track and manage stock levels' },
     analytics: { label: 'Analytics', icon: 'ri-bar-chart-line', description: 'View sales and performance analytics' },
+    finance: { label: 'Finance & COP', icon: 'ri-funds-line', description: 'Cost of production, margins, and production payroll' },
     coupons: { label: 'Coupons', icon: 'ri-coupon-2-line', description: 'Create and manage discount coupons' },
     support: { label: 'Support Hub', icon: 'ri-customer-service-2-line', description: 'Manage support tickets' },
     customer_insights: { label: 'Customer Insights', icon: 'ri-user-search-line', description: 'View customer analytics and segments' },

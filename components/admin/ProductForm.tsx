@@ -251,6 +251,34 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
     const [metaDescEdited, setMetaDescEdited] = useState(!!initialData?.seo_description);
     const [keywordsEdited, setKeywordsEdited] = useState(!!(initialData?.tags?.length));
 
+    const initialCopRow = (() => {
+        const rel = initialData?.product_cost_of_production;
+        if (Array.isArray(rel)) return rel[0] ?? null;
+        return rel ?? null;
+    })();
+    const [copEnabled, setCopEnabled] = useState(() => {
+        if (!initialCopRow) return false;
+        return (
+            Number(initialCopRow.fabric_cost) > 0 ||
+            Number(initialCopRow.other_cost) > 0 ||
+            Number(initialCopRow.labour_cost) > 0 ||
+            !!initialCopRow.production_staff_id ||
+            !!(initialCopRow.cop_description && String(initialCopRow.cop_description).trim())
+        );
+    });
+    const [copDescription, setCopDescription] = useState(initialCopRow?.cop_description || '');
+    const [fabricCost, setFabricCost] = useState(
+        initialCopRow?.fabric_cost != null ? String(initialCopRow.fabric_cost) : ''
+    );
+    const [otherCost, setOtherCost] = useState(
+        initialCopRow?.other_cost != null ? String(initialCopRow.other_cost) : ''
+    );
+    const [labourCost, setLabourCost] = useState(
+        initialCopRow?.labour_cost != null ? String(initialCopRow.labour_cost) : ''
+    );
+    const [productionStaffId, setProductionStaffId] = useState<string>(initialCopRow?.production_staff_id || '');
+    const [productionStaff, setProductionStaff] = useState<{ id: string; full_name: string }[]>([]);
+
     const generateSeoFields = (name: string, desc: string) => {
         const title = name ? `${name} | Frebys Fashion GH` : '';
         const metaDesc = desc
@@ -271,6 +299,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         { id: 'pricing', label: 'Pricing & Inventory', icon: 'ri-price-tag-3-line' },
         { id: 'variants', label: 'Variants', icon: 'ri-layout-grid-line' },
         { id: 'images', label: 'Images', icon: 'ri-image-line' },
+        { id: 'cop', label: 'COP', icon: 'ri-calculator-line' },
         { id: 'seo', label: 'SEO', icon: 'ri-search-line' }
     ];
 
@@ -287,6 +316,21 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         }
         fetchCategories();
     }, [categoryId]);
+
+    useEffect(() => {
+        async function fetchProductionStaff() {
+            try {
+                const res = await fetch('/api/admin/production-staff?active=1', { credentials: 'include' });
+                const json = await res.json().catch(() => ({}));
+                if (res.ok && Array.isArray(json.data)) {
+                    setProductionStaff(json.data.map((s: any) => ({ id: s.id, full_name: s.full_name })));
+                }
+            } catch {
+                /* optional */
+            }
+        }
+        fetchProductionStaff();
+    }, []);
 
     // Auto-generate slug from name if not manually edited
     useEffect(() => {
@@ -474,6 +518,15 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                 variants: variantsPayload,
             };
 
+            const copPayload = {
+                enabled: copEnabled,
+                cop_description: copDescription.trim() || null,
+                fabric_cost: parseFloat(fabricCost) || 0,
+                other_cost: parseFloat(otherCost) || 0,
+                labour_cost: parseFloat(labourCost) || 0,
+                production_staff_id: productionStaffId || null,
+            };
+
             let productId = initialData?.id;
 
             if (isEditMode && productId) {
@@ -482,7 +535,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify(productData),
+                    body: JSON.stringify({ ...productData, cop: copPayload }),
                 });
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.error || 'Failed to update product');
@@ -492,7 +545,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify(productData),
+                    body: JSON.stringify({ ...productData, cop: copPayload }),
                 });
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.error || 'Failed to create product');
@@ -1401,6 +1454,155 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                 </p>
                                 <p className="text-xs text-blue-700 mt-1">Images: JPG, PNG, WebP, HEIC (max 5MB each) · Videos: MP4, MOV, WebM (max 100MB each)</p>
                             </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'cop' && (
+                        <div className="space-y-6 max-w-3xl">
+                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">Cost of production (COP)</h3>
+                                    <p className="text-gray-600 text-sm">
+                                        Optional. Track fabric, trims, and labour per garment. Link a production team member for payroll-style totals when you log completed pieces under{' '}
+                                        <Link href="/admin/finance" className="text-brand-greenDark font-semibold underline">
+                                            Finance
+                                        </Link>
+                                        .
+                                    </p>
+                                </div>
+                                <label className="flex items-center gap-2 cursor-pointer shrink-0">
+                                    <input
+                                        type="checkbox"
+                                        checked={copEnabled}
+                                        onChange={(e) => setCopEnabled(e.target.checked)}
+                                        className="rounded border-gray-300 w-4 h-4"
+                                    />
+                                    <span className="text-sm font-semibold text-gray-800">Enable COP for this product</span>
+                                </label>
+                            </div>
+
+                            {!copEnabled ? (
+                                <p className="text-sm text-gray-500 py-6 border border-dashed border-gray-200 rounded-xl px-4 text-center">
+                                    Turn on COP to record costs and staff attribution for this style.
+                                </p>
+                            ) : (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Description / notes</label>
+                                        <textarea
+                                            rows={3}
+                                            value={copDescription}
+                                            onChange={(e) => setCopDescription(e.target.value)}
+                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 resize-none"
+                                            placeholder="e.g. 2 yards wax print, lining navy, zip 8&quot;, elastic waist…"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-900 mb-2">Fabric cost (GH₵)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={fabricCost}
+                                                onChange={(e) => setFabricCost(e.target.value)}
+                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-900 mb-2">Other costs (GH₵)</label>
+                                            <p className="text-xs text-gray-500 mb-1">Lining, net, zip, elastic, etc.</p>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={otherCost}
+                                                onChange={(e) => setOtherCost(e.target.value)}
+                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-900 mb-2">Labour cost (GH₵)</label>
+                                            <p className="text-xs text-gray-500 mb-1">Per unit (one garment)</p>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={labourCost}
+                                                onChange={(e) => setLabourCost(e.target.value)}
+                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Production staff</label>
+                                        <p className="text-xs text-gray-500 mb-2">
+                                            Who typically makes this piece (used as default; you can still log production by anyone).
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                                            <select
+                                                value={productionStaffId}
+                                                onChange={(e) => setProductionStaffId(e.target.value)}
+                                                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white"
+                                            >
+                                                <option value="">— None —</option>
+                                                {productionStaff.map((s) => (
+                                                    <option key={s.id} value={s.id}>
+                                                        {s.full_name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <Link
+                                                href="/admin/finance/staff"
+                                                className="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-brand-greenDark border-2 border-brand-green/30 rounded-lg hover:bg-brand-greenLight"
+                                            >
+                                                <i className="ri-team-line" />
+                                                Manage team
+                                            </Link>
+                                        </div>
+                                    </div>
+
+                                    {(() => {
+                                        const f = parseFloat(fabricCost) || 0;
+                                        const o = parseFloat(otherCost) || 0;
+                                        const l = parseFloat(labourCost) || 0;
+                                        const gross = f + o + l;
+                                        const sale = parseFloat(String(price)) || 0;
+                                        const profit = sale - gross;
+                                        const margin = sale > 0 ? (profit / sale) * 100 : null;
+                                        return (
+                                            <div className="rounded-xl border-2 border-gray-200 bg-gray-50 p-5 space-y-3">
+                                                <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Summary</h4>
+                                                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                                    <div className="flex justify-between gap-4 border-b border-gray-200 pb-2">
+                                                        <dt className="text-gray-600">Gross cost</dt>
+                                                        <dd className="font-semibold text-gray-900">GH₵ {gross.toFixed(2)}</dd>
+                                                    </div>
+                                                    <div className="flex justify-between gap-4 border-b border-gray-200 pb-2">
+                                                        <dt className="text-gray-600">Retail price</dt>
+                                                        <dd className="font-semibold text-gray-900">GH₵ {sale.toFixed(2)}</dd>
+                                                    </div>
+                                                    <div className="flex justify-between gap-4 border-b border-gray-200 pb-2">
+                                                        <dt className="text-gray-600">Gross profit (sales − gross cost)</dt>
+                                                        <dd className={`font-semibold ${profit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>GH₵ {profit.toFixed(2)}</dd>
+                                                    </div>
+                                                    <div className="flex justify-between gap-4 pb-1">
+                                                        <dt className="text-gray-600">Margin</dt>
+                                                        <dd className="font-semibold text-gray-900">
+                                                            {margin != null ? `${margin.toFixed(1)}%` : '—'}
+                                                        </dd>
+                                                    </div>
+                                                </dl>
+                                            </div>
+                                        );
+                                    })()}
+                                </>
+                            )}
                         </div>
                     )}
 

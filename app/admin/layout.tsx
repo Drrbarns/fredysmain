@@ -251,6 +251,12 @@ export default function AdminLayout({
       permissionKey: 'analytics'
     },
     {
+      title: 'Finance',
+      icon: 'ri-funds-line',
+      path: '/admin/finance',
+      permissionKey: 'finance'
+    },
+    {
       title: 'Coupons',
       icon: 'ri-coupon-2-line',
       path: '/admin/coupons',

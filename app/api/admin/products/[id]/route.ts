@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { syncProductCostOfProduction } from '@/lib/product-cop';
 
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
@@ -71,7 +72,16 @@ export async function GET(
         *,
         categories(id, name),
         product_variants(*),
-        product_images(*)
+        product_images(*),
+        product_cost_of_production (
+          cop_description,
+          fabric_cost,
+          other_cost,
+          labour_cost,
+          gross_cost,
+          production_staff_id,
+          production_staff ( id, full_name )
+        )
       `)
       .eq('id', productId)
       .single();
@@ -105,7 +115,7 @@ export async function PUT(
 
   try {
     const body = await request.json();
-    const { variants = [], ...productData } = body;
+    const { variants = [], cop, ...productData } = body;
 
     // Ensure slug uniqueness (ignore the current product)
     let slug: string = productData.slug || productData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -131,6 +141,12 @@ export async function PUT(
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+
+    try {
+      await syncProductCostOfProduction(productId, cop);
+    } catch (copErr: any) {
+      return NextResponse.json({ error: copErr?.message || 'Failed to save cost of production' }, { status: 500 });
     }
 
     // Replace variants
