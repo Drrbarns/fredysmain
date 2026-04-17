@@ -22,30 +22,17 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { orderId, customerEmail } = body;
+        const { orderId, customerEmail, redirectUrl } = body;
 
         if (!orderId || typeof orderId !== 'string') {
             return NextResponse.json({ success: false, message: 'Missing or invalid orderId' }, { status: 400 });
         }
 
         // Ensure environment variables are set
-        const missing: string[] = [];
-        if (!process.env.MOOLRE_API_USER) missing.push('MOOLRE_API_USER');
-        if (!process.env.MOOLRE_API_PUBKEY) missing.push('MOOLRE_API_PUBKEY');
-        if (!process.env.MOOLRE_ACCOUNT_NUMBER) missing.push('MOOLRE_ACCOUNT_NUMBER');
-        if (missing.length > 0) {
-            console.error('Missing Moolre credentials:', missing.join(', '));
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: `Payment gateway configuration error (missing: ${missing.join(', ')})`,
-                    missing
-                },
-                { status: 500 }
-            );
+        if (!process.env.MOOLRE_API_USER || !process.env.MOOLRE_API_PUBKEY || !process.env.MOOLRE_ACCOUNT_NUMBER) {
+            console.error('Missing Moolre credentials');
+            return NextResponse.json({ success: false, message: 'Payment gateway configuration error' }, { status: 500 });
         }
-        const moolreApiUser = process.env.MOOLRE_API_USER as string;
-        const moolreApiPubkey = process.env.MOOLRE_API_PUBKEY as string;
 
         // SECURITY: Fetch the order from the database and use its total.
         // NEVER trust the amount from the client.
@@ -63,12 +50,47 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
         }
 
-        // Don't allow payment for already-paid orders
         if (order.payment_status === 'paid') {
             return NextResponse.json({ success: false, message: 'Order is already paid' }, { status: 400 });
         }
 
-        // Use the database amount, NOT the client-provided amount
+        // Stock validation: block payment only if items are confirmed out of stock.
+        try {
+            const { data: orderItems, error: itemsError } = await supabaseAdmin
+                .from('order_items')
+                .select('quantity, product_id, products(name, quantity, is_active)')
+                .eq('order_id', order.id);
+
+            if (itemsError) {
+                console.warn('[Payment] Stock check query failed (non-blocking):', itemsError.message);
+            } else if (orderItems && orderItems.length > 0) {
+                const outOfStock: string[] = [];
+                for (const item of orderItems) {
+                    const product = (item as any).products;
+                    if (!product) continue;
+                    if (!product.is_active) {
+                        outOfStock.push(`${product.name} is no longer available`);
+                    } else if (product.quantity < item.quantity) {
+                        outOfStock.push(
+                            product.quantity === 0
+                                ? `${product.name} is out of stock`
+                                : `${product.name} — only ${product.quantity} left (you ordered ${item.quantity})`
+                        );
+                    }
+                }
+                if (outOfStock.length > 0) {
+                    console.log('[Payment] Blocked — out of stock items:', outOfStock);
+                    return NextResponse.json({
+                        success: false,
+                        message: `Some items are out of stock: ${outOfStock.join('; ')}`,
+                        outOfStock,
+                    }, { status: 409 });
+                }
+            }
+        } catch (stockErr: any) {
+            console.warn('[Payment] Stock check exception (non-blocking):', stockErr.message);
+        }
+
         const amount = Number(order.total);
         if (!amount || amount <= 0) {
             return NextResponse.json({ success: false, message: 'Invalid order amount' }, { status: 400 });
@@ -78,6 +100,14 @@ export async function POST(req: Request) {
 
         const requestUrl = new URL(req.url);
         const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || requestUrl.origin).replace(/\/+$/, '');
+
+        const defaultRedirectUrl = `${baseUrl}/order-success?order=${orderRef}&payment_success=true`;
+        const allowedPrefixes = ['https://'];
+        const safeRedirectUrl =
+            typeof redirectUrl === 'string' &&
+                allowedPrefixes.some((prefix) => redirectUrl.startsWith(prefix))
+                ? redirectUrl
+                : defaultRedirectUrl;
 
         // Generate a unique external reference for Moolre
         const uniqueRef = `${orderRef}-R${Date.now()}`;
@@ -89,7 +119,7 @@ export async function POST(req: Request) {
             email: process.env.MOOLRE_MERCHANT_EMAIL || 'admin@frebysfashion.com',
             externalref: uniqueRef,
             callback: `${baseUrl}/api/payment/moolre/callback`,
-            redirect: `${baseUrl}/order-success?order=${orderRef}&payment_success=true`,
+            redirect: safeRedirectUrl,
             reusable: "0",
             currency: "GHS",
             accountnumber: process.env.MOOLRE_ACCOUNT_NUMBER,
@@ -99,29 +129,14 @@ export async function POST(req: Request) {
             }
         };
 
-        // Save uniqueRef on the order so the verify endpoint can use it later
-        try {
-            const { data: currentOrder } = await supabaseAdmin
-                .from('orders')
-                .select('metadata')
-                .eq('order_number', orderRef)
-                .single();
-            await supabaseAdmin
-                .from('orders')
-                .update({ metadata: { ...(currentOrder?.metadata || {}), moolre_unique_ref: uniqueRef, moolre_init_at: new Date().toISOString() } })
-                .eq('order_number', orderRef);
-        } catch (metaErr) {
-            console.warn('[Payment] Could not save uniqueRef to order:', metaErr);
-        }
-
-        console.log('[Payment] Initiating for order:', orderRef, '| Amount from DB:', amount, '| UniqueRef:', uniqueRef, '| Callback:', payload.callback);
+        console.log('[Payment] Initiating for order:', orderRef, '| Amount from DB:', amount, '| Callback:', payload.callback);
 
         const response = await fetch('https://api.moolre.com/embed/link', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-USER': moolreApiUser,
-                'X-API-PUBKEY': moolreApiPubkey
+                'X-API-USER': process.env.MOOLRE_API_USER,
+                'X-API-PUBKEY': process.env.MOOLRE_API_PUBKEY
             },
             body: JSON.stringify(payload)
         });
@@ -130,7 +145,12 @@ export async function POST(req: Request) {
         console.log('[Payment] Response status:', result.status, '| Has URL:', !!result.data?.authorization_url);
 
         if (result.status === 1 && result.data?.authorization_url) {
-            return NextResponse.json({ success: true, url: result.data.authorization_url, reference: result.data.reference });
+            return NextResponse.json({
+                success: true,
+                url: result.data.authorization_url,
+                reference: result.data.reference,
+                externalRef: uniqueRef
+            });
         } else {
             return NextResponse.json({ success: false, message: result.message || 'Failed to generate payment link' }, { status: 400 });
         }

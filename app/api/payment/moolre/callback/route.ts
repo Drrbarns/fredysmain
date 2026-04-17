@@ -76,15 +76,11 @@ export async function POST(req: Request) {
         const expectedSecret = process.env.MOOLRE_CALLBACK_SECRET;
         if (expectedSecret) {
             if (!body.secret || body.secret !== expectedSecret) {
-                // Log the mismatch clearly but DO NOT reject — amount check below provides security.
-                // A hard reject here causes all payments to silently fail if the secret is misconfigured.
-                console.warn('[Callback] SECRET MISMATCH (non-blocking) — expected:', expectedSecret.substring(0, 8) + '...', '| received:', String(body.secret || 'NONE').substring(0, 8) + '...');
-                console.warn('[Callback] Continuing despite secret mismatch. Update MOOLRE_CALLBACK_SECRET in Vercel to fix this warning.');
-            } else {
-                console.log('[Callback] Secret verified OK');
+                console.error('[Callback] Secret mismatch or missing! Rejecting callback.');
+                return NextResponse.json({ success: false, message: 'Invalid callback signature' }, { status: 403 });
             }
         } else {
-            console.warn('[Callback] MOOLRE_CALLBACK_SECRET not set — amount check is the only security layer.');
+            console.warn('[Callback] WARNING: MOOLRE_CALLBACK_SECRET not configured. Callback origin cannot be verified.');
         }
 
         // ============================================================
@@ -92,7 +88,6 @@ export async function POST(req: Request) {
         // ============================================================
         const data = body.data || {};
 
-        // Order reference: check body.data.externalref first, then top-level fallbacks
         const rawExternalRef =
             data.externalref ||
             data.external_reference ||
@@ -106,15 +101,12 @@ export async function POST(req: Request) {
             ? rawExternalRef.replace(/-R\d+$/, '')
             : (data.metadata?.original_order_number || body.metadata?.original_order_number);
 
-        // Moolre's transaction reference
         const moolreReference =
             data.transactionid ||
             data.thirdpartyref ||
             body.reference ||
             'callback';
 
-        // Payment status: body.status === 1 means API call succeeded,
-        // body.data.txtstatus === 1 means transaction was successful
         const apiStatus = body.status;
         const txStatus = data.txtstatus;
         const messageStr = String(body.message || '').toLowerCase();
@@ -130,24 +122,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, message: 'Missing order reference' }, { status: 400 });
         }
 
-        // ============================================================
-        // SECURITY: Strict success validation
-        // Require BOTH api status AND transaction status to be success,
-        // OR the message explicitly indicates success (as fallback only 
-        // when both status fields are present and consistent).
-        // ============================================================
         const apiOk = (apiStatus === 1 || apiStatus === '1');
         const txOk = (txStatus === 1 || txStatus === '1');
-        const messageOk = messageStr.includes('successful') || messageStr.includes('success');
-
-        // Require at least api status OR tx status to be explicitly successful
-        // AND the message must not indicate failure
         const isSuccess = (apiOk || txOk) && !messageStr.includes('fail') && !messageStr.includes('error');
 
         if (isSuccess) {
             console.log(`[Callback] Payment SUCCESS for Order ${merchantOrderRef}`);
 
-            // Check if order exists
             const { data: existingOrder, error: fetchError } = await supabaseAdmin
                 .from('orders')
                 .select('id, order_number, payment_status, total')
@@ -159,15 +140,12 @@ export async function POST(req: Request) {
                 return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
             }
 
-            // Already paid - idempotent
             if (existingOrder.payment_status === 'paid') {
                 console.log('[Callback] Order already paid, skipping:', merchantOrderRef);
                 return NextResponse.json({ success: true, message: 'Order already processed' });
             }
 
-            // ============================================================
-            // SECURITY: Verify amount matches — REJECT if mismatch
-            // ============================================================
+            // SECURITY: Verify amount matches
             const callbackAmount = data.amount ? parseFloat(data.amount) : (body.amount ? parseFloat(body.amount) : null);
             if (callbackAmount !== null) {
                 const expectedAmount = Number(existingOrder.total);
@@ -180,7 +158,6 @@ export async function POST(req: Request) {
                 }
             }
 
-            // Mark order as paid via RPC
             const { data: orderJson, error: updateError } = await supabaseAdmin
                 .rpc('mark_order_paid', {
                     order_ref: merchantOrderRef,
@@ -199,7 +176,6 @@ export async function POST(req: Request) {
 
             console.log('[Callback] Order updated! ID:', orderJson.id, '| Status:', orderJson.status);
 
-            // Update customer stats
             try {
                 if (orderJson.email) {
                     await supabaseAdmin.rpc('update_customer_stats', {
@@ -211,7 +187,6 @@ export async function POST(req: Request) {
                 console.error('[Callback] Customer stats failed:', statsError.message);
             }
 
-            // Send SMS + Email notifications
             try {
                 console.log('[Callback] Sending notifications for:', orderJson.order_number);
                 await sendOrderConfirmation(orderJson);
@@ -223,25 +198,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, message: 'Payment verified and Order Updated' });
 
         } else {
-            // Payment failed
             console.log(`[Callback] Payment FAILED for ${merchantOrderRef} | Status: ${apiStatus} | TX: ${txStatus}`);
-
-            // Fetch existing metadata first so we don't wipe it
-            const { data: failedOrder } = await supabaseAdmin
-                .from('orders')
-                .select('metadata')
-                .eq('order_number', merchantOrderRef)
-                .single();
 
             await supabaseAdmin
                 .from('orders')
                 .update({
                     payment_status: 'failed',
                     metadata: {
-                        ...(failedOrder?.metadata || {}),
                         moolre_reference: moolreReference,
-                        failure_reason: body.message || 'Payment failed',
-                        failed_at: new Date().toISOString(),
+                        failure_reason: body.message || 'Payment failed'
                     }
                 })
                 .eq('order_number', merchantOrderRef);

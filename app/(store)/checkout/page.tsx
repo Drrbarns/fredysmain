@@ -33,31 +33,32 @@ export default function CheckoutPage() {
     region: ''
   });
 
-  // Ghana Regions for dropdown
-  const ghanaRegions = [
-    'Greater Accra',
-    'Ashanti',
-    'Western',
-    'Central',
-    'Eastern',
-    'Northern',
-    'Volta',
-    'Upper East',
-    'Upper West',
-    'Brong-Ahafo',
-    'Ahafo',
-    'Bono',
-    'Bono East',
-    'North East',
-    'Savannah',
-    'Oti',
-    'Western North'
-  ];
+  const regionCities: Record<string, string[]> = {
+    'Greater Accra': ['Accra', 'Tema', 'Madina', 'Adenta', 'Ashaiman', 'Teshie', 'Nungua', 'Lashibi', 'Sakumono', 'Kasoa', 'Weija', 'Dansoman', 'Kaneshie', 'Osu', 'Labadi', 'East Legon', 'Spintex', 'Airport Residential', 'Dzorwulu', 'Achimota', 'Dome', 'Haatso', 'Kwabenya', 'Dodowa', 'Prampram', 'Ningo'],
+    'Ashanti': ['Kumasi', 'Obuasi', 'Ejisu', 'Konongo', 'Mampong', 'Bekwai', 'Agogo', 'Mankranso', 'Offinso', 'Nkawie', 'Juaso', 'New Edubiase'],
+    'Western': ['Takoradi', 'Sekondi', 'Tarkwa', 'Prestea', 'Axim', 'Elubo', 'Half Assini', 'Agona Nkwanta', 'Shama'],
+    'Central': ['Cape Coast', 'Winneba', 'Kasoa', 'Mankessim', 'Saltpond', 'Dunkwa-on-Offin', 'Elmina', 'Agona Swedru', 'Assin Fosu', 'Buduburam'],
+    'Eastern': ['Koforidua', 'Nkawkaw', 'Nsawam', 'Suhum', 'Akosombo', 'Akim Oda', 'Kade', 'Aburi', 'Kibi', 'Somanya', 'Donkorkrom'],
+    'Northern': ['Tamale', 'Yendi', 'Savelugu', 'Damongo', 'Bimbilla', 'Salaga', 'Tolon'],
+    'Volta': ['Ho', 'Keta', 'Hohoe', 'Kpandu', 'Aflao', 'Anloga', 'Sogakope', 'Akatsi', 'Denu'],
+    'Upper East': ['Bolgatanga', 'Navrongo', 'Bawku', 'Zebilla', 'Paga', 'Sandema'],
+    'Upper West': ['Wa', 'Tumu', 'Nandom', 'Lawra', 'Jirapa', 'Nadowli'],
+    'Brong-Ahafo': ['Sunyani', 'Techiman', 'Berekum', 'Dormaa Ahenkro', 'Wenchi', 'Kintampo', 'Nkoranza', 'Atebubu'],
+    'Ahafo': ['Goaso', 'Bechem', 'Duayaw-Nkwanta', 'Kukuom', 'Hwidiem'],
+    'Bono': ['Sunyani', 'Berekum', 'Dormaa Ahenkro', 'Wenchi', 'Odumase'],
+    'Bono East': ['Techiman', 'Kintampo', 'Nkoranza', 'Atebubu', 'Yeji', 'Prang'],
+    'North East': ['Nalerigu', 'Gambaga', 'Walewale', 'Chereponi'],
+    'Savannah': ['Damongo', 'Bole', 'Salaga', 'Buipe', 'Sawla'],
+    'Oti': ['Dambai', 'Jasikan', 'Kadjebi', 'Nkwanta', 'Kpassa'],
+    'Western North': ['Sefwi Wiawso', 'Bibiani', 'Juaboso', 'Enchi', 'Dadieso'],
+  };
+
+  const ghanaRegions = Object.keys(regionCities);
+  const availableCities = shippingData.region ? regionCities[shippingData.region] || [] : [];
 
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const [paymentMethod, setPaymentMethod] = useState('moolre');
   const [errors, setErrors] = useState<any>({});
-  const [moolreConfig, setMoolreConfig] = useState<{ enabled: boolean; missing: string[] } | null>(null);
 
 
 
@@ -67,42 +68,19 @@ export default function CheckoutPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
-        setCheckoutType('account'); // Auto-select account checkout if logged in
-        // Pre-fill email if available
+        setCheckoutType('account');
         setShippingData(prev => ({ ...prev, email: session.user.email || '' }));
       }
     }
     checkUser();
 
-    // Small delay to ensure cart load
     const timer = setTimeout(() => {
       if (cart.length === 0 && !isLoading) {
-        // router.push('/cart'); // Optional: redirect if empty
+        // router.push('/cart');
       }
     }, 500);
     return () => clearTimeout(timer);
   }, [cart, router, isLoading]);
-
-  // Detect payment gateway configuration at runtime
-  useEffect(() => {
-    async function checkPaymentGateway() {
-      try {
-        const res = await fetch('/api/payment/moolre/config', { credentials: 'include' });
-        const json = await res.json().catch(() => null);
-        if (res.ok && json) {
-          const cfg = {
-            enabled: Boolean(json.enabled),
-            missing: Array.isArray(json.missing) ? json.missing : [],
-          };
-          setMoolreConfig(cfg);
-          if (!cfg.enabled) setPaymentMethod('cod');
-        }
-      } catch {
-        // Keep default flow; /api/payment/moolre will still guard
-      }
-    }
-    checkPaymentGateway();
-  }, []);
 
   // Scroll to top when step changes
   useEffect(() => {
@@ -111,8 +89,8 @@ export default function CheckoutPage() {
 
   // Calculate Totals
   const subtotal = cartSubtotal;
-  const shippingCost = 0; // Delivery options temporarily disabled
-  const tax = 0; // No Tax
+  const shippingCost = 0;
+  const tax = 0;
   const total = subtotal + shippingCost + tax;
 
   const validateShipping = () => {
@@ -121,7 +99,17 @@ export default function CheckoutPage() {
     if (!shippingData.lastName) newErrors.lastName = 'Last name is required';
     if (!shippingData.email) newErrors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(shippingData.email)) newErrors.email = 'Invalid email';
-    if (!shippingData.phone) newErrors.phone = 'Phone is required';
+    if (!shippingData.phone) {
+      newErrors.phone = 'Phone number is required';
+    } else {
+      const digits = shippingData.phone.replace(/\D/g, '');
+      const valid =
+        (digits.length === 10 && digits.startsWith('0')) ||
+        (digits.length === 12 && digits.startsWith('233'));
+      if (!valid) {
+        newErrors.phone = 'Enter a valid 10-digit Ghana number (e.g. 0551234567)';
+      }
+    }
     if (!shippingData.address) newErrors.address = 'Address is required';
     if (!shippingData.city) newErrors.city = 'City is required';
     if (!shippingData.region) newErrors.region = 'Region is required';
@@ -137,7 +125,6 @@ export default function CheckoutPage() {
   };
 
   const handleContinueToPayment = async () => {
-    // Skip step 3 and directly initiate payment with default method (Moolre/Mobile Money)
     await handlePlaceOrder();
   };
 
@@ -151,7 +138,6 @@ export default function CheckoutPage() {
 
     setIsLoading(true);
 
-    // reCAPTCHA verification
     const isHuman = await getToken('checkout');
     if (!isHuman) {
       alert('Security verification failed. Please try again.');
@@ -161,51 +147,110 @@ export default function CheckoutPage() {
 
     try {
       const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      // Generate tracking number: SLI-XXXXXX (6-char alphanumeric)
       const trackingId = Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
       const trackingNumber = `SLI-${trackingId}`;
 
-      // 1-3. Create order + items + customer upsert via server API (service role, avoids client-side RLS issues)
-      const effectivePaymentMethod =
-        paymentMethod === 'moolre' && moolreConfig && !moolreConfig.enabled ? 'cod' : paymentMethod;
+      // Normalize phone to 0XXXXXXXXX format
+      const phoneDigits = shippingData.phone.replace(/\D/g, '');
+      const normalizedPhone = phoneDigits.length === 12 && phoneDigits.startsWith('233')
+        ? '0' + phoneDigits.slice(3)
+        : phoneDigits;
 
-      const checkoutRes = await fetch('/api/storefront/checkout', {
+      // 1. Resolve product IDs and build items
+      const isValidUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+      
+      const productIds = cart.map(item => item.id).filter(id => isValidUUID(id));
+      const { data: productsData } = productIds.length > 0
+        ? await supabase.from('products').select('id, metadata').in('id', productIds)
+        : { data: [] };
+      const productMetaMap = new Map(
+        (productsData || []).map((p: any) => [p.id, { metadata: p.metadata }])
+      );
+      
+      const orderItems = [];
+      for (const item of cart) {
+        let productId = item.id;
+        
+        if (!isValidUUID(productId)) {
+          const { data: product } = await supabase
+            .from('products')
+            .select('id, metadata')
+            .or(`slug.eq.${productId},id.eq.${productId}`)
+            .single();
+          
+          if (product) {
+            productId = product.id;
+            productMetaMap.set(product.id, { metadata: product.metadata });
+          } else {
+            throw new Error(`Product not found: ${item.name}. Please remove it from your cart and try again.`);
+          }
+        }
+        
+        const prodInfo = productMetaMap.get(productId);
+        const prodMeta = prodInfo?.metadata;
+
+        orderItems.push({
+          product_id: productId,
+          product_name: item.name,
+          variant_name: item.variant,
+          quantity: item.quantity,
+          unit_price: item.price,
+          total_price: item.price * item.quantity,
+          metadata: {
+            image: item.image,
+            slug: item.slug,
+            preorder_shipping: prodMeta?.preorder_shipping || null
+          }
+        });
+      }
+
+      // 2. Create order + items via secure server API
+      const createRes = await fetch('/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({
-          orderNumber,
-          trackingNumber,
-          userId: user?.id || null,
-          email: shippingData.email,
-          phone: shippingData.phone,
-          subtotal,
-          tax,
-          shippingCost,
-          total,
-          deliveryMethod,
-          paymentMethod: effectivePaymentMethod,
-          shippingData,
-          cart,
-        }),
+          orderData: {
+            order_number: orderNumber,
+            user_id: user?.id || null,
+            email: shippingData.email,
+            phone: normalizedPhone,
+            status: 'pending',
+            payment_status: 'pending',
+            currency: 'GHS',
+            subtotal: subtotal,
+            tax_total: tax,
+            shipping_total: shippingCost,
+            discount_total: 0,
+            total: total,
+            shipping_method: deliveryMethod,
+            payment_method: paymentMethod,
+            shipping_address: shippingData,
+            billing_address: shippingData,
+            metadata: {
+              guest_checkout: !user,
+              first_name: shippingData.firstName,
+              last_name: shippingData.lastName,
+              tracking_number: trackingNumber
+            }
+          },
+          items: orderItems
+        })
       });
-      const checkoutResult = await checkoutRes.json().catch(() => ({}));
-      if (!checkoutRes.ok) {
-        throw new Error(checkoutResult.error || 'Failed to create order');
+      
+      const createResult = await createRes.json();
+      if (!createRes.ok || !createResult.order) {
+        throw new Error(createResult.error || 'Failed to create order');
       }
-      const order = checkoutResult.order;
-      const placedOrderNumber = order?.order_number || orderNumber;
+      const order = createResult.order;
 
-      // 4. Handle Payment Redirects or Completion
-      if (effectivePaymentMethod === 'moolre') {
+      // 3. Handle Payment Redirects or Completion
+      if (paymentMethod === 'moolre') {
         try {
-          // Payment link reminder will be sent automatically after 15 mins if unpaid (via cron)
-
           const paymentRes = await fetch('/api/payment/moolre', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              orderId: placedOrderNumber,
+              orderId: orderNumber,
               amount: total,
               customerEmail: shippingData.email
             })
@@ -217,25 +262,19 @@ export default function CheckoutPage() {
             throw new Error(paymentResult.message || 'Payment initialization failed');
           }
 
-          // Clear cart before redirecting
           clearCart();
-
-          // Redirect to Moolre
           window.location.href = paymentResult.url;
           return;
 
         } catch (paymentErr: any) {
           console.error('Payment Error:', paymentErr);
-          alert(
-            `Failed to initialize payment: ${paymentErr.message}. ` +
-            'Please configure MOOLRE_API_USER, MOOLRE_API_PUBKEY, and MOOLRE_ACCOUNT_NUMBER.'
-          );
+          alert('Failed to initialize payment: ' + paymentErr.message);
           setIsLoading(false);
-          return; // Stop execution
+          return;
         }
       }
 
-      // 5. Send Notifications (For COD or others)
+      // 4. Send Notifications (For COD or others)
       fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -245,9 +284,9 @@ export default function CheckoutPage() {
         })
       }).catch(err => console.error('Notification trigger error:', err));
 
-      // 6. Clear Cart & Redirect (For COD)
+      // 5. Clear Cart & Redirect (For COD)
       clearCart();
-      router.push(`/order-success?order=${placedOrderNumber}`);
+      router.push(`/order-success?order=${orderNumber}`);
 
     } catch (err: any) {
       console.error('Checkout error:', err);
@@ -333,13 +372,6 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {moolreConfig && !moolreConfig.enabled && (
-          <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            Online payment is temporarily unavailable ({moolreConfig.missing.join(', ')} not set). You can still place
-            the order now, then complete payment later from your order link.
-          </div>
-        )}
-
         <CheckoutSteps currentStep={currentStep} />
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
@@ -388,7 +420,7 @@ export default function CheckoutPage() {
                       <input
                         type="email"
                         value={shippingData.email}
-                        readOnly={!!user} // Make read-only if logged in (optional, but safer)
+                        readOnly={!!user}
                         onChange={(e) => setShippingData({ ...shippingData, email: e.target.value })}
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
                           } ${user ? 'bg-gray-100 cursor-not-allowed' : ''}`}
@@ -404,12 +436,25 @@ export default function CheckoutPage() {
                       <input
                         type="tel"
                         value={shippingData.phone}
-                        onChange={(e) => setShippingData({ ...shippingData, phone: e.target.value })}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9+\- ]/g, '');
+                          if (val.replace(/\D/g, '').length <= 12) {
+                            setShippingData({ ...shippingData, phone: val });
+                          }
+                        }}
+                        maxLength={15}
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'
                           }`}
-                        placeholder="+233 XX XXX XXXX"
+                        placeholder="0551234567"
                       />
                       {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
+                      {!errors.phone && shippingData.phone && (() => {
+                        const d = shippingData.phone.replace(/\D/g, '');
+                        const valid = (d.length === 10 && d.startsWith('0')) || (d.length === 12 && d.startsWith('233'));
+                        if (valid) return <p className="text-xs text-green-600 mt-1 flex items-center gap-1"><i className="ri-checkbox-circle-fill"></i> Valid phone number</p>;
+                        if (d.length > 0 && d.length < 10) return <p className="text-xs text-amber-600 mt-1">{10 - d.length} more digit{10 - d.length > 1 ? 's' : ''} needed</p>;
+                        return null;
+                      })()}
                     </div>
 
                     <div>
@@ -430,25 +475,11 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-900 mb-2">
-                          City *
-                        </label>
-                        <input
-                          type="text"
-                          value={shippingData.city}
-                          onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })}
-                          className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${errors.city ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                          placeholder="Accra"
-                        />
-                        {errors.city && <p className="text-sm text-red-600 mt-1">{errors.city}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-900 mb-2">
                           Region *
                         </label>
                         <select
                           value={shippingData.region}
-                          onChange={(e) => setShippingData({ ...shippingData, region: e.target.value })}
+                          onChange={(e) => setShippingData({ ...shippingData, region: e.target.value, city: '' })}
                           className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white ${errors.region ? 'border-red-500' : 'border-gray-300'
                             }`}
                         >
@@ -458,6 +489,24 @@ export default function CheckoutPage() {
                           ))}
                         </select>
                         {errors.region && <p className="text-sm text-red-600 mt-1">{errors.region}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          City *
+                        </label>
+                        <select
+                          value={shippingData.city}
+                          onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })}
+                          disabled={!shippingData.region}
+                          className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white ${errors.city ? 'border-red-500' : 'border-gray-300'
+                            } ${!shippingData.region ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                        >
+                          <option value="">{shippingData.region ? 'Select City' : 'Select a region first'}</option>
+                          {availableCities.map((city) => (
+                            <option key={city} value={city}>{city}</option>
+                          ))}
+                        </select>
+                        {errors.city && <p className="text-sm text-red-600 mt-1">{errors.city}</p>}
                       </div>
                     </div>
 
@@ -528,31 +577,6 @@ export default function CheckoutPage() {
                       </div>
                       <p className="font-semibold text-amber-600 text-sm">At a Cost</p>
                     </label>
-
-                    {/* Comprehensive delivery options - to be re-enabled later
-                    <label className={`flex items-center justify-between p-4 border-2 rounded-lg cursor-pointer transition-colors ${deliveryMethod === 'accra' ? 'border-emerald-700 bg-emerald-50' : 'border-gray-300 hover:border-gray-400'
-                      }`}>
-                      <div className="flex items-center space-x-4">
-                        <input type="radio" name="delivery" value="accra" checked={deliveryMethod === 'accra'} onChange={(e) => setDeliveryMethod(e.target.value)} className="w-5 h-5 text-emerald-700" />
-                        <div>
-                          <p className="font-semibold text-gray-900">Accra Delivery</p>
-                          <p className="text-sm text-gray-600">Delivery within Accra</p>
-                        </div>
-                      </div>
-                      <p className="font-bold text-gray-900">GH₵ 40.00</p>
-                    </label>
-                    <label className={`flex items-center justify-between p-4 border-2 rounded-lg cursor-pointer transition-colors ${deliveryMethod === 'outside-accra' ? 'border-emerald-700 bg-emerald-50' : 'border-gray-300 hover:border-gray-400'
-                      }`}>
-                      <div className="flex items-center space-x-4">
-                        <input type="radio" name="delivery" value="outside-accra" checked={deliveryMethod === 'outside-accra'} onChange={(e) => setDeliveryMethod(e.target.value)} className="w-5 h-5 text-emerald-700" />
-                        <div>
-                          <p className="font-semibold text-gray-900">Outside Accra Delivery</p>
-                          <p className="text-sm text-gray-600">Delivery to bus stations (VIP, OA, STC, etc.)</p>
-                        </div>
-                      </div>
-                      <p className="font-bold text-gray-900">GH₵ 30.00</p>
-                    </label>
-                    */}
                   </div>
 
                   <div className="flex flex-col-reverse md:flex-row gap-4 mt-6">
@@ -586,8 +610,6 @@ export default function CheckoutPage() {
 
               </>
             )}
-
-            {/* Step 3 removed - payment now initiates directly from step 2 */}
           </div>
 
           <div className="lg:col-span-1">
