@@ -57,6 +57,7 @@ export default function CheckoutPage() {
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const [paymentMethod, setPaymentMethod] = useState('moolre');
   const [errors, setErrors] = useState<any>({});
+  const [moolreConfig, setMoolreConfig] = useState<{ enabled: boolean; missing: string[] } | null>(null);
 
 
 
@@ -81,6 +82,27 @@ export default function CheckoutPage() {
     }, 500);
     return () => clearTimeout(timer);
   }, [cart, router, isLoading]);
+
+  // Detect payment gateway configuration at runtime
+  useEffect(() => {
+    async function checkPaymentGateway() {
+      try {
+        const res = await fetch('/api/payment/moolre/config', { credentials: 'include' });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json) {
+          const cfg = {
+            enabled: Boolean(json.enabled),
+            missing: Array.isArray(json.missing) ? json.missing : [],
+          };
+          setMoolreConfig(cfg);
+          if (!cfg.enabled) setPaymentMethod('cod');
+        }
+      } catch {
+        // Keep default flow; /api/payment/moolre will still guard
+      }
+    }
+    checkPaymentGateway();
+  }, []);
 
   // Scroll to top when step changes
   useEffect(() => {
@@ -144,6 +166,9 @@ export default function CheckoutPage() {
       const trackingNumber = `SLI-${trackingId}`;
 
       // 1-3. Create order + items + customer upsert via server API (service role, avoids client-side RLS issues)
+      const effectivePaymentMethod =
+        paymentMethod === 'moolre' && moolreConfig && !moolreConfig.enabled ? 'cod' : paymentMethod;
+
       const checkoutRes = await fetch('/api/storefront/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,7 +184,7 @@ export default function CheckoutPage() {
           shippingCost,
           total,
           deliveryMethod,
-          paymentMethod,
+          paymentMethod: effectivePaymentMethod,
           shippingData,
           cart,
         }),
@@ -172,7 +197,7 @@ export default function CheckoutPage() {
       const placedOrderNumber = order?.order_number || orderNumber;
 
       // 4. Handle Payment Redirects or Completion
-      if (paymentMethod === 'moolre') {
+      if (effectivePaymentMethod === 'moolre') {
         try {
           // Payment link reminder will be sent automatically after 15 mins if unpaid (via cron)
 
@@ -201,7 +226,10 @@ export default function CheckoutPage() {
 
         } catch (paymentErr: any) {
           console.error('Payment Error:', paymentErr);
-          alert('Failed to initialize payment: ' + paymentErr.message);
+          alert(
+            `Failed to initialize payment: ${paymentErr.message}. ` +
+            'Please configure MOOLRE_API_USER, MOOLRE_API_PUBKEY, and MOOLRE_ACCOUNT_NUMBER.'
+          );
           setIsLoading(false);
           return; // Stop execution
         }
@@ -302,6 +330,13 @@ export default function CheckoutPage() {
                 </p>
               </button>
             </div>
+          </div>
+        )}
+
+        {moolreConfig && !moolreConfig.enabled && (
+          <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            Online payment is temporarily unavailable ({moolreConfig.missing.join(', ')} not set). You can still place
+            the order now, then complete payment later from your order link.
           </div>
         )}
 

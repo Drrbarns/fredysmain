@@ -29,10 +29,23 @@ export async function POST(req: Request) {
         }
 
         // Ensure environment variables are set
-        if (!process.env.MOOLRE_API_USER || !process.env.MOOLRE_API_PUBKEY || !process.env.MOOLRE_ACCOUNT_NUMBER) {
-            console.error('Missing Moolre credentials');
-            return NextResponse.json({ success: false, message: 'Payment gateway configuration error' }, { status: 500 });
+        const missing: string[] = [];
+        if (!process.env.MOOLRE_API_USER) missing.push('MOOLRE_API_USER');
+        if (!process.env.MOOLRE_API_PUBKEY) missing.push('MOOLRE_API_PUBKEY');
+        if (!process.env.MOOLRE_ACCOUNT_NUMBER) missing.push('MOOLRE_ACCOUNT_NUMBER');
+        if (missing.length > 0) {
+            console.error('Missing Moolre credentials:', missing.join(', '));
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: `Payment gateway configuration error (missing: ${missing.join(', ')})`,
+                    missing
+                },
+                { status: 500 }
+            );
         }
+        const moolreApiUser = process.env.MOOLRE_API_USER as string;
+        const moolreApiPubkey = process.env.MOOLRE_API_PUBKEY as string;
 
         // SECURITY: Fetch the order from the database and use its total.
         // NEVER trust the amount from the client.
@@ -107,8 +120,8 @@ export async function POST(req: Request) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-USER': process.env.MOOLRE_API_USER,
-                'X-API-PUBKEY': process.env.MOOLRE_API_PUBKEY
+                'X-API-USER': moolreApiUser,
+                'X-API-PUBKEY': moolreApiPubkey
             },
             body: JSON.stringify(payload)
         });
