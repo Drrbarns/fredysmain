@@ -60,7 +60,7 @@ export default function Header() {
   const { getSetting } = useCMS();
 
   const rawSiteName = getSetting('site_name') || '';
-  const siteName = rawSiteName && !/deliz/i.test(rawSiteName) ? rawSiteName : 'Frebys Fashion GH';
+  const siteName = rawSiteName && !/deliz/i.test(rawSiteName) ? rawSiteName : 'Freby's Fashion GH';
 
   useEffect(() => {
     const handleScroll = () => {

@@ -18,13 +18,13 @@ interface SEOProps {
 const seoSiteUrl = (
   process.env.NEXT_PUBLIC_APP_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-  "https://frebysfashiongh.com"
+  "https://frebysfashion.com"
 ).replace(/\/+$/, "");
 const defaultShareImage = `${seoSiteUrl}/frebys-logo.png`;
 
 export function generateMetadata({
   title = "Kids Ready-to-Wear Ankara Clothes in Ghana",
-  description = "Shop unique casual and luxury kids Ankara wear for all occasions. Frebys Fashion GH delivers worldwide from Haatso, Accra, Ghana.",
+  description = "Shop unique casual and luxury kids Ankara wear for all occasions. Freby's Fashion GH delivers worldwide from Haatso, Accra, Ghana.",
   keywords = [],
   ogImage = defaultShareImage,
   ogType = "website",
@@ -36,7 +36,7 @@ export function generateMetadata({
   author,
   noindex = false
 }: SEOProps): Metadata {
-  const siteName = "Frebys Fashion GH";
+  const siteName = "Freby's Fashion GH";
   const siteUrl = seoSiteUrl;
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 
@@ -121,7 +121,7 @@ export function generateProductSchema(product: {
     sku: product.sku,
     brand: {
       "@type": "Brand",
-      name: product.brand || "Frebys Fashion GH",
+      name: product.brand || "Freby's Fashion GH",
     },
     offers: {
       "@type": "Offer",
@@ -172,7 +172,7 @@ export function generateOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Frebys Fashion GH",
+    name: "Freby's Fashion GH",
     url: seoSiteUrl,
     logo: `${seoSiteUrl}/frebys-logo.png`,
     contactPoint: {
@@ -190,7 +190,7 @@ export function generateWebsiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Frebys Fashion GH",
+    name: "Freby's Fashion GH",
     url: seoSiteUrl,
     potentialAction: {
       "@type": "SearchAction",

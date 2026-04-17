@@ -14,10 +14,10 @@ export interface SiteKnowledgeEntry {
 export const SITE_KNOWLEDGE: SiteKnowledgeEntry[] = [
   {
     id: "business-overview",
-    title: "About Frebys Fashion GH",
+    title: "About Freby's Fashion GH",
     path: "/about",
     category: "company",
-    content: `Frebys Fashion GH is a kids ready-to-wear Ankara clothing brand.
+    content: `Freby's Fashion GH is a kids ready-to-wear Ankara clothing brand.
 
 We create unique kids wear for all occasions with both casual and luxury options.
 
@@ -30,10 +30,10 @@ Delivery: Worldwide delivery.`,
     title: "Contact Information",
     path: "/contact",
     category: "contact",
-    content: `Contact Frebys Fashion GH:
+    content: `Contact Freby's Fashion GH:
 
 Phone/WhatsApp: 024 472 0197
-Email: hello@frebysfashiongh.com
+Email: hello@frebysfashion.com
 Address: Haatso, Accra, Ghana
 Support Hours: Monday to Saturday, 8 AM - 8 PM GMT`,
     keywords: ["contact", "phone", "whatsapp", "email", "address", "support", "0244720197", "haatso"],
@@ -43,7 +43,7 @@ Support Hours: Monday to Saturday, 8 AM - 8 PM GMT`,
     title: "Shipping & Delivery Policy",
     path: "/shipping",
     category: "shipping",
-    content: `Frebys Fashion GH ships from Haatso, Accra, Ghana and offers worldwide delivery.
+    content: `Freby's Fashion GH ships from Haatso, Accra, Ghana and offers worldwide delivery.
 
 Shipping fees and delivery timelines depend on destination and are shown at checkout.
 
@@ -101,7 +101,7 @@ Customers can contact support via WhatsApp, email, or support ticket for unresol
     category: "legal",
     content: `Privacy Policy and Terms explain data handling, order conditions, returns, and user responsibilities.
 
-For legal questions, contact hello@frebysfashiongh.com.`,
+For legal questions, contact hello@frebysfashion.com.`,
     keywords: ["privacy", "terms", "legal", "data", "policy"],
   },
   {
@@ -184,7 +184,7 @@ export function getSiteMapSummary(): string {
 - /returns — Start a return request (30-day policy)
 - /account — Profile, order history, addresses, security settings
 - /wishlist — Saved products
-- /about — Frebys Fashion GH story and mission
+- /about — Freby's Fashion GH story and mission
 - /contact — Phone numbers, email, WhatsApp, visit info
 - /faqs — 25+ frequently asked questions
 - /help — Help center with 50+ articles across 6 categories

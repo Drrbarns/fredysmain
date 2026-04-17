@@ -368,7 +368,7 @@ export default function AdminLayout({
       >
         <div className="h-full px-4 py-6 overflow-y-auto">
           <Link href="/admin" className="flex items-center mb-8 px-2 cursor-pointer">
-            <img src="/frebys-logo.png" alt="Frebys Fashion GH" className="h-10 w-auto object-contain" />
+            <img src="/frebys-logo.png" alt="Freby's Fashion GH" className="h-10 w-auto object-contain" />
             <span className="ml-3 text-sm font-semibold text-gray-500">ADMIN</span>
           </Link>
 

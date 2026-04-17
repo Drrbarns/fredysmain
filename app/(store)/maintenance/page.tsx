@@ -10,7 +10,7 @@ export default function MaintenancePage() {
             We'll Be Right Back
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            We are performing scheduled updates to improve your Frebys Fashion GH shopping experience. We will be back online shortly.
+            We are performing scheduled updates to improve your Freby's Fashion GH shopping experience. We will be back online shortly.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export default function MaintenancePage() {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a
-              href="mailto:hello@frebysfashiongh.com"
+              href="mailto:hello@frebysfashion.com"
               className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-full font-medium hover:bg-gray-50 transition-colors border border-gray-200 whitespace-nowrap"
             >
               <i className="ri-mail-line"></i>

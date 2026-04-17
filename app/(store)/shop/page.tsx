@@ -192,7 +192,7 @@ function ShopContent() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 md:py-20 text-white">
           <div className="max-w-3xl">
             <span className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[11px] font-semibold tracking-[0.2em] uppercase">
-              Frebys Fashion GH
+              Freby's Fashion GH
             </span>
             <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
               Shop Kids Ankara Collections

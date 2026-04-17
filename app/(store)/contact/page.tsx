@@ -87,7 +87,7 @@ export default function ContactPage() {
   };
 
   // Get contact details from CMS settings
-  const contactEmail = getSetting("contact_email") || "hello@frebysfashiongh.com";
+  const contactEmail = getSetting("contact_email") || "hello@frebysfashion.com";
   const contactPhone = getSetting("contact_phone") || "0244720197";
   const contactAddress = getSetting("contact_address") || "Haatso, Accra, Ghana";
 
@@ -134,7 +134,7 @@ export default function ContactPage() {
     {
       question: 'Do you offer international shipping?',
       answer:
-        "Yes. Frebys Fashion GH offers worldwide delivery from Haatso, Accra, Ghana.",
+        "Yes. Freby's Fashion GH offers worldwide delivery from Haatso, Accra, Ghana.",
     },
     {
       question: 'What payment methods do you accept?',

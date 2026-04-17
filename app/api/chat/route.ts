@@ -239,7 +239,7 @@ const LLM_TOOLS = [
     type: 'function' as const,
     function: {
       name: 'get_website_info',
-      description: 'Search the website\'s pages and content for information. Use this to answer ANY question about the business, policies, how things work, FAQs, contact info, shipping, returns, payment methods, account management, checkout process, blog content, or anything else about Frebys Fashion GH. This searches all public pages of the website. ALWAYS use this tool when a customer asks about the business, policies, processes, or anything non-product related.',
+      description: 'Search the website\'s pages and content for information. Use this to answer ANY question about the business, policies, how things work, FAQs, contact info, shipping, returns, payment methods, account management, checkout process, blog content, or anything else about Freby's Fashion GH. This searches all public pages of the website. ALWAYS use this tool when a customer asks about the business, policies, processes, or anything non-product related.',
       parameters: {
         type: 'object',
         properties: {
@@ -305,7 +305,7 @@ const LLM_TOOLS = [
 function buildSystemPrompt(profile: ChatCustomerProfile | null, pagePath?: string): string {
   const now = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  let prompt = `You are the AI shopping assistant for Frebys Fashion GH — a kids ready-to-wear Ankara clothing brand. We create unique kids wear for all occasions, offering both casual and luxury styles. We are located in Haatso, Accra, Ghana and deliver worldwide. Today is ${now}.
+  let prompt = `You are the AI shopping assistant for Freby's Fashion GH — a kids ready-to-wear Ankara clothing brand. We create unique kids wear for all occasions, offering both casual and luxury styles. We are located in Haatso, Accra, Ghana and deliver worldwide. Today is ${now}.
 
 ABSOLUTE RULES — NEVER BREAK THESE:
 - NEVER show your internal reasoning, thinking steps, chain-of-thought, or planning process. NEVER output anything like "Step 1:", "## Step", "Let me think", or similar. Only output the final customer-facing response.
@@ -393,7 +393,7 @@ LIMITATIONS (what you CANNOT do directly):
 WHEN YOU CANNOT HELP OR ANSWER A QUESTION:
 If you genuinely cannot answer a question or resolve an issue (whether it's beyond your capabilities, the customer is frustrated, or anything else), you MUST do TWO things:
 1. AUTOMATICALLY create a support ticket using the create_support_ticket tool — don't just offer to, actually do it. Use whatever info the customer already provided (email, name, issue details).
-2. ALWAYS provide the customer with direct contact information for faster help. Share: Phone/WhatsApp 024 472 0197, email hello@frebysfashiongh.com, or visit Haatso, Accra, Ghana. Say something like: "I've created a support ticket for you. For a faster response, you can also reach us at 024 472 0197 (call or WhatsApp) or hello@frebysfashiongh.com."
+2. ALWAYS provide the customer with direct contact information for faster help. Share: Phone/WhatsApp 024 472 0197, email hello@frebysfashion.com, or visit Haatso, Accra, Ghana. Say something like: "I've created a support ticket for you. For a faster response, you can also reach us at 024 472 0197 (call or WhatsApp) or hello@frebysfashion.com."
 Never leave a customer stuck without a path forward.
 
 ${getSiteMapSummary()}`;
@@ -797,7 +797,7 @@ async function handleWithoutAI(supabase: any, userText: string, profile: ChatCus
   }
 
   return {
-    message: "I'm not quite sure what you're looking for. I can help with:\n- Finding and buying products\n- Tracking orders\n- Checking coupons\n- Store policies and info\n- Creating support tickets\n\nFor immediate assistance, call or WhatsApp 024 472 0197 or email hello@frebysfashiongh.com.",
+    message: "I'm not quite sure what you're looking for. I can help with:\n- Finding and buying products\n- Tracking orders\n- Checking coupons\n- Store policies and info\n- Creating support tickets\n\nFor immediate assistance, call or WhatsApp 024 472 0197 or email hello@frebysfashion.com.",
     quickReplies: ['Find a product', 'Track my order', 'What do you recommend?', 'Call us'],
   };
 }
@@ -955,7 +955,7 @@ async function handleWithAI(
       } else if (couponCard) {
         assistantContent = `Here's the coupon information:`;
       } else {
-        assistantContent = `I'm sorry, I wasn't able to process that properly. You can try rephrasing your request, or for immediate help reach us at 024 472 0197 (call or WhatsApp) or hello@frebysfashiongh.com. Our team is available Mon-Sat, 8am-8pm GMT.`;
+        assistantContent = `I'm sorry, I wasn't able to process that properly. You can try rephrasing your request, or for immediate help reach us at 024 472 0197 (call or WhatsApp) or hello@frebysfashion.com. Our team is available Mon-Sat, 8am-8pm GMT.`;
       }
     }
 

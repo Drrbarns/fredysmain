@@ -121,7 +121,7 @@ function printReceipt(order: {
     .footer { font-size: 10px; color: #555; margin-top: 8px; }
 </style></head><body>
     <div class="center">
-        <div class="store-name">FREBYS FASHION GH</div>
+        <div class="store-name">FREBY'S FASHION GH</div>
         <div style="font-size:10px;margin-top:2px;">Kids Ready-to-Wear Ankara</div>
         <div style="font-size:10px;">Tel: 024 472 0197</div>
     </div>
@@ -159,7 +159,7 @@ function printReceipt(order: {
     <div class="divider"></div>
     <div class="center footer">
         <div>Thank you for shopping with us!</div>
-        <div>www.frebysfashiongh.com</div>
+        <div>frebysfashion.com</div>
     </div>
     <div style="margin-top:12px;"></div>
 </body></html>`;

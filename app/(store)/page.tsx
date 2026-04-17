@@ -71,7 +71,7 @@ export default function Home() {
     getSetting('hero_headline') || 'Unique Kids Wear for All Occasions';
   const heroSubheadline =
     getSetting('hero_subheadline') ||
-    'Frebys Fashion GH brings kids ready-to-wear Ankara outfits that blend comfort, culture, and confidence for every special moment.';
+    'Freby's Fashion GH brings kids ready-to-wear Ankara outfits that blend comfort, culture, and confidence for every special moment.';
   const heroPrimaryText = getSetting('hero_primary_btn_text') || 'Shop Now';
   const heroPrimaryLink = getSetting('hero_primary_btn_link') || '/shop';
   const heroSecondaryText =
@@ -176,7 +176,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 text-center">
           <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 px-3 py-1 sm:px-4 sm:py-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white/95 mb-4 sm:mb-5">
-            Frebys Fashion GH · Kids Ankara Collection
+            Freby's Fashion GH · Kids Ankara Collection
           </span>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.25rem] font-extrabold leading-tight text-white drop-shadow-sm max-w-3xl mx-auto">
             {heroHeadline}
@@ -443,7 +443,7 @@ export default function Home() {
               Built with passion for kids fashion
             </h2>
             <p className="mt-3 text-sm sm:text-base text-gray-600">
-              Every Frebys piece is made to help children look confident, feel
+              Every Freby's piece is made to help children look confident, feel
               comfortable, and stand out beautifully at every occasion.
             </p>
           </div>
@@ -493,14 +493,14 @@ export default function Home() {
           <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#166d1f] text-white border border-[#145b1a] shadow-[0_16px_45px_rgba(17,77,24,0.28)] flex flex-col md:flex-row items-center md:items-stretch">
             <div className="relative w-full md:w-3/5 px-5 sm:px-8 py-8 sm:py-10 flex flex-col justify-center space-y-3 text-center md:text-left">
               <span className="inline-flex items-center text-xs font-semibold tracking-[0.25em] uppercase text-[#d9f1dd]">
-                Join the Frebys family
+                Join the Freby's family
               </span>
               <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold">
                 Dress your kids in style for every occasion.
               </h3>
               <p className="text-sm sm:text-base text-[#e6f5e8] max-w-md mx-auto md:mx-0">
                 Explore casual and luxury kids Ankara wear with comfort, quality
-                finishing, and worldwide delivery from Frebys Fashion GH.
+                finishing, and worldwide delivery from Freby's Fashion GH.
               </p>
               <div className="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
                 <Link
@@ -521,7 +521,7 @@ export default function Home() {
             <div className="relative w-full md:w-2/5 py-4 sm:py-6 pr-4 pl-4 md:pl-0 flex justify-center">
               <div className="relative h-40 sm:h-52 md:h-64 lg:h-full min-h-[12rem] w-full max-w-sm md:max-w-none rounded-2xl border border-white/20 bg-[#1b8124] p-5 flex flex-col justify-center gap-3 shadow-[0_22px_45px_rgba(0,0,0,0.24)]">
                 <span className="inline-flex w-fit items-center rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
-                  Frebys Fashion GH
+                  Freby's Fashion GH
                 </span>
                 <p className="text-lg sm:text-xl font-bold text-white leading-snug">
                   Casual and luxury kids Ankara wear

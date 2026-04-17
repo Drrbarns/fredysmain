@@ -3,14 +3,14 @@ import { supabase } from '@/lib/supabase';
 import { escapeHtml } from '@/lib/sanitize';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'missing_api_key');
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@frebysfashiongh.com';
-const EMAIL_FROM = process.env.EMAIL_FROM || 'Frebys Fashion GH <noreply@frebysfashiongh.com>';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@frebysfashion.com';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'Freby's Fashion GH <noreply@frebysfashion.com>';
 const BRAND = {
-    name: 'Frebys Fashion GH',
+    name: 'Freby's Fashion GH',
     color: '#171717',
     colorLight: '#f9fafb',
     colorDark: '#262626',
-    url: (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashiongh.com').replace(/\/+$/, ''),
+    url: (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashion.com').replace(/\/+$/, ''),
     phone: process.env.CONTACT_PHONE || '0244720197',
 };
 
@@ -154,7 +154,7 @@ export async function sendSMS({ to, message }: { to: string; message: string }) 
             },
             body: JSON.stringify({
                 type: 1,
-                senderid: process.env.SMS_SENDER_ID || 'FrebysGH',
+                senderid: process.env.SMS_SENDER_ID || 'Freby'sGH',
                 messages: [
                     {
                         recipient: recipient,
@@ -186,7 +186,7 @@ export async function sendSMS({ to, message }: { to: string; message: string }) 
 export async function sendOrderConfirmation(order: any) {
     const { id, email, phone: orderPhone, shipping_address, total, created_at, order_number, metadata } = order;
 
-    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashiongh.com').replace(/\/+$/, '');
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashion.com').replace(/\/+$/, '');
 
     // Build customer name from available sources
     const getName = () => {
@@ -296,7 +296,7 @@ ${emailButton('View Order in Admin', `${baseUrl}/admin/orders/${id}`)}
     if (phone) {
         const smsMessage = trackingNumber
             ? `Hi ${name}, your order #${order_number || id} is confirmed! Tracking: ${trackingNumber}. Track here: ${trackingUrl}${shippingNotesSms}`
-            : `Hi ${name}, your order #${order_number || id} at Frebys Fashion GH is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
+            : `Hi ${name}, your order #${order_number || id} at Freby's Fashion GH is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
         
         await sendSMS({
             to: phone,
@@ -308,7 +308,7 @@ ${emailButton('View Order in Admin', `${baseUrl}/admin/orders/${id}`)}
 export async function sendOrderStatusUpdate(order: any, newStatus: string) {
     const { id, email, phone: orderPhone, shipping_address, order_number, metadata } = order;
 
-    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashiongh.com').replace(/\/+$/, '');
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashion.com').replace(/\/+$/, '');
 
     // Build customer name from available sources
     const getName = () => {
@@ -444,7 +444,7 @@ ${emailButton('Start Shopping', `${BRAND.url}/shop`)}
     if (phone) {
         await sendSMS({
             to: phone,
-            message: `Welcome ${firstName}! Thanks for joining Frebys Fashion GH.`
+            message: `Welcome ${firstName}! Thanks for joining Freby's Fashion GH.`
         });
     }
 }
@@ -452,7 +452,7 @@ ${emailButton('Start Shopping', `${BRAND.url}/shop`)}
 export async function sendPaymentLink(order: any) {
     const { id, email, phone: orderPhone, shipping_address, total, order_number, metadata } = order;
 
-    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashiongh.com').replace(/\/+$/, '');
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) || 'https://frebysfashion.com').replace(/\/+$/, '');
     const paymentUrl = `${baseUrl}/pay/${id}`;
 
     // Build customer name from available sources

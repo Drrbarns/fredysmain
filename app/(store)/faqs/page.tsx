@@ -25,7 +25,7 @@ export default function FAQsPage() {
     {
       category: 'orders',
       question: 'Can I modify or cancel my order?',
-      answer: "You can request changes within 1 hour of placing your order. Contact support immediately at 024 472 0197 or hello@frebysfashiongh.com. Once processing starts, changes may be limited."
+      answer: "You can request changes within 1 hour of placing your order. Contact support immediately at 024 472 0197 or hello@frebysfashion.com. Once processing starts, changes may be limited."
     },
     {
       category: 'orders',
@@ -50,7 +50,7 @@ export default function FAQsPage() {
     {
       category: 'shipping',
       question: 'Do you ship outside Ghana?',
-      answer: 'Yes. Frebys Fashion GH offers worldwide delivery from Ghana.'
+      answer: 'Yes. Freby's Fashion GH offers worldwide delivery from Ghana.'
     },
     {
       category: 'shipping',

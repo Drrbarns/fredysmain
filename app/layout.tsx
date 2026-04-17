@@ -22,7 +22,7 @@ const inter = Inter({
 const siteUrl = (
   process.env.NEXT_PUBLIC_APP_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-  "https://frebysfashiongh.com"
+  "https://frebysfashion.com"
 ).replace(/\/+$/, "");
 
 /** WhatsApp / Facebook / iMessage read og:image — use absolute URL + explicit meta tags below. */
@@ -30,17 +30,17 @@ const shareImageUrl = `${siteUrl}/frebys-logo.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  applicationName: "Frebys Fashion GH",
+  applicationName: "Freby's Fashion GH",
   category: "shopping",
   referrer: "origin-when-cross-origin",
   title: {
-    default: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
-    template: "%s | Frebys Fashion GH",
+    default: "Freby's Fashion GH | Kids Ready-to-Wear Ankara Clothes",
+    template: "%s | Freby's Fashion GH",
   },
   description:
-    "Frebys Fashion GH creates unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear with worldwide delivery from Haatso, Accra, Ghana.",
+    "Freby's Fashion GH creates unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear with worldwide delivery from Haatso, Accra, Ghana.",
   keywords: [
-    "Frebys Fashion GH",
+    "Freby's Fashion GH",
     "kids Ankara clothes",
     "kids ready to wear Ghana",
     "children fashion Ghana",
@@ -50,9 +50,9 @@ export const metadata: Metadata = {
     "Haatso Accra",
     "worldwide kids fashion delivery",
   ],
-  authors: [{ name: "Frebys Fashion GH" }],
-  creator: "Frebys Fashion GH",
-  publisher: "Frebys Fashion GH",
+  authors: [{ name: "Freby's Fashion GH" }],
+  creator: "Freby's Fashion GH",
+  publisher: "Freby's Fashion GH",
   robots: {
     index: true,
     follow: true,
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Frebys Fashion GH",
+    title: "Freby's Fashion GH",
   },
   formatDetection: {
     telephone: true,
@@ -95,23 +95,23 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_GH",
     url: siteUrl,
-    title: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
+    title: "Freby's Fashion GH | Kids Ready-to-Wear Ankara Clothes",
     description:
       "Unique kids wear for all occasions. Passion for kids fashion with casual and luxury Ankara styles. Worldwide delivery from Haatso, Accra, Ghana.",
-    siteName: "Frebys Fashion GH",
+    siteName: "Freby's Fashion GH",
     images: [
       {
         url: shareImageUrl,
         width: 593,
         height: 421,
         type: "image/png",
-        alt: "Frebys Fashion GH logo",
+        alt: "Freby's Fashion GH logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Frebys Fashion GH | Kids Ready-to-Wear Ankara Clothes",
+    title: "Freby's Fashion GH | Kids Ready-to-Wear Ankara Clothes",
     description:
       "Unique casual and luxury kids Ankara wear with worldwide delivery from Ghana.",
     images: [shareImageUrl],
@@ -140,7 +140,7 @@ export default function RootLayout({
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="593" />
         <meta property="og:image:height" content="421" />
-        <meta property="og:image:alt" content="Frebys Fashion GH logo" />
+        <meta property="og:image:alt" content="Freby's Fashion GH logo" />
         <meta name="twitter:image" content={shareImageUrl} />
         <link rel="image_src" href={shareImageUrl} />
 
@@ -148,7 +148,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#166d1f" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Frebys Fashion GH" />
+        <meta name="apple-mobile-web-app-title" content="Freby's Fashion GH" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#166d1f" />
         <meta name="msapplication-tap-highlight" content="no" />
@@ -177,7 +177,7 @@ export default function RootLayout({
                 {
                   "@type": "Organization",
                   "@id": `${siteUrl}#organization`,
-                  "name": "Frebys Fashion GH",
+                  "name": "Freby's Fashion GH",
                   "url": siteUrl,
                   "logo": `${siteUrl}/frebys-logo.png`,
                   "image": shareImageUrl,
@@ -193,7 +193,7 @@ export default function RootLayout({
                 {
                   "@type": "ClothingStore",
                   "@id": `${siteUrl}#store`,
-                  "name": "Frebys Fashion GH",
+                  "name": "Freby's Fashion GH",
                   "url": siteUrl,
                   "image": shareImageUrl,
                   "telephone": "+233244720197",
