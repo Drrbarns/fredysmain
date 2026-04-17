@@ -29,9 +29,13 @@ export async function POST(req: Request) {
         }
 
         // Ensure environment variables are set
-        if (!process.env.MOOLRE_API_USER || !process.env.MOOLRE_API_PUBKEY || !process.env.MOOLRE_ACCOUNT_NUMBER) {
-            console.error('Missing Moolre credentials');
-            return NextResponse.json({ success: false, message: 'Payment gateway configuration error' }, { status: 500 });
+        const missingVars: string[] = [];
+        if (!process.env.MOOLRE_API_USER) missingVars.push('MOOLRE_API_USER');
+        if (!process.env.MOOLRE_API_PUBKEY) missingVars.push('MOOLRE_API_PUBKEY');
+        if (!process.env.MOOLRE_ACCOUNT_NUMBER) missingVars.push('MOOLRE_ACCOUNT_NUMBER');
+        if (missingVars.length > 0) {
+            console.error('Missing Moolre credentials:', missingVars.join(', '));
+            return NextResponse.json({ success: false, message: `Payment gateway configuration error. Missing: ${missingVars.join(', ')}` }, { status: 500 });
         }
 
         // SECURITY: Fetch the order from the database and use its total.
