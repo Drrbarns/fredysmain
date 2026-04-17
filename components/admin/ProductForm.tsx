@@ -282,10 +282,10 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
     const [productionStaff, setProductionStaff] = useState<{ id: string; full_name: string }[]>([]);
 
     const generateSeoFields = (name: string, desc: string) => {
-        const title = name ? `${name} | Freby's Fashion GH` : '';
+        const title = name ? `${name} | Freby’s Fashion GH` : '';
         const metaDesc = desc
             ? (desc.length > 160 ? desc.substring(0, 157).trimEnd() + '...' : desc)
-            : name ? `Shop ${name} at Freby's Fashion GH. Unique kids Ankara fashion in Ghana with worldwide delivery.` : '';
+            : name ? `Shop ${name} at Freby’s Fashion GH. Unique kids Ankara fashion in Ghana with worldwide delivery.` : '';
         const kw = name
             ? [...new Set([
                 name.toLowerCase(),
@@ -1656,7 +1656,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                     value={seoTitle}
                                     onChange={(e) => { setSeoTitle(e.target.value); setSeoTitleEdited(true); }}
                                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600"
-                                    placeholder="e.g. Ankara Party Dress | Freby's Fashion GH"
+                                    placeholder="e.g. Ankara Party Dress | Freby’s Fashion GH"
                                 />
                             </div>
 
@@ -1672,7 +1672,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                     value={metaDescription}
                                     onChange={(e) => { setMetaDescription(e.target.value); setMetaDescEdited(true); }}
                                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 resize-none"
-                                    placeholder="e.g. Shop premium kids Ankara outfits at Freby's Fashion GH. Worldwide delivery available."
+                                    placeholder="e.g. Shop premium kids Ankara outfits at Freby’s Fashion GH. Worldwide delivery available."
                                 />
                             </div>
 

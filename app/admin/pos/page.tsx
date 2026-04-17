@@ -121,7 +121,7 @@ function printReceipt(order: {
     .footer { font-size: 10px; color: #555; margin-top: 8px; }
 </style></head><body>
     <div class="center">
-        <div class="store-name">FREBY'S FASHION GH</div>
+        <div class="store-name">FREBY’S FASHION GH</div>
         <div style="font-size:10px;margin-top:2px;">Kids Ready-to-Wear Ankara</div>
         <div style="font-size:10px;">Tel: 024 472 0197</div>
     </div>

@@ -113,7 +113,7 @@ export default function PWAPrompt() {
                   <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-gray-100 flex items-center justify-center">
                     <img
                       src="/frebys-logo.png"
-                      alt="Freby's Fashion GH"
+                      alt="Freby’s Fashion GH"
                       className="w-10 h-10 object-contain"
                     />
                   </div>
@@ -207,12 +207,12 @@ export default function PWAPrompt() {
                   <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-gray-100 flex items-center justify-center">
                     <img
                       src="/frebys-logo.png"
-                      alt="Freby's Fashion GH"
+                      alt="Freby’s Fashion GH"
                       className="w-10 h-10 object-contain"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-900 text-lg truncate">Freby's Fashion GH</h3>
+                    <h3 className="font-bold text-gray-900 text-lg truncate">Freby’s Fashion GH</h3>
                     <p className="text-sm text-gray-500">frebysfashion.com</p>
                     <div className="flex items-center gap-1 mt-1">
                       {[1, 2, 3, 4, 5].map((star) => (

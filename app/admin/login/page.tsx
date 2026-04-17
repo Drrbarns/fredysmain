@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
           <Link href="/" className="inline-block">
             <img
               src="/frebys-logo.png"
-              alt="Freby's Fashion GH"
+              alt="Freby’s Fashion GH"
               className="h-16 sm:h-20 w-auto object-contain mx-auto"
             />
           </Link>

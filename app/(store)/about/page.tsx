@@ -22,7 +22,7 @@ export default function AboutPage() {
   usePageTitle('Our Story');
   const { getSetting } = useCMS();
 
-  const siteName = getSetting('site_name') || 'Freby's Fashion GH';
+  const siteName = getSetting('site_name') || 'Freby’s Fashion GH';
 
   const valueCards: ValueCard[] = [
     {
@@ -107,7 +107,7 @@ export default function AboutPage() {
                 <div className="relative overflow-hidden rounded-2xl aspect-[4/5] border border-brand-green/15 bg-brand-green/10">
                   <Image
                     src="/hero-frebys-1.png"
-                    alt="Freby's kids fashion"
+                    alt="Freby’s kids fashion"
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 50vw, 33vw"
@@ -116,7 +116,7 @@ export default function AboutPage() {
                 <div className="relative overflow-hidden rounded-2xl aspect-[4/5] border border-brand-green/15 bg-brand-green/10 mt-8">
                   <Image
                     src="/hero-frebys-2.png"
-                    alt="Freby's Ankara style"
+                    alt="Freby’s Ankara style"
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 50vw, 33vw"
@@ -163,7 +163,7 @@ export default function AboutPage() {
               Our process
             </p>
             <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">
-              How every Freby's piece comes to life.
+              How every Freby’s piece comes to life.
             </h2>
           </div>
 

@@ -30,11 +30,11 @@ export default function PWASplash() {
       <div className="pwa-splash-logo mb-6">
         <img
           src="/frebys-logo.png"
-          alt="Freby's Fashion GH"
+          alt="Freby’s Fashion GH"
           className="w-20 h-20 object-contain"
         />
       </div>
-      <h1 className="text-white text-xl font-bold font-serif mb-2">Freby's Fashion GH</h1>
+      <h1 className="text-white text-xl font-bold font-serif mb-2">Freby’s Fashion GH</h1>
       <p className="text-gray-300 text-sm font-medium mb-8">Premium Imports</p>
       <div className="pwa-splash-dots flex gap-1.5">
         <span className="w-2 h-2 bg-white rounded-full" />

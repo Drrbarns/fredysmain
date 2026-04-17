@@ -134,7 +134,7 @@ export default function ContactPage() {
     {
       question: 'Do you offer international shipping?',
       answer:
-        "Yes. Freby's Fashion GH offers worldwide delivery from Haatso, Accra, Ghana.",
+        "Yes. Freby’s Fashion GH offers worldwide delivery from Haatso, Accra, Ghana.",
     },
     {
       question: 'What payment methods do you accept?',

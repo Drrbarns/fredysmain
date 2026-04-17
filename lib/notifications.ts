@@ -4,9 +4,9 @@ import { escapeHtml } from '@/lib/sanitize';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'missing_api_key');
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@frebysfashion.com';
-const EMAIL_FROM = process.env.EMAIL_FROM || 'Freby's Fashion GH <noreply@frebysfashion.com>';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'Freby’s Fashion GH <noreply@frebysfashion.com>';
 const BRAND = {
-    name: 'Freby's Fashion GH',
+    name: 'Freby’s Fashion GH',
     color: '#171717',
     colorLight: '#f9fafb',
     colorDark: '#262626',
@@ -154,7 +154,7 @@ export async function sendSMS({ to, message }: { to: string; message: string }) 
             },
             body: JSON.stringify({
                 type: 1,
-                senderid: process.env.SMS_SENDER_ID || 'Freby'sGH',
+                senderid: process.env.SMS_SENDER_ID || 'Freby’sGH',
                 messages: [
                     {
                         recipient: recipient,
@@ -296,7 +296,7 @@ ${emailButton('View Order in Admin', `${baseUrl}/admin/orders/${id}`)}
     if (phone) {
         const smsMessage = trackingNumber
             ? `Hi ${name}, your order #${order_number || id} is confirmed! Tracking: ${trackingNumber}. Track here: ${trackingUrl}${shippingNotesSms}`
-            : `Hi ${name}, your order #${order_number || id} at Freby's Fashion GH is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
+            : `Hi ${name}, your order #${order_number || id} at Freby’s Fashion GH is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
         
         await sendSMS({
             to: phone,
@@ -444,7 +444,7 @@ ${emailButton('Start Shopping', `${BRAND.url}/shop`)}
     if (phone) {
         await sendSMS({
             to: phone,
-            message: `Welcome ${firstName}! Thanks for joining Freby's Fashion GH.`
+            message: `Welcome ${firstName}! Thanks for joining Freby’s Fashion GH.`
         });
     }
 }

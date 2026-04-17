@@ -27,7 +27,7 @@ export default function Footer() {
   const { getSetting } = useCMS();
   const rawSiteName = getSetting("site_name") || "";
   const siteName =
-    rawSiteName && !/deliz/i.test(rawSiteName) ? rawSiteName : "Freby's Fashion GH";
+    rawSiteName && !/deliz/i.test(rawSiteName) ? rawSiteName : "Freby’s Fashion GH";
   const siteTagline =
     getSetting("site_tagline") ||
     "Unique kids ready-to-wear Ankara clothes for all occasions.";

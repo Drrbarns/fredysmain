@@ -10,7 +10,7 @@ export default function MaintenancePage() {
             We'll Be Right Back
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            We are performing scheduled updates to improve your Freby's Fashion GH shopping experience. We will be back online shortly.
+            We are performing scheduled updates to improve your Freby’s Fashion GH shopping experience. We will be back online shortly.
           </p>
         </div>
 

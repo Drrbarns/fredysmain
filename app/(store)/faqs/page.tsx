@@ -50,7 +50,7 @@ export default function FAQsPage() {
     {
       category: 'shipping',
       question: 'Do you ship outside Ghana?',
-      answer: 'Yes. Freby's Fashion GH offers worldwide delivery from Ghana.'
+      answer: 'Yes. Freby’s Fashion GH offers worldwide delivery from Ghana.'
     },
     {
       category: 'shipping',

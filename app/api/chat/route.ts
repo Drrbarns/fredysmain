@@ -239,7 +239,7 @@ const LLM_TOOLS = [
     type: 'function' as const,
     function: {
       name: 'get_website_info',
-      description: 'Search the website\'s pages and content for information. Use this to answer ANY question about the business, policies, how things work, FAQs, contact info, shipping, returns, payment methods, account management, checkout process, blog content, or anything else about Freby's Fashion GH. This searches all public pages of the website. ALWAYS use this tool when a customer asks about the business, policies, processes, or anything non-product related.',
+      description: 'Search the website\'s pages and content for information. Use this to answer ANY question about the business, policies, how things work, FAQs, contact info, shipping, returns, payment methods, account management, checkout process, blog content, or anything else about Freby’s Fashion GH. This searches all public pages of the website. ALWAYS use this tool when a customer asks about the business, policies, processes, or anything non-product related.',
       parameters: {
         type: 'object',
         properties: {
@@ -305,7 +305,7 @@ const LLM_TOOLS = [
 function buildSystemPrompt(profile: ChatCustomerProfile | null, pagePath?: string): string {
   const now = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  let prompt = `You are the AI shopping assistant for Freby's Fashion GH — a kids ready-to-wear Ankara clothing brand. We create unique kids wear for all occasions, offering both casual and luxury styles. We are located in Haatso, Accra, Ghana and deliver worldwide. Today is ${now}.
+  let prompt = `You are the AI shopping assistant for Freby’s Fashion GH — a kids ready-to-wear Ankara clothing brand. We create unique kids wear for all occasions, offering both casual and luxury styles. We are located in Haatso, Accra, Ghana and deliver worldwide. Today is ${now}.
 
 ABSOLUTE RULES — NEVER BREAK THESE:
 - NEVER show your internal reasoning, thinking steps, chain-of-thought, or planning process. NEVER output anything like "Step 1:", "## Step", "Let me think", or similar. Only output the final customer-facing response.
