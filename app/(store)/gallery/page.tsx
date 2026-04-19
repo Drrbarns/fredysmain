@@ -6,25 +6,25 @@ const siteUrl =
   process.env.NEXT_PUBLIC_APP_URL || 'https://frebysfashion.com';
 
 export const metadata: Metadata = {
-  title: 'Lookbook',
+  title: 'Gallery | Freby\u2019s Fashion GH',
   description:
-    'Browse photos of our kids ready-to-wear Ankara dresses and studio creations from Freby’s Fashion GH.',
-  alternates: { canonical: `${siteUrl}/lookbook` },
+    'Browse photos of our kids ready-to-wear Ankara dresses and studio creations from Freby\u2019s Fashion GH in Haatso, Accra.',
+  alternates: { canonical: `${siteUrl}/gallery` },
   openGraph: {
-    title: 'Lookbook | Freby’s Fashion GH',
+    title: 'Gallery | Freby\u2019s Fashion GH',
     description:
-      'Photos of our latest kids Ankara outfits — Haatso, Accra, worldwide delivery.',
-    url: `${siteUrl}/lookbook`,
+      'Photos of our latest kids Ankara outfits \u2014 handmade in Haatso, Accra with worldwide delivery.',
+    url: `${siteUrl}/gallery`,
     type: 'website',
   },
 };
 
-export default function LookbookPage() {
+export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-white">
       <PageHero
-        title="Lookbook"
-        subtitle="A walk through our dresses and creations — tap any photo to view it larger."
+        title="Gallery"
+        subtitle="A walk through our dresses and creations \u2014 tap any photo to view it larger."
       />
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <LookbookGallery />

@@ -49,6 +49,16 @@ export const metadata: Metadata = {
     "Ankara outfits for kids",
     "Haatso Accra",
     "worldwide kids fashion delivery",
+    "African print kids clothing",
+    "Ankara dresses for children",
+    "kids clothing brand Ghana",
+    "buy kids Ankara online",
+    "children occasion outfits Ghana",
+    "birthday outfit kids Ankara",
+    "Ghana kids fashion store",
+    "Accra children clothing",
+    "kids ready-to-wear Ankara",
+    "unique kids wear",
   ],
   authors: [{ name: "Freby’s Fashion GH" }],
   creator: "Freby’s Fashion GH",
@@ -167,7 +177,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
 
-        {/* Structured Data - Organization + Local Business */}
+        {/* Structured Data: Organization + LocalBusiness + WebSite + SearchAction */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -178,32 +188,40 @@ export default function RootLayout({
                   "@type": "Organization",
                   "@id": `${siteUrl}#organization`,
                   "name": "Freby’s Fashion GH",
+                  "alternateName": ["Frebys Fashion GH", "Freby’s Fashion Ghana", "Frebys Kids Ankara"],
                   "url": siteUrl,
-                  "logo": `${siteUrl}/frebys-logo.png`,
+                  "logo": { "@type": "ImageObject", "url": `${siteUrl}/frebys-logo.png`, "width": 593, "height": 421 },
                   "image": shareImageUrl,
-                  "description": "Unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear with worldwide delivery.",
+                  "description": "Unique kids ready-to-wear Ankara clothes for all occasions. Casual and luxury kids wear handmade in Haatso, Accra with worldwide delivery.",
+                  "foundingLocation": "Haatso, Accra, Ghana",
+                  "knowsAbout": ["Kids fashion", "Ankara fabric", "African print clothing", "Children ready-to-wear", "Kids occasion outfits"],
                   "sameAs": ["https://wa.me/233244720197"],
-                  "contactPoint": {
-                    "@type": "ContactPoint",
-                    "contactType": "customer service",
-                    "telephone": "+233244720197",
-                    "availableLanguage": "English"
-                  }
+                  "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "telephone": "+233244720197", "email": "info@frebysfashion.com", "availableLanguage": ["English"] }
                 },
                 {
                   "@type": "ClothingStore",
                   "@id": `${siteUrl}#store`,
                   "name": "Freby’s Fashion GH",
                   "url": siteUrl,
-                  "image": shareImageUrl,
+                  "image": [shareImageUrl],
                   "telephone": "+233244720197",
+                  "email": "info@frebysfashion.com",
                   "priceRange": "$$",
-                  "address": {
-                    "@type": "PostalAddress",
-                    "addressLocality": "Haatso, Accra",
-                    "addressCountry": "GH"
-                  },
-                  "areaServed": "Worldwide"
+                  "currenciesAccepted": "GHS",
+                  "paymentAccepted": "Mobile Money, Cash",
+                  "openingHoursSpecification": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "08:00", "closes": "18:00" },
+                  "address": { "@type": "PostalAddress", "streetAddress": "Haatso", "addressLocality": "Accra", "addressRegion": "Greater Accra", "addressCountry": "GH" },
+                  "geo": { "@type": "GeoCoordinates", "latitude": 5.6505, "longitude": -0.2092 },
+                  "areaServed": [{ "@type": "Country", "name": "Ghana" }, { "@type": "Place", "name": "Worldwide" }],
+                  "hasOfferCatalog": { "@type": "OfferCatalog", "name": "Kids Ankara Clothing", "itemListElement": [{ "@type": "OfferCatalog", "name": "Casual Kids Wear" }, { "@type": "OfferCatalog", "name": "Luxury Kids Wear" }, { "@type": "OfferCatalog", "name": "Occasion Outfits" }] }
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": `${siteUrl}#website`,
+                  "name": "Freby’s Fashion GH",
+                  "url": siteUrl,
+                  "publisher": { "@id": `${siteUrl}#organization` },
+                  "potentialAction": { "@type": "SearchAction", "target": { "@type": "EntryPoint", "urlTemplate": `${siteUrl}/shop?search={search_term_string}` }, "query-input": "required name=search_term_string" }
                 }
               ]
             })

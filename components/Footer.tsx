@@ -91,7 +91,7 @@ export default function Footer() {
                 <li><Link href="/categories" className="hover:text-emerald-300 transition-colors flex items-center gap-2"><i className="ri-arrow-right-s-line opacity-50"></i> Categories</Link></li>
                 <li><Link href="/shop?sort=newest" className="hover:text-emerald-300 transition-colors flex items-center gap-2"><i className="ri-arrow-right-s-line opacity-50"></i> New Arrivals</Link></li>
                 <li><Link href="/shop?sort=bestsellers" className="hover:text-emerald-300 transition-colors flex items-center gap-2"><i className="ri-arrow-right-s-line opacity-50"></i> Best Sellers</Link></li>
-                <li><Link href="/lookbook" className="hover:text-emerald-300 transition-colors flex items-center gap-2"><i className="ri-arrow-right-s-line opacity-50"></i> Lookbook</Link></li>
+                <li><Link href="/gallery" className="hover:text-emerald-300 transition-colors flex items-center gap-2"><i className="ri-arrow-right-s-line opacity-50"></i> Gallery</Link></li>
               </ul>
             </FooterSection>
 

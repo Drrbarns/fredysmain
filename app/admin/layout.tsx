@@ -227,7 +227,7 @@ export default function AdminLayout({
       permissionKey: 'categories'
     },
     {
-      title: 'Homepage gallery',
+      title: 'Gallery',
       icon: 'ri-gallery-line',
       path: '/admin/homepage-gallery',
       permissionKey: 'products'

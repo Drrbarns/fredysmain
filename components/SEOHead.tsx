@@ -47,6 +47,11 @@ export function generateMetadata({
     "casual kids wear",
     "luxury kids wear",
     "worldwide delivery",
+    "African print kids clothing",
+    "buy kids Ankara online",
+    "Ghana kids fashion store",
+    "Accra children clothing",
+    "kids ready-to-wear Ankara",
   ];
 
   const allKeywords = [...new Set([...keywords, ...defaultKeywords])];
