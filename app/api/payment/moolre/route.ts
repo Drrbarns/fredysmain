@@ -38,6 +38,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, message: `Payment gateway configuration error. Missing: ${missingVars.join(', ')}` }, { status: 500 });
         }
 
+        const moolreApiUser = process.env.MOOLRE_API_USER as string;
+        const moolreApiPubkey = process.env.MOOLRE_API_PUBKEY as string;
+
         // SECURITY: Fetch the order from the database and use its total.
         // NEVER trust the amount from the client.
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
@@ -139,8 +142,8 @@ export async function POST(req: Request) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-USER': process.env.MOOLRE_API_USER,
-                'X-API-PUBKEY': process.env.MOOLRE_API_PUBKEY
+                'X-API-USER': moolreApiUser,
+                'X-API-PUBKEY': moolreApiPubkey
             },
             body: JSON.stringify(payload)
         });

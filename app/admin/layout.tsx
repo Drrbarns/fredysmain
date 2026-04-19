@@ -227,6 +227,12 @@ export default function AdminLayout({
       permissionKey: 'categories'
     },
     {
+      title: 'Homepage gallery',
+      icon: 'ri-gallery-line',
+      path: '/admin/homepage-gallery',
+      permissionKey: 'products'
+    },
+    {
       title: 'Customers',
       icon: 'ri-group-line',
       path: '/admin/customers',
