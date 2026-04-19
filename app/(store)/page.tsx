@@ -10,7 +10,6 @@ import ProductCard, {
   getColorHex,
 } from '@/components/ProductCard';
 import AnimatedSection, { AnimatedGrid } from '@/components/AnimatedSection';
-import HomepageLookbookGallery from '@/components/HomepageLookbookGallery';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function Home() {
@@ -226,8 +225,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <HomepageLookbookGallery />
 
       <AnimatedSection className="bg-white py-8 sm:py-10 border-b border-brand-green/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import AnimatedSection from '@/components/AnimatedSection';
+import Link from 'next/link';
 
 export type LookbookItem = {
   id: string;
@@ -12,8 +12,10 @@ export type LookbookItem = {
   sort_order: number;
 };
 
-export default function HomepageLookbookGallery() {
+/** Full-page dress gallery (same data as admin “Homepage gallery”). */
+export default function LookbookGallery() {
   const [items, setItems] = useState<LookbookItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   useEffect(() => {
@@ -27,6 +29,8 @@ export default function HomepageLookbookGallery() {
         }
       } catch {
         /* ignore */
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     })();
     return () => {
@@ -48,55 +52,64 @@ export default function HomepageLookbookGallery() {
     return () => window.removeEventListener('keydown', onKey);
   }, [lightbox, items.length, close]);
 
-  if (items.length === 0) return null;
+  if (loading) {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="aspect-[3/4] rounded-2xl bg-gray-100 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-brand-green/25 bg-brand-greenLight/30">
+        <i className="ri-image-2-line text-4xl text-brand-green/60 mb-4 block" />
+        <p className="text-lg font-semibold text-gray-900">Gallery coming soon</p>
+        <p className="mt-2 text-sm text-gray-600 max-w-md mx-auto">
+          We’re preparing new photos of our dresses. Browse the shop in the meantime.
+        </p>
+        <Link
+          href="/shop"
+          className="inline-flex mt-6 items-center rounded-full bg-brand-orange px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-orangeDark transition-colors"
+        >
+          Shop collection
+          <i className="ri-arrow-right-line ml-2" />
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
-      <AnimatedSection className="bg-brand-greenLight/40 py-10 sm:py-14 border-y border-brand-green/15">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
-            <div>
-              <p className="text-xs font-semibold tracking-[0.25em] text-brand-greenDark uppercase">
-                Lookbook
-              </p>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-gray-900">
-                Our dresses &amp; creations
-              </h2>
-              <p className="mt-2 text-sm text-gray-700 max-w-xl">
-                A glimpse of recent pieces from the studio — tap any photo to view larger.
-              </p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        {items.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => setLightbox(index)}
+            className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-brand-green/15 bg-white shadow-sm text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange"
+          >
+            <Image
+              src={item.image_url}
+              alt={item.title || 'Lookbook photo'}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-90" />
+            <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+              {item.title ? (
+                <p className="text-sm font-semibold text-white drop-shadow line-clamp-2">{item.title}</p>
+              ) : null}
+              {item.caption ? (
+                <p className="mt-1 text-xs text-white/90 line-clamp-2">{item.caption}</p>
+              ) : null}
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {items.map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setLightbox(index)}
-                className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-brand-green/15 bg-white shadow-sm text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange"
-              >
-                <Image
-                  src={item.image_url}
-                  alt={item.title || 'Lookbook photo'}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-90" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                  {item.title ? (
-                    <p className="text-sm font-semibold text-white drop-shadow line-clamp-2">{item.title}</p>
-                  ) : null}
-                  {item.caption ? (
-                    <p className="mt-1 text-xs text-white/90 line-clamp-2">{item.caption}</p>
-                  ) : null}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </AnimatedSection>
+          </button>
+        ))}
+      </div>
 
       {lightbox !== null && items[lightbox] && (
         <div

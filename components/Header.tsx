@@ -145,6 +145,7 @@ export default function Header() {
                 <div className="inline-flex items-center gap-1 rounded-full border border-brand-green/20 bg-white/90 p-1 shadow-sm">
                   <NavLink href="/shop" isActive={pathname === '/shop'}>Shop</NavLink>
                   <NavLink href="/categories" isActive={pathname === '/categories'}>Categories</NavLink>
+                  <NavLink href="/lookbook" isActive={pathname === '/lookbook'}>Lookbook</NavLink>
                   <NavLink href="/about" isActive={pathname === '/about'}>About</NavLink>
                   <NavLink href="/contact" isActive={pathname === '/contact'}>Contact</NavLink>
                 </div>
@@ -308,6 +309,7 @@ export default function Header() {
                 { label: 'Home', href: '/' },
                 { label: 'Shop', href: '/shop' },
                 { label: 'Categories', href: '/categories' },
+                { label: 'Lookbook', href: '/lookbook' },
                 { label: 'About', href: '/about' },
                 { label: 'Contact', href: '/contact' },
               ].map((link, index) => (
