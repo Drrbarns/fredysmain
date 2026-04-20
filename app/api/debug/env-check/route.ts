@@ -1,0 +1,50 @@
+import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
+
+/**
+ * TEMPORARY diagnostic endpoint. Reports presence (not values) of key env vars.
+ * DELETE THIS FILE after debugging.
+ */
+export async function GET() {
+  const keys = [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'NEXT_PUBLIC_APP_URL',
+    'MOOLRE_API_USER',
+    'MOOLRE_API_PUBKEY',
+    'MOOLRE_ACCOUNT_NUMBER',
+    'MOOLRE_MERCHANT_EMAIL',
+    'MOOLRE_CALLBACK_SECRET',
+    'MOOLRE_SMS_API_KEY',
+    'RESEND_API_KEY',
+    'ADMIN_EMAIL',
+    'EMAIL_FROM',
+  ];
+
+  const report: Record<string, unknown> = {};
+  for (const k of keys) {
+    const v = process.env[k];
+    if (v === undefined) {
+      report[k] = { present: false };
+    } else {
+      report[k] = {
+        present: true,
+        length: v.length,
+        first2: v.slice(0, 2),
+        last2: v.slice(-2),
+        hasLeadingSpace: /^\s/.test(v),
+        hasTrailingSpace: /\s$/.test(v),
+      };
+    }
+  }
+
+  return NextResponse.json({
+    vercelEnv: process.env.VERCEL_ENV || null,
+    vercelUrl: process.env.VERCEL_URL || null,
+    nodeEnv: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+    report,
+  });
+}
