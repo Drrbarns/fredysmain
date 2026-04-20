@@ -40,11 +40,17 @@ export async function GET() {
     }
   }
 
+  const moolreKeyNames = Object.keys(process.env)
+    .filter((k) => k.toUpperCase().includes('MOOLRE'))
+    .sort();
+
   return NextResponse.json({
     vercelEnv: process.env.VERCEL_ENV || null,
     vercelUrl: process.env.VERCEL_URL || null,
     nodeEnv: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),
+    /** Exact env keys containing "MOOLRE" (names only) — catches typos vs MOOLRE_API_USER */
+    moolreKeyNames,
     report,
   });
 }
