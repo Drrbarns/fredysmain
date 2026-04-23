@@ -9,12 +9,14 @@ import { useRecaptcha } from '@/hooks/useRecaptcha';
 export default function AdminLoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { getToken, verifying } = useRecaptcha();
+
+  const looksLikeEmail = identifier.includes('@');
 
   useEffect(() => {
     const errorParam = searchParams.get('error');
@@ -43,8 +45,26 @@ export default function AdminLoginPage() {
     }
 
     try {
+      // Resolve the identifier (email or phone) to an email address before
+      // calling Supabase Auth. The server-side route looks up the admin/staff
+      // profile by phone when needed and never leaks account existence for
+      // non-admin users.
+      let emailForAuth = identifier.trim();
+      if (!emailForAuth.includes('@')) {
+        const resolveRes = await fetch('/api/admin/resolve-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: emailForAuth })
+        });
+        const resolveJson = await resolveRes.json().catch(() => ({}));
+        if (!resolveRes.ok || !resolveJson.email) {
+          throw new Error(resolveJson.error || 'No admin account matches that phone number.');
+        }
+        emailForAuth = resolveJson.email;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: emailForAuth,
         password
       });
 
@@ -63,7 +83,7 @@ export default function AdminLoginPage() {
     } catch (err: any) {
       const msg = err?.message || 'Login failed';
       if (msg.toLowerCase().includes('invalid login credentials') || msg.toLowerCase().includes('invalid_credentials')) {
-        setError('Invalid email or password. Use the admin account from your .env.local (ADMIN_EMAIL / ADMIN_PASSWORD) or run: node scripts/create-admin.mjs');
+        setError('Invalid credentials. Check your email/phone and password, or run: node scripts/create-admin.mjs');
       } else {
         setError(msg);
       }
@@ -101,19 +121,26 @@ export default function AdminLoginPage() {
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Email Address
+                Email or Phone
               </label>
               <div className="relative">
-                <i className="ri-mail-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                <i
+                  className={`${looksLikeEmail ? 'ri-mail-line' : 'ri-smartphone-line'} absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg`}
+                ></i>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  inputMode={looksLikeEmail ? 'email' : 'text'}
+                  autoComplete="username"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
-                  placeholder="admin@frebysfashion.com"
+                  placeholder="admin@frebysfashion.com or 0244720197"
                   required
                 />
               </div>
+              <p className="mt-1.5 text-xs text-gray-500">
+                Use your admin email or the phone number on your admin profile.
+              </p>
             </div>
 
             <div>
