@@ -24,6 +24,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Determine if any cart item is a preorder (client-supplied flag)
+    const orderIsPreorder = Array.isArray(cart) && cart.some((i: any) => i?.isPreorder === true);
+
     // 1. Create Order
     const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
@@ -44,11 +47,13 @@ export async function POST(request: Request) {
         payment_method: paymentMethod,
         shipping_address: shippingData,
         billing_address: shippingData,
+        is_preorder: orderIsPreorder,
         metadata: {
           guest_checkout: !userId,
           first_name: shippingData.firstName,
           last_name: shippingData.lastName,
           tracking_number: trackingNumber,
+          is_preorder: orderIsPreorder,
         },
       }])
       .select()
@@ -92,6 +97,7 @@ export async function POST(request: Request) {
       }
 
       const prodMeta = productMetaMap.get(productId);
+      const itemIsPreorder = !!item.isPreorder;
       orderItems.push({
         order_id: order.id,
         product_id: productId,
@@ -100,10 +106,12 @@ export async function POST(request: Request) {
         quantity: item.quantity,
         unit_price: item.price,
         total_price: item.price * item.quantity,
+        is_preorder: itemIsPreorder,
         metadata: {
           image: item.image,
           slug: item.slug,
           preorder_shipping: prodMeta?.preorder_shipping || null,
+          is_preorder: itemIsPreorder,
         },
       });
     }

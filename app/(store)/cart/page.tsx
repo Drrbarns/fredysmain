@@ -56,6 +56,7 @@ export default function CartPage() {
 
   const shipping = subtotal >= 200 ? 0 : 15;
   const total = subtotal - couponDiscount + shipping;
+  const hasPreorderItems = cartItems.some((i) => i.isPreorder);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,6 +65,18 @@ export default function CartPage() {
 
         <CartCountdown />
         {/* <FreeShippingBar currentAmount={subtotal} threshold={200} /> */}
+
+        {hasPreorderItems && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <i className="ri-time-line text-xl text-amber-700 mt-0.5"></i>
+            <div className="text-sm">
+              <p className="font-semibold text-amber-900">Your cart contains preorder items</p>
+              <p className="text-amber-800 mt-1">
+                Preorder items are produced after your order is placed and take <strong>3–4 business days</strong> to be ready before delivery or pickup.
+              </p>
+            </div>
+          </div>
+        )}
 
         {cartItems.length === 0 && savedItems.length === 0 ? (
           <section className="py-20">
@@ -113,8 +126,14 @@ export default function CartPage() {
 
                             <div className="text-sm text-gray-600 mb-3 space-y-1">
                               {item.variant && <p>Variant: {item.variant}</p>}
-                              {/* Stock status assuming always available if in cart for now */}
-                              <p className="text-gray-700 font-medium">In Stock</p>
+                              {item.isPreorder ? (
+                                <p className="inline-flex items-center gap-1.5 text-amber-800 font-medium bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                                  <i className="ri-time-line"></i>
+                                  Preorder · ready in 3–4 business days
+                                </p>
+                              ) : (
+                                <p className="text-gray-700 font-medium">In Stock</p>
+                              )}
                             </div>
 
                             <div className="flex items-center justify-between flex-wrap gap-4">

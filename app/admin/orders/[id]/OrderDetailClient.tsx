@@ -374,7 +374,15 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
               <i className="ri-arrow-left-line text-2xl"></i>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{order?.order_number}</h1>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl font-bold text-gray-900">{order?.order_number}</h1>
+                {(order?.is_preorder || order?.order_items?.some((i: any) => i.is_preorder)) && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                    <i className="ri-time-line"></i>
+                    Preorder · 3–4 days
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-gray-600">Order placed on {order ? new Date(order.created_at).toLocaleDateString() : ''}</p>
             </div>
           </div>
@@ -418,7 +426,15 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
                       )}
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">{item.product_name}</h3>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
+                        {(item.is_preorder || item.metadata?.is_preorder) && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                            <i className="ri-time-line"></i>
+                            Preorder
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600 mb-1">{item.variant_name}</p>
                       <p className="text-xs text-gray-500">SKU: {item.sku}</p>
                     </div>

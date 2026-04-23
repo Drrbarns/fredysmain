@@ -62,10 +62,11 @@ export async function POST(req: Request) {
         }
 
         // Stock validation: block payment only if items are confirmed out of stock.
+        // Preorder items are explicitly allowed to proceed even when quantity = 0.
         try {
             const { data: orderItems, error: itemsError } = await supabaseAdmin
                 .from('order_items')
-                .select('quantity, product_id, products(name, quantity, is_active)')
+                .select('quantity, product_id, is_preorder, metadata, products(name, quantity, is_active)')
                 .eq('order_id', order.id);
 
             if (itemsError) {
@@ -75,6 +76,8 @@ export async function POST(req: Request) {
                 for (const item of orderItems) {
                     const product = (item as any).products;
                     if (!product) continue;
+                    const isPreorder = (item as any).is_preorder === true || (item as any).metadata?.is_preorder === true;
+                    if (isPreorder) continue; // Preorder items bypass stock validation
                     if (!product.is_active) {
                         outOfStock.push(`${product.name} is no longer available`);
                     } else if (product.quantity < item.quantity) {

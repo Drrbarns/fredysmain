@@ -18,6 +18,7 @@ interface Order {
   phone?: string;
   shipping_address?: any;
   metadata?: any;
+  is_preorder?: boolean;
   profiles?: {
     full_name: string;
     email: string;
@@ -25,6 +26,7 @@ interface Order {
   order_items?: {
     quantity: number;
     product_name?: string;
+    is_preorder?: boolean;
   }[];
 }
 
@@ -585,9 +587,17 @@ export default function AdminOrdersPage() {
                       </div>
                     </td>
                     <td className="py-4 px-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap ${statusColors[order.status] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                        {formatStatus(order.status)}
-                      </span>
+                      <div className="flex flex-col items-start gap-1">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap ${statusColors[order.status] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+                          {formatStatus(order.status)}
+                        </span>
+                        {(order.is_preorder || order.order_items?.some((i: any) => i.is_preorder)) && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                            <i className="ri-time-line"></i>
+                            Preorder
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-2">

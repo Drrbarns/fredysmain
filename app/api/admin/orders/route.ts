@@ -72,7 +72,8 @@ export async function GET(request: Request) {
     }
 
     // Full orders list
-    const { data: ordersData, error } = await supabaseAdmin
+    const preorderOnly = searchParams.get('preorder') === '1';
+    let ordersQuery = supabaseAdmin
       .from('orders')
       .select(`
         id,
@@ -87,12 +88,20 @@ export async function GET(request: Request) {
         phone,
         shipping_address,
         metadata,
+        is_preorder,
         order_items (
           quantity,
-          product_name
+          product_name,
+          is_preorder
         )
       `)
       .order('created_at', { ascending: false });
+
+    if (preorderOnly) {
+      ordersQuery = ordersQuery.eq('is_preorder', true);
+    }
+
+    const { data: ordersData, error } = await ordersQuery;
 
     if (error) throw error;
     return NextResponse.json({ orders: ordersData || [] });

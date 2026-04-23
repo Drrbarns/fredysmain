@@ -12,6 +12,8 @@ export type CartItem = {
     slug: string;
     maxStock: number;
     moq?: number; // Minimum Order Quantity
+    /** True when the item is out of stock at purchase time and is being ordered as a preorder (produced on demand) */
+    isPreorder?: boolean;
 };
 
 type CartContextType = {

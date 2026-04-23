@@ -17,7 +17,7 @@ export async function GET(
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
     const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
-      .select('*, order_items(id, product_id, product_name, variant_name, quantity, unit_price, metadata)')
+      .select('*, order_items(id, product_id, product_name, variant_name, quantity, unit_price, metadata, is_preorder)')
       .or(isUUID ? `id.eq.${orderId}` : `order_number.eq.${orderId}`)
       .single();
 
@@ -31,6 +31,9 @@ export async function GET(
     if (order.order_items?.length) {
       for (const item of order.order_items) {
         if (!item.product_id) continue;
+
+        // Preorder items bypass stock validation
+        if (item.is_preorder === true || item.metadata?.is_preorder === true) continue;
 
         // Fetch current product stock
         const { data: product } = await supabaseAdmin

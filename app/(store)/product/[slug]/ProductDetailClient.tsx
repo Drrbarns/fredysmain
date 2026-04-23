@@ -199,9 +199,16 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
   const activePrice = selectedVariant?.price ?? product?.price ?? 0;
   const activeStock = selectedVariant ? (selectedVariant.stock ?? selectedVariant.quantity ?? product?.stockCount ?? 0) : (product?.stockCount ?? 0);
 
+  const isPreorder = activeStock === 0;
+  // When preordering, allow the customer to order up to a sensible cap so the
+  // quantity selector still works (base stock is 0).
+  const PREORDER_MAX = 50;
+  const effectiveMaxStock = isPreorder ? PREORDER_MAX : activeStock;
+
   const handleAddToCart = () => {
     if (!product) return;
     if (needsVariantSelection) return; // Safety check
+    if (needsColorSelection) return;
 
     // Build variant display string: "Color / Name" or just "Name" or just "Color"
     let variantLabel: string | undefined;
@@ -223,8 +230,9 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
       quantity: quantity,
       variant: variantLabel,
       slug: product.slug,
-      maxStock: activeStock,
-      moq: product.moq || 1
+      maxStock: effectiveMaxStock,
+      moq: product.moq || 1,
+      isPreorder,
     });
   };
 
@@ -455,13 +463,12 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                     setSelectedSize('');
                                   }
                                 }}
-                                disabled={isOutOfStock}
-                                title={color}
+                                title={isOutOfStock ? `${color} — available by preorder` : color}
                                 className={`relative group flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all duration-150 cursor-pointer select-none
                                   ${isSelected
                                     ? 'border-gray-900 bg-gray-900 text-white shadow-md scale-105'
                                     : isOutOfStock
-                                      ? 'border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed opacity-50'
+                                      ? 'border-amber-300 bg-amber-50 text-amber-800 hover:border-amber-400 hover:shadow-sm active:scale-95'
                                       : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400 hover:shadow-sm active:scale-95'
                                   }`}
                               >
@@ -476,7 +483,11 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                   />
                                 )}
                                 <span className="text-sm font-medium">{color}</span>
-                                {isOutOfStock && <span className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/60 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Out of Stock</span>}
+                                {isOutOfStock && !isSelected && (
+                                  <span className="ml-1 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">
+                                    Preorder
+                                  </span>
+                                )}
                                 {isSelected && <i className="ri-check-line text-xs ml-1 opacity-80"></i>}
                               </button>
                             );
@@ -519,9 +530,8 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                   <button
                                     key={variant.id || variant.name}
                                     onClick={() => { setSelectedVariant(variant); setSelectedSize(variant.name); }}
-                                    disabled={isOutOfStock}
                                     className={`relative rounded-xl overflow-hidden border-2 transition-all duration-150 cursor-pointer flex flex-col active:scale-95
-                                      ${isSelected ? 'border-gray-900 shadow-md' : isOutOfStock ? 'border-gray-100 opacity-40 cursor-not-allowed' : 'border-gray-200 hover:border-gray-400 hover:shadow-sm'}`}
+                                      ${isSelected ? 'border-gray-900 shadow-md' : isOutOfStock ? 'border-amber-300 hover:border-amber-400 hover:shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:shadow-sm'}`}
                                   >
                                     {variant.image_url ? (
                                       <span className="w-full aspect-square bg-gray-100 block overflow-hidden">
@@ -533,6 +543,11 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                     <span className={`block text-center text-[11px] font-semibold py-1 px-1 truncate ${isSelected ? 'bg-gray-900 text-white' : 'bg-white text-gray-600'}`}>
                                       GH₵{(variant.price || product.price).toFixed(2)}
                                     </span>
+                                    {isOutOfStock && !isSelected && (
+                                      <span className="absolute top-1 left-1 text-[9px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">
+                                        Preorder
+                                      </span>
+                                    )}
                                     {isSelected && (
                                       <span className="absolute top-1 right-1 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
                                         <i className="ri-check-line text-white text-[10px]"></i>
@@ -553,16 +568,18 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                   <button
                                     key={variant.id || variant.name}
                                     onClick={() => { setSelectedVariant(variant); setSelectedSize(variant.name); }}
-                                    disabled={isOutOfStock}
                                     className={`relative px-4 py-2.5 rounded-xl border-2 text-sm font-medium transition-all duration-150 cursor-pointer select-none active:scale-95
                                       ${isSelected
                                         ? 'border-gray-900 bg-gray-900 text-white shadow-md'
                                         : isOutOfStock
-                                          ? 'border-gray-100 bg-gray-50 text-gray-300 line-through cursor-not-allowed'
+                                          ? 'border-amber-300 bg-amber-50 text-amber-800 hover:border-amber-400 hover:shadow-sm'
                                           : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400 hover:shadow-sm'
                                       }`}
                                   >
                                     <span>{variant.name}</span>
+                                    {isOutOfStock && !isSelected && (
+                                      <span className="block text-[9px] mt-0.5 font-bold uppercase tracking-wider">Preorder</span>
+                                    )}
                                     <span className={`block text-[11px] mt-0.5 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
                                       GH₵{(variant.price || product.price).toFixed(2)}
                                     </span>
@@ -586,23 +603,21 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                       <button
                         onClick={() => setQuantity(Math.max(product.moq || 1, quantity - 1))}
                         className="w-12 h-12 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
-                        disabled={activeStock === 0 || quantity <= (product.moq || 1)}
+                        disabled={quantity <= (product.moq || 1)}
                       >
                         <i className="ri-subtract-line text-xl"></i>
                       </button>
                       <input
                         type="number"
                         value={quantity}
-                        onChange={(e) => setQuantity(Math.max(product.moq || 1, Math.min(activeStock, parseInt(e.target.value) || (product.moq || 1))))}
+                        onChange={(e) => setQuantity(Math.max(product.moq || 1, Math.min(effectiveMaxStock, parseInt(e.target.value) || (product.moq || 1))))}
                         className="w-16 h-12 text-center border-x-2 border-gray-300 focus:outline-none text-lg font-semibold"
                         min={product.moq || 1}
-                        max={activeStock}
-                        disabled={activeStock === 0}
+                        max={effectiveMaxStock}
                       />
                       <button
-                        onClick={() => setQuantity(Math.min(activeStock, quantity + 1))}
+                        onClick={() => setQuantity(Math.min(effectiveMaxStock, quantity + 1))}
                         className="w-12 h-12 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
-                        disabled={activeStock === 0}
                       >
                         <i className="ri-add-line text-xl"></i>
                       </button>
@@ -614,36 +629,57 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                           Min. order: {product.moq} units
                         </span>
                       )}
-                      {activeStock > 0 ? (
+                      {isPreorder ? (
+                        <span className="text-amber-700 font-medium text-sm">
+                          <i className="ri-time-line mr-1"></i>
+                          Preorder · made to order
+                        </span>
+                      ) : (
                         <span className="text-green-600 font-medium text-sm">
                           <i className="ri-checkbox-circle-line mr-1"></i>
                           In Stock
-                        </span>
-                      ) : (
-                        <span className="text-red-600 font-medium">
-                          <i className="ri-close-circle-line mr-1"></i>
-                          Out of Stock
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
 
+                {/* Preorder notice */}
+                {isPreorder && !needsColorSelection && !needsVariantSelection && (
+                  <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <i className="ri-time-line text-xl text-amber-700 mt-0.5"></i>
+                    <div className="text-sm">
+                      <p className="font-semibold text-amber-900">This item is a preorder</p>
+                      <p className="text-amber-800 mt-1">
+                        We&apos;ll produce your order after you place it. Preorder items take <strong>3–4 business days</strong> to be ready before delivery or pickup.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
                   <button
-                    disabled={activeStock === 0 || needsVariantSelection || needsColorSelection}
-                    className={`flex-1 bg-gray-900 hover:bg-gray-900 text-white py-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-lg whitespace-nowrap cursor-pointer ${(activeStock === 0 || needsVariantSelection || needsColorSelection) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={needsVariantSelection || needsColorSelection}
+                    className={`flex-1 ${isPreorder ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-900 hover:bg-gray-900'} text-white py-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-lg whitespace-nowrap cursor-pointer ${(needsVariantSelection || needsColorSelection) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={handleAddToCart}
                   >
-                    <i className="ri-shopping-cart-line text-xl"></i>
-                    <span>{activeStock === 0 ? 'Out of Stock' : needsColorSelection ? 'Select a Color' : needsVariantSelection ? 'Select a Variant' : 'Add to Cart'}</span>
+                    <i className={`${isPreorder ? 'ri-time-line' : 'ri-shopping-cart-line'} text-xl`}></i>
+                    <span>
+                      {needsColorSelection
+                        ? 'Select a Color'
+                        : needsVariantSelection
+                          ? 'Select a Variant'
+                          : isPreorder
+                            ? 'Preorder Now'
+                            : 'Add to Cart'}
+                    </span>
                   </button>
-                  {activeStock > 0 && !needsVariantSelection && !needsColorSelection && (
+                  {!needsVariantSelection && !needsColorSelection && (
                     <button
                       onClick={handleBuyNow}
                       className="sm:w-auto bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
                     >
-                      Buy Now
+                      {isPreorder ? 'Preorder & Checkout' : 'Buy Now'}
                     </button>
                   )}
                 </div>

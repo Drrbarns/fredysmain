@@ -53,6 +53,7 @@ const ORDER_SELECT = `
     quantity,
     unit_price,
     total_price,
+    is_preorder,
     metadata,
     products (
       product_images (url)

@@ -92,6 +92,7 @@ export default function CheckoutPage() {
   const shippingCost = 0;
   const tax = 0;
   const total = subtotal + shippingCost + tax;
+  const hasPreorderItems = cart.some((i) => i.isPreorder);
 
   const validateShipping = () => {
     const newErrors: any = {};
@@ -196,13 +197,17 @@ export default function CheckoutPage() {
           quantity: item.quantity,
           unit_price: item.price,
           total_price: item.price * item.quantity,
+          is_preorder: !!item.isPreorder,
           metadata: {
             image: item.image,
             slug: item.slug,
-            preorder_shipping: prodMeta?.preorder_shipping || null
+            preorder_shipping: prodMeta?.preorder_shipping || null,
+            is_preorder: !!item.isPreorder,
           }
         });
       }
+
+      const orderIsPreorder = orderItems.some((i) => i.is_preorder);
 
       // 2. Create order + items via secure server API
       const createRes = await fetch('/api/orders/create', {
@@ -226,11 +231,13 @@ export default function CheckoutPage() {
             payment_method: paymentMethod,
             shipping_address: shippingData,
             billing_address: shippingData,
+            is_preorder: orderIsPreorder,
             metadata: {
               guest_checkout: !user,
               first_name: shippingData.firstName,
               last_name: shippingData.lastName,
-              tracking_number: trackingNumber
+              tracking_number: trackingNumber,
+              is_preorder: orderIsPreorder,
             }
           },
           items: orderItems
@@ -324,6 +331,18 @@ export default function CheckoutPage() {
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+
+        {hasPreorderItems && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <i className="ri-time-line text-xl text-amber-700 mt-0.5"></i>
+            <div className="text-sm">
+              <p className="font-semibold text-amber-900">You are placing a preorder</p>
+              <p className="text-amber-800 mt-1">
+                Some items in your order are being produced on demand. Preorder items take <strong>3–4 business days</strong> to be ready before delivery or pickup. You&apos;ll receive an SMS update when they&apos;re ready.
+              </p>
+            </div>
+          </div>
+        )}
 
         {currentStep === 1 && (
           <div className="mb-8 bg-white rounded-xl shadow-sm p-6">

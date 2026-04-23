@@ -216,12 +216,13 @@ export async function sendOrderConfirmation(order: any) {
 
     console.log(`[Notification] Preparing for Order #${order_number} | Phone: ${phone ? 'Present' : 'Missing'} | Tracking: ${trackingNumber || 'None'}`);
 
-    // Fetch order items to get preorder_shipping info
+    // Fetch order items to get preorder_shipping info + preorder flag
     let shippingNotes: string[] = [];
+    let hasPreorderItems = order?.is_preorder === true;
     try {
         const { data: items } = await supabase
             .from('order_items')
-            .select('product_name, metadata')
+            .select('product_name, metadata, is_preorder')
             .eq('order_id', id);
         if (items) {
             for (const item of items) {
@@ -229,14 +230,21 @@ export async function sendOrderConfirmation(order: any) {
                 if (preorder) {
                     shippingNotes.push(`${item.product_name}: ${preorder}`);
                 }
+                if (item.is_preorder === true || item.metadata?.is_preorder === true) {
+                    hasPreorderItems = true;
+                }
             }
         }
     } catch (err) {
         console.warn('[Notification] Could not fetch order items for shipping notes');
     }
 
-    const shippingNotesSms = shippingNotes.length > 0
-        ? ` Note: ${shippingNotes.join('; ')}.`
+    if (hasPreorderItems) {
+        shippingNotes.unshift('Preorder items take 3–4 business days to be ready before delivery.');
+    }
+
+    const preorderSmsSuffix = hasPreorderItems
+        ? ' Preorder items take 3-4 business days to be ready before delivery.'
         : '';
 
     // 1. Email to Customer
@@ -295,9 +303,9 @@ ${emailButton('View Order in Admin', `${baseUrl}/admin/orders/${id}`)}
     // 3. SMS to Customer (if phone exists)
     if (phone) {
         const smsMessage = trackingNumber
-            ? `Hi ${name}, your order #${order_number || id} is confirmed! Tracking: ${trackingNumber}. Track here: ${trackingUrl}${shippingNotesSms}`
-            : `Hi ${name}, your order #${order_number || id} at Freby’s Fashion GH is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
-        
+            ? `Hi ${name}, your order #${order_number || id} is confirmed! Tracking: ${trackingNumber}. Track here: ${trackingUrl}${preorderSmsSuffix}`
+            : `Hi ${name}, your order #${order_number || id} at Freby’s Fashion GH is confirmed! Track here: ${trackingUrl}${preorderSmsSuffix}`;
+
         await sendSMS({
             to: phone,
             message: smsMessage
