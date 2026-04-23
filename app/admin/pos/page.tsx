@@ -869,7 +869,14 @@ export default function POSPage() {
             }
         } catch (error: any) {
             console.error('Checkout failed:', error);
-            setCheckoutError(error.message || 'Checkout failed. Please try again.');
+            const raw = String(error?.message || '').trim();
+            // Browsers throw TypeError("Failed to fetch") for network-level failures
+            // (offline, dropped connection, deployment swap). That message is useless
+            // to a cashier, so translate it to something actionable.
+            const friendly = /failed to fetch|network|networkerror/i.test(raw)
+                ? 'Network problem reaching the server. Check the internet connection, then press "Complete Payment" again.'
+                : raw || 'Checkout failed. Please try again.';
+            setCheckoutError(friendly);
             playSound('error');
         } finally {
             setProcessing(false);
