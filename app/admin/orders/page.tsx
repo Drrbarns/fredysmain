@@ -45,6 +45,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [orderViewTab, setOrderViewTab] = useState<'confirmed' | 'abandoned'>('confirmed');
+  const [channelFilter, setChannelFilter] = useState<'all' | 'online' | 'pos'>('all');
   const [sendingPaymentLink, setSendingPaymentLink] = useState<string | null>(null);
   const [orderStats, setOrderStats] = useState<OrderStats[]>([
     { label: 'All Orders', count: 0, status: 'all' },
@@ -296,6 +297,9 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const isPosOrder = (order: Order) =>
+    order.metadata?.pos_sale === true || order.metadata?.pos_sale === 'true';
+
   const filteredOrders = orders.filter(order => {
     const customerName = getCustomerName(order).toLowerCase();
     const customerEmail = getCustomerEmail(order).toLowerCase();
@@ -309,9 +313,14 @@ export default function AdminOrdersPage() {
       customerName.includes(searchQuery.toLowerCase()) ||
       customerEmail.includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    const matchesProduct = productFilter === 'all' || 
+    const matchesProduct = productFilter === 'all' ||
       order.order_items?.some((item: any) => item.product_name === productFilter);
-    return matchesViewTab && matchesSearch && matchesStatus && matchesProduct;
+    const isPos = isPosOrder(order);
+    const matchesChannel =
+      channelFilter === 'all' ||
+      (channelFilter === 'pos' && isPos) ||
+      (channelFilter === 'online' && !isPos);
+    return matchesViewTab && matchesSearch && matchesStatus && matchesProduct && matchesChannel;
   });
 
   return (
@@ -422,6 +431,16 @@ export default function AdminOrdersPage() {
                 <i className="ri-filter-line mr-2"></i>
                 Filters
               </button>
+              <select
+                value={channelFilter}
+                onChange={(e) => setChannelFilter(e.target.value as 'all' | 'online' | 'pos')}
+                className="px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 font-medium cursor-pointer"
+                title="Filter by sales channel"
+              >
+                <option value="all">All Channels</option>
+                <option value="online">Online (Website)</option>
+                <option value="pos">In-Store (POS)</option>
+              </select>
               <select
                 value={productFilter}
                 onChange={(e) => setProductFilter(e.target.value)}
@@ -558,9 +577,22 @@ export default function AdminOrdersPage() {
                       />
                     </td>
                     <td className="py-4 px-4">
-                      <Link href={`/admin/orders/${order.id}`} className="text-gray-900 hover:text-gray-800 font-semibold whitespace-nowrap cursor-pointer">
-                        {order.order_number || order.id.substring(0, 8)}
-                      </Link>
+                      <div className="flex flex-col items-start gap-1">
+                        <Link href={`/admin/orders/${order.id}`} className="text-gray-900 hover:text-gray-800 font-semibold whitespace-nowrap cursor-pointer">
+                          {order.order_number || order.id.substring(0, 8)}
+                        </Link>
+                        {isPosOrder(order) ? (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <i className="ri-store-3-line"></i>
+                            POS
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-200">
+                            <i className="ri-global-line"></i>
+                            Online
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">

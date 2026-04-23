@@ -376,6 +376,17 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
             <div>
               <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="text-2xl font-bold text-gray-900">{order?.order_number}</h1>
+                {order && (order.metadata?.pos_sale === true || order.metadata?.pos_sale === 'true') ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <i className="ri-store-3-line"></i>
+                    POS Sale
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-200">
+                    <i className="ri-global-line"></i>
+                    Online Order
+                  </span>
+                )}
                 {(order?.is_preorder || order?.order_items?.some((i: any) => i.is_preorder)) && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
                     <i className="ri-time-line"></i>
