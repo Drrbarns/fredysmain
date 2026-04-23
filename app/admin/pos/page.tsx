@@ -6,6 +6,16 @@ import { supabase } from '@/lib/supabase';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
+interface ProductVariant {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    option1?: string | null;
+    option2?: string | null;
+    image_url?: string | null;
+}
+
 interface Product {
     id: string;
     name: string;
@@ -15,12 +25,15 @@ interface Product {
     image: string;
     sku: string;
     barcode?: string;
+    variants?: ProductVariant[];
 }
 
 interface CartItem extends Product {
     cartQuantity: number;
     discount: number;
     variant?: string;
+    /** Selected variant row id (optional, populated when the line came from a product_variant) */
+    variantId?: string | null;
 }
 
 interface Customer {
@@ -350,21 +363,43 @@ export default function POSPage() {
             setLoading(true);
             const { data: prodData } = await supabase
                 .from('products')
-                .select(`id, name, price, quantity, sku, metadata, categories(name), product_images(url)`)
+                .select(`id, name, price, quantity, sku, metadata, categories(name), product_images(url), product_variants(id, name, price, quantity, option1, option2, image_url, sort_order)`)
                 .eq('status', 'active')
                 .order('name');
 
             if (prodData) {
-                const formatted: Product[] = prodData.map((p: any) => ({
-                    id: p.id,
-                    name: p.name,
-                    price: p.price,
-                    quantity: p.quantity,
-                    category: p.categories?.name || 'Uncategorized',
-                    image: p.product_images?.[0]?.url || '',
-                    sku: p.sku || '',
-                    barcode: p.metadata?.barcode || p.sku || '',
-                }));
+                const formatted: Product[] = prodData.map((p: any) => {
+                    const rawVariants = Array.isArray(p.product_variants) ? p.product_variants : [];
+                    const variants: ProductVariant[] = [...rawVariants]
+                        .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+                        .map((v: any) => ({
+                            id: v.id,
+                            name: v.name,
+                            price: Number(v.price ?? p.price) || 0,
+                            quantity: Number(v.quantity ?? 0) || 0,
+                            option1: v.option1 ?? null,
+                            option2: v.option2 ?? null,
+                            image_url: v.image_url ?? null,
+                        }));
+
+                    // If the product has variants, treat the displayed stock as the sum
+                    // of variant stock — otherwise fall back to the product-level quantity.
+                    const effectiveQuantity = variants.length > 0
+                        ? variants.reduce((sum, v) => sum + (v.quantity || 0), 0)
+                        : Number(p.quantity ?? 0) || 0;
+
+                    return {
+                        id: p.id,
+                        name: p.name,
+                        price: p.price,
+                        quantity: effectiveQuantity,
+                        category: p.categories?.name || 'Uncategorized',
+                        image: p.product_images?.[0]?.url || '',
+                        sku: p.sku || '',
+                        barcode: p.metadata?.barcode || p.sku || '',
+                        variants: variants.length > 0 ? variants : undefined,
+                    };
+                });
                 setProducts(formatted);
                 const cats = Array.from(new Set(formatted.map(p => p.category))).sort();
                 setCategories(['All', ...cats]);
@@ -407,15 +442,74 @@ export default function POSPage() {
         } catch {}
     };
 
+    // ─── Variant Picker ─────────────────────────────────────────────────────
+
+    const [variantPicker, setVariantPicker] = useState<Product | null>(null);
+
+    function formatVariantLabel(variant: ProductVariant): string {
+        const color = variant.option2 || '';
+        const size = variant.name || variant.option1 || '';
+        if (color && size && color !== size) return `${color} / ${size}`;
+        return size || color || 'Variant';
+    }
+
     // ─── Cart Functions ─────────────────────────────────────────────────────
 
+    const addVariantToCart = useCallback((product: Product, variant: ProductVariant) => {
+        if (variant.quantity <= 0) {
+            playSound('error');
+            return;
+        }
+        const variantLabel = formatVariantLabel(variant);
+        setCart(prev => {
+            const existing = prev.find(item => item.id === product.id && item.variant === variantLabel);
+            if (existing) {
+                if (existing.cartQuantity >= variant.quantity) {
+                    playSound('error');
+                    return prev;
+                }
+                playSound('add');
+                return prev.map(item =>
+                    item.id === product.id && item.variant === variantLabel
+                        ? { ...item, cartQuantity: item.cartQuantity + 1 }
+                        : item
+                );
+            }
+            playSound('add');
+            return [
+                ...prev,
+                {
+                    ...product,
+                    // Line-item specific overrides: variant price, stock and image
+                    price: variant.price,
+                    quantity: variant.quantity,
+                    image: variant.image_url || product.image,
+                    cartQuantity: 1,
+                    discount: 0,
+                    variant: variantLabel,
+                    variantId: variant.id,
+                },
+            ];
+        });
+    }, []);
+
     const addToCart = useCallback((product: Product) => {
+        // If the product has variants, prompt the cashier to choose one.
+        if (product.variants && product.variants.length > 0) {
+            if (product.variants.length === 1) {
+                addVariantToCart(product, product.variants[0]);
+                return;
+            }
+            setVariantPicker(product);
+            return;
+        }
+
         if (product.quantity <= 0) {
             playSound('error');
             return;
         }
         setCart(prev => {
-            const existing = prev.find(item => item.id === product.id);
+            const existing = prev.find(item => item.id === product.id && !item.variant);
             if (existing) {
                 if (existing.cartQuantity >= product.quantity) {
                     playSound('error');
@@ -423,13 +517,15 @@ export default function POSPage() {
                 }
                 playSound('add');
                 return prev.map(item =>
-                    item.id === product.id ? { ...item, cartQuantity: item.cartQuantity + 1 } : item
+                    item.id === product.id && !item.variant
+                        ? { ...item, cartQuantity: item.cartQuantity + 1 }
+                        : item
                 );
             }
             playSound('add');
             return [...prev, { ...product, cartQuantity: 1, discount: 0 }];
         });
-    }, []);
+    }, [addVariantToCart]);
 
     // ─── Barcode Scanner Detection ──────────────────────────────────────────
 
@@ -476,13 +572,13 @@ export default function POSPage() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [products, handleBarcodeScan]);
 
-    const removeFromCart = (productId: string) => {
-        setCart(prev => prev.filter(item => item.id !== productId));
+    const removeFromCart = (productId: string, variant?: string) => {
+        setCart(prev => prev.filter(item => !(item.id === productId && (item.variant || '') === (variant || ''))));
     };
 
-    const updateQuantity = (productId: string, delta: number) => {
+    const updateQuantity = (productId: string, delta: number, variant?: string) => {
         setCart(prev => prev.map(item => {
-            if (item.id === productId) {
+            if (item.id === productId && (item.variant || '') === (variant || '')) {
                 const newQty = item.cartQuantity + delta;
                 if (newQty < 1) return item;
                 if (newQty > item.quantity) { playSound('error'); return item; }
@@ -492,10 +588,10 @@ export default function POSPage() {
         }));
     };
 
-    const setItemDiscount = (productId: string, discount: number) => {
+    const setItemDiscount = (productId: string, discount: number, variant?: string) => {
         const d = Math.max(0, Math.min(100, discount));
         setCart(prev => prev.map(item =>
-            item.id === productId ? { ...item, discount: d } : item
+            item.id === productId && (item.variant || '') === (variant || '') ? { ...item, discount: d } : item
         ));
     };
 
@@ -644,10 +740,16 @@ export default function POSPage() {
                 product_id: item.id,
                 product_name: item.name,
                 variant_name: item.variant || null,
+                variant_id: item.variantId || null,
                 quantity: item.cartQuantity,
                 unit_price: item.price,
                 total_price: item.price * item.cartQuantity * (1 - (item.discount || 0) / 100),
-                metadata: { image: item.image, pos_sale: true, discount_pct: item.discount || 0 }
+                metadata: {
+                    image: item.image,
+                    pos_sale: true,
+                    discount_pct: item.discount || 0,
+                    variant_id: item.variantId || null,
+                }
             }));
 
             const res = await fetch('/api/admin/pos/orders', {
@@ -933,8 +1035,11 @@ export default function POSPage() {
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 pb-20 lg:pb-4">
                             {filteredProducts.map(product => {
-                                const inCart = cart.find(c => c.id === product.id);
+                                const productLines = cart.filter(c => c.id === product.id);
+                                const inCartQty = productLines.reduce((sum, l) => sum + l.cartQuantity, 0);
+                                const inCart = inCartQty > 0;
                                 const outOfStock = product.quantity <= 0;
+                                const hasVariants = (product.variants?.length || 0) > 0;
                                 return (
                                     <div
                                         key={product.id}
@@ -958,7 +1063,13 @@ export default function POSPage() {
                                             </div>
                                             {inCart && (
                                                 <div className="absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                                                    {inCart.cartQuantity}
+                                                    {inCartQty}
+                                                </div>
+                                            )}
+                                            {hasVariants && !outOfStock && (
+                                                <div className="absolute bottom-2 left-2 bg-white/90 text-gray-800 text-[10px] font-semibold px-1.5 py-0.5 rounded-full backdrop-blur-sm border border-gray-200">
+                                                    <i className="ri-apps-2-line mr-0.5"></i>
+                                                    {product.variants!.length} opts
                                                 </div>
                                             )}
                                         </div>
@@ -1038,25 +1149,30 @@ export default function POSPage() {
                         </div>
                     ) : (
                         cart.map(item => (
-                            <div key={item.id} className="flex gap-2.5 p-2.5 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors">
+                            <div key={`${item.id}-${item.variant || ''}`} className="flex gap-2.5 p-2.5 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors">
                                 <div className="w-14 h-14 bg-white rounded-md overflow-hidden flex-shrink-0 border border-gray-200">
                                     {item.image ? <img src={item.image} className="w-full h-full object-cover" alt="" /> :
                                         <div className="w-full h-full flex items-center justify-center text-gray-300"><i className="ri-image-line" /></div>}
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-between">
                                     <div className="flex justify-between items-start">
-                                        <p className="text-xs font-semibold text-gray-900 line-clamp-1 pr-1">{item.name}</p>
-                                        <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 flex-shrink-0">
+                                        <div className="min-w-0 pr-1">
+                                            <p className="text-xs font-semibold text-gray-900 line-clamp-1">{item.name}</p>
+                                            {item.variant && (
+                                                <p className="text-[10px] text-gray-500 truncate">{item.variant}</p>
+                                            )}
+                                        </div>
+                                        <button onClick={() => removeFromCart(item.id, item.variant)} className="text-gray-400 hover:text-red-500 flex-shrink-0">
                                             <i className="ri-close-line text-sm" />
                                         </button>
                                     </div>
                                     <div className="flex items-center justify-between mt-1">
                                         <div className="flex items-center space-x-1 bg-white rounded border border-gray-200 px-0.5 py-0.5">
-                                            <button onClick={() => updateQuantity(item.id, -1)} className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded">
+                                            <button onClick={() => updateQuantity(item.id, -1, item.variant)} className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded">
                                                 <i className="ri-subtract-line text-xs" />
                                             </button>
                                             <span className="text-xs font-bold w-5 text-center">{item.cartQuantity}</span>
-                                            <button onClick={() => updateQuantity(item.id, 1)} className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded">
+                                            <button onClick={() => updateQuantity(item.id, 1, item.variant)} className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded">
                                                 <i className="ri-add-line text-xs" />
                                             </button>
                                         </div>
@@ -1404,6 +1520,117 @@ export default function POSPage() {
                                 </div>
                             </>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* ─── Variant Picker Modal ──────────────────────────────────────── */}
+            {variantPicker && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+                        <div className="p-5 border-b border-gray-100 flex justify-between items-start gap-4 bg-gray-50">
+                            <div className="flex items-start gap-3 min-w-0">
+                                {variantPicker.image && (
+                                    <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-white flex-shrink-0">
+                                        <img src={variantPicker.image} alt={variantPicker.name} className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                                <div className="min-w-0">
+                                    <h3 className="text-lg font-bold text-gray-900 truncate">{variantPicker.name}</h3>
+                                    <p className="text-xs text-gray-500 mt-0.5">
+                                        Choose a variant to add to the order
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setVariantPicker(null)}
+                                className="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-500 flex-shrink-0"
+                            >
+                                <i className="ri-close-line text-xl" />
+                            </button>
+                        </div>
+                        <div className="p-4 overflow-y-auto flex-1">
+                            {(() => {
+                                const variants = variantPicker.variants || [];
+                                if (variants.length === 0) {
+                                    return (
+                                        <div className="text-center py-8 text-gray-500">
+                                            <i className="ri-information-line text-3xl mb-2 block" />
+                                            <p className="text-sm">This product has no variants configured.</p>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        {variants.map((variant) => {
+                                            const outOfStock = variant.quantity <= 0;
+                                            const label = formatVariantLabel(variant);
+                                            const existingQty = cart
+                                                .filter((c) => c.id === variantPicker.id && c.variant === label)
+                                                .reduce((s, l) => s + l.cartQuantity, 0);
+                                            const canAdd = !outOfStock && existingQty < variant.quantity;
+                                            return (
+                                                <button
+                                                    key={variant.id}
+                                                    onClick={() => {
+                                                        if (!canAdd) {
+                                                            playSound('error');
+                                                            return;
+                                                        }
+                                                        addVariantToCart(variantPicker, variant);
+                                                        // Keep picker open so cashier can add more variants in a row.
+                                                    }}
+                                                    disabled={!canAdd}
+                                                    className={`group relative text-left rounded-xl border-2 p-3 transition-all ${
+                                                        canAdd
+                                                            ? 'border-gray-200 bg-white hover:border-gray-900 hover:shadow-md cursor-pointer'
+                                                            : 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex-shrink-0">
+                                                            {variant.image_url ? (
+                                                                <img src={variant.image_url} alt={label} className="w-full h-full object-cover" />
+                                                            ) : variantPicker.image ? (
+                                                                <img src={variantPicker.image} alt={label} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                                                    <i className="ri-image-line text-lg" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center justify-between gap-2">
+                                                                <p className="text-sm font-semibold text-gray-900 truncate">{label}</p>
+                                                                {existingQty > 0 && (
+                                                                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                                                        {existingQty}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-sm font-bold text-gray-900 mt-0.5">
+                                                                GH₵{Number(variant.price).toFixed(2)}
+                                                            </p>
+                                                            <p className={`text-[11px] mt-0.5 ${outOfStock ? 'text-red-500' : 'text-gray-500'}`}>
+                                                                {outOfStock ? 'Out of stock' : `${variant.quantity} in stock`}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            })()}
+                        </div>
+                        <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+                            <button
+                                onClick={() => setVariantPicker(null)}
+                                className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-white"
+                            >
+                                Done
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

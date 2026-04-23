@@ -111,6 +111,7 @@ export async function POST(request: Request) {
       product_id: item.product_id,
       product_name: item.product_name,
       variant_name: item.variant_name || null,
+      variant_id: item.variant_id || null,
       quantity: item.quantity,
       unit_price: Number(item.unit_price) || 0,
       total_price: Number(item.total_price) || 0,
