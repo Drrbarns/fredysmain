@@ -129,10 +129,12 @@ export async function POST(request: Request) {
           order_ref: order_number,
           moolre_ref: `POS-${(payment_method || 'cash').toUpperCase()}-${Date.now()}`,
         });
-        // POS sales are fulfilled immediately — mark as completed
+        // POS sales are fulfilled immediately in-store — mark as delivered.
+        // Note: the order_status enum does not have a "completed" value;
+        // "delivered" is the correct terminal status for a walk-in sale.
         await supabaseAdmin
           .from('orders')
-          .update({ status: 'completed' })
+          .update({ status: 'delivered' })
           .eq('order_number', order_number);
       } catch (e) {
         console.error('mark_order_paid error:', e);
